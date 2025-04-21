@@ -121,38 +121,41 @@ public class GraphInfoTest {
         Assert.assertEquals("person", vertexInfo.getLabel().toJavaString());
         Assert.assertEquals(100, vertexInfo.getChunkSize());
         Assert.assertEquals("vertex/person/",vertexInfo.getPrefix().toJavaString());
+        Assert.assertEquals("vertex/person/vertex_count",vertexInfo.getVerticesNumFilePath().value().toJavaString());
         Assert.assertEquals("gar/v1", vertexInfo.getVersion());
         Assert.assertEquals(2, vertexInfo.getPropertyGroups().size());
         
         //vertex properties
-        Result<PropertyGroup> propertyGroup1_result = vertexInfo.getPropertyGroup("id");
+        Result<PropertyGroup> propertyGroup1_result = vertexInfo.getPropertyGroup(StdString.create("id"));
         Assert.assertFalse(propertyGroup1_result.hasError());
         PropertyGroup propertyGroup1 = propertyGroup1_result.value();
         Assert.assertEquals("id/", propertyGroup1.getPrefix().toJavaString());
+        Assert.assertEquals("vertex/person/id/chunk0",vertexInfo.getFilePath(propertyGroup1,0).value().toJavaString());
+        Assert.assertEquals("vertex/person/id/chunk4",vertexInfo.getFilePath(propertyGroup1,4).value().toJavaString());
         Assert.assertEquals("csv", propertyGroup1.getFileType().toJavaString());
-        Assert.assertTrue(vertexInfo.containProperty("id"));
-        propertyGroup1.getProperties().forEach((key, value) -> {
-            Assert.assertEquals("id", key.toJavaString());
-            Assert.assertEquals("int64", value.getType().toJavaString());
-            Assert.assertTrue(value.isPrimaryKey());
-        });
-        Assert.assertTrue(vertexInfo.containProperty("firstName"));
-        Result<PropertyGroup> propertyGroup2_result = vertexInfo.getPropertyGroup("firstName");
+        Assert.assertTrue(vertexInfo.containProperty(StdString.create("id")));
+        Property property1 = propertyGroup1.getProperties().get(0);
+        Assert.assertEquals("int64", property1.getType().toString());
+        Assert.assertTrue(property1.isPrimary());
+        Assert.assertTrue(vertexInfo.containProperty(StdString.create("firstName")));
+        Result<PropertyGroup> propertyGroup2_result = vertexInfo.getPropertyGroup(StdString.create("firstName"));
         Assert.assertFalse(propertyGroup2_result.hasError());
         PropertyGroup propertyGroup2 = propertyGroup2_result.value();
-        Assert.assertEquals("firstName_lastName_gender/", propertyGroup2.getPrefix().toJavaString());
-        Assert.assertEquals("csv", propertyGroup2.getFileType().toJavaString());
+        Assert.assertEquals("firstName_lastName_gender/", propertyGroup2.getPrefix().toString());
+        Assert.assertEquals("vertex/person/firstName_lastName_gender/chunk0",vertexInfo.getFilePath(propertyGroup2,0).value().toString());
+        Assert.assertEquals("vertex/person/firstName_lastName_gender/chunk4",vertexInfo.getFilePath(propertyGroup2,4).value().toString());
+        Assert.assertEquals("csv", propertyGroup2.getFileType().toString());
         StdVector<Property> g2Properties = propertyGroup2.getProperties();
-        Assert.assertEquals("firstName",g2Properties.get(0).getName().toJavaString());
-        Assert.assertEquals("string",g2Properties.get(0).getType().toJavaString());
+        Assert.assertEquals("firstName",g2Properties.get(0).getName().toString());
+        Assert.assertEquals("string",g2Properties.get(0).getType().toString());
         Assert.assertFalse(g2Properties.get(0).isPrimary());
 
-        Assert.assertEquals("lastName",g2Properties.get(1).getName().toJavaString());
-        Assert.assertEquals("string",g2Properties.get(1).getType().toJavaString());
+        Assert.assertEquals("lastName",g2Properties.get(1).getName().toString());
+        Assert.assertEquals("string",g2Properties.get(1).getType().toString());
         Assert.assertFalse(g2Properties.get(1).isPrimary());
 
-        Assert.assertEquals("gender",g2Properties.get(2).getName().toJavaString());
-        Assert.assertEquals("string",g2Properties.get(2).getType().toJavaString());
+        Assert.assertEquals("gender",g2Properties.get(2).getName().toString());
+        Assert.assertEquals("string",g2Properties.get(2).getType().toString());
         Assert.assertFalse(g2Properties.get(2).isPrimary());
 
 
@@ -174,13 +177,51 @@ public class GraphInfoTest {
         AdjListType ordered_by_source = AdjListType.ordered_by_source;
         AdjListType ordered_by_dest = AdjListType.ordered_by_dest;
         Assert.assertTrue(edgeInfo.containAdjList(ordered_by_source));
-        Assert.assertEquals("ordered_by_source/", edgeInfo.getAdjListPathPrefix(ordered_by_source).toJavaString());
-        Assert.assertEquals("csv", edgeInfo.getFileType(ordered_by_source).toJavaString());
-
-        Assert.assertTrue(edgeInfo.containAdjList(ordered_by_dest));
-        Assert.assertEquals("ordered_by_dest/", edgeInfo.getAdjListPathPrefix(ordered_by_dest).toJavaString());
-        Assert.assertEquals("csv", edgeInfo.getFileType(ordered_by_dest).toJavaString());
+        Assert.assertEquals("ordered_by_source/", edgeInfo.getAdjListPathPrefix(ordered_by_source).value().toJavaString());
+        Assert.assertEquals("csv", edgeInfo.getFileType(ordered_by_source).value().toString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_source/vertex_count",edgeInfo.getVerticesNumFilePath(ordered_by_source).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_source/edge_count0", edgeInfo.getEdgesNumFilePath(0, ordered_by_dest).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_source/adj_list/part0/chunk0", edgeInfo.getAdjListFilePath(0,0,ordered_by_source).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_source/offset/chunk0", edgeInfo.getAdjListOffsetFilePath(0, ordered_by_source).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_source/offset/chunk4", edgeInfo.getAdjListOffsetFilePath(4, ordered_by_source).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_source/offset/", edgeInfo.getOffsetPathPrefix(ordered_by_source).value().toJavaString());
         
+        Assert.assertTrue(edgeInfo.containAdjList(ordered_by_dest));
+        Assert.assertEquals("ordered_by_dest/", edgeInfo.getAdjListPathPrefix(ordered_by_dest).value().toJavaString());
+        Assert.assertEquals("csv", edgeInfo.getFileType(ordered_by_dest).value().toString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_dest/vertex_count",edgeInfo.getVerticesNumFilePath(ordered_by_dest).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_dest/edge_count0", edgeInfo.getEdgesNumFilePath(0, ordered_by_dest).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_dest/adj_list/part0/chunk0", edgeInfo.getAdjListFilePath(0,0,ordered_by_source).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_dest/offset/chunk0", edgeInfo.getAdjListOffsetFilePath(0, ordered_by_dest).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_dest/offset/chunk4", edgeInfo.getAdjListOffsetFilePath(4, ordered_by_dest).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_dest/offset/", edgeInfo.getOffsetPathPrefix(ordered_by_dest).value().toJavaString());
+        
+        //edge properties_group
+        Assert.assertEquals(1, edgeInfo.getPropertyGroups(ordered_by_source).value().size());
+        PropertyGroup os_propertyGroup = edgeInfo.getPropertyGroups(ordered_by_source).value().get(0);
+        Assert.assertEquals("creationDate/",os_propertyGroup.getPrefix().toJavaString());
+        Assert.assertEquals("csv",os_propertyGroup.getFileType().toString());
+        Property os_property = os_propertyGroup.getProperties().get(0);
+        Assert.assertEquals("creationDate",os_property.getName().toJavaString());
+        Assert.assertEquals("string",os_property.getType().toString());
+        Assert.assertFalse(os_property.isPrimary());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_source/creationDate/part0/chunk0", edgeInfo.getPropertyFilePath(os_propertyGroup, ordered_by_source, 0, 0).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_source/creationDate/part1/chunk2", edgeInfo.getPropertyFilePath(os_propertyGroup, ordered_by_source, 1, 2).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_source/creationDate/", edgeInfo.getPropertyGroupPathPrefix(os_propertyGroup, ordered_by_source).value().toJavaString());
+
+        Assert.assertEquals(1, edgeInfo.getPropertyGroups(ordered_by_dest).value().size());
+        PropertyGroup od_propertyGroup = edgeInfo.getPropertyGroups(ordered_by_dest).value().get(0);
+        Assert.assertEquals("creationDate/",od_propertyGroup.getPrefix().toJavaString());
+        Assert.assertEquals("csv",od_propertyGroup.getFileType().toString());
+        Property od_property = od_propertyGroup.getProperties().get(0);
+        Assert.assertEquals("creationDate",od_property.getName().toJavaString());
+        Assert.assertEquals("string",od_property.getType().toString());
+        Assert.assertFalse(od_property.isPrimary());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_dest/creationDate/part0/chunk0", edgeInfo.getPropertyFilePath(os_propertyGroup, ordered_by_dest, 0, 0).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_dest/creationDate/part1/chunk2", edgeInfo.getPropertyFilePath(os_propertyGroup, ordered_by_dest, 1, 2).value().toJavaString());
+        Assert.assertEquals("edge/person_knows_person/ordered_by_dest/creationDate/", edgeInfo.getPropertyGroupPathPrefix(os_propertyGroup, ordered_by_dest).value().toJavaString());
+
+
 }
 
     @Ignore(
