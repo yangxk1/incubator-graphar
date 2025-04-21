@@ -21,6 +21,8 @@ package org.apache.graphar.graphinfo;
 
 import org.apache.graphar.stdcxx.StdMap;
 import org.apache.graphar.stdcxx.StdString;
+import org.apache.graphar.stdcxx.StdVector;
+import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.util.InfoVersion;
 import org.apache.graphar.util.Result;
 import org.junit.Assert;
@@ -103,13 +105,83 @@ public class GraphInfoTest {
         Result<GraphInfo> graphInfoResult = GraphInfo.load(path);
         Assert.assertFalse(graphInfoResult.hasError());
         GraphInfo graphInfo = graphInfoResult.value();
+        //basics
         Assert.assertEquals("ldbc_sample", graphInfo.getName().toJavaString());
         Assert.assertEquals(root + "/ldbc_sample/csv/", graphInfo.getPrefix().toJavaString());
+        Assert.assertEquals("gar/v1", graphInfo.getInfoVersion().toJavaString());
         StdMap<StdString, VertexInfo> vertexInfos = graphInfo.getVertexInfos();
         StdMap<StdString, EdgeInfo> edgeInfos = graphInfo.getEdgeInfos();
         Assert.assertEquals(1, vertexInfos.size());
         Assert.assertEquals(1, edgeInfos.size());
-    }
+
+        VertexInfo vertexInfo = vertexInfos.get(StdString.create("person"));
+        //IsValidate
+        Assert.assertTrue(vertexInfo.isValidated());
+        //vertex info
+        Assert.assertEquals("person", vertexInfo.getLabel().toJavaString());
+        Assert.assertEquals(100, vertexInfo.getChunkSize());
+        Assert.assertEquals("vertex/person/",vertexInfo.getPrefix().toJavaString());
+        Assert.assertEquals("gar/v1", vertexInfo.getVersion());
+        Assert.assertEquals(2, vertexInfo.getPropertyGroups().size());
+        
+        //vertex properties
+        Result<PropertyGroup> propertyGroup1_result = vertexInfo.getPropertyGroup("id");
+        Assert.assertFalse(propertyGroup1_result.hasError());
+        PropertyGroup propertyGroup1 = propertyGroup1_result.value();
+        Assert.assertEquals("id/", propertyGroup1.getPrefix().toJavaString());
+        Assert.assertEquals("csv", propertyGroup1.getFileType().toJavaString());
+        Assert.assertTrue(vertexInfo.containProperty("id"));
+        propertyGroup1.getProperties().forEach((key, value) -> {
+            Assert.assertEquals("id", key.toJavaString());
+            Assert.assertEquals("int64", value.getType().toJavaString());
+            Assert.assertTrue(value.isPrimaryKey());
+        });
+        Assert.assertTrue(vertexInfo.containProperty("firstName"));
+        Result<PropertyGroup> propertyGroup2_result = vertexInfo.getPropertyGroup("firstName");
+        Assert.assertFalse(propertyGroup2_result.hasError());
+        PropertyGroup propertyGroup2 = propertyGroup2_result.value();
+        Assert.assertEquals("firstName_lastName_gender/", propertyGroup2.getPrefix().toJavaString());
+        Assert.assertEquals("csv", propertyGroup2.getFileType().toJavaString());
+        StdVector<Property> g2Properties = propertyGroup2.getProperties();
+        Assert.assertEquals("firstName",g2Properties.get(0).getName().toJavaString());
+        Assert.assertEquals("string",g2Properties.get(0).getType().toJavaString());
+        Assert.assertFalse(g2Properties.get(0).isPrimary());
+
+        Assert.assertEquals("lastName",g2Properties.get(1).getName().toJavaString());
+        Assert.assertEquals("string",g2Properties.get(1).getType().toJavaString());
+        Assert.assertFalse(g2Properties.get(1).isPrimary());
+
+        Assert.assertEquals("gender",g2Properties.get(2).getName().toJavaString());
+        Assert.assertEquals("string",g2Properties.get(2).getType().toJavaString());
+        Assert.assertFalse(g2Properties.get(2).isPrimary());
+
+
+        EdgeInfo edgeInfo = edgeInfos.get(StdString.create("knows"));
+        //isValidated
+        Assert.assertTrue(edgeInfo.isValidated());
+        //edge info
+        Assert.assertEquals("knows", edgeInfo.getEdgeLabel().toJavaString());
+        Assert.assertEquals("person", edgeInfo.getSrcLabel().toJavaString());
+        Assert.assertEquals("person", edgeInfo.getDstLabel().toJavaString());
+        Assert.assertEquals(1024, edgeInfo.getChunkSize());
+        Assert.assertEquals(100, edgeInfo.getSrcChunkSize());
+        Assert.assertEquals(100, edgeInfo.getDstChunkSize());
+        Assert.assertFalse(edgeInfo.isDirected());
+        Assert.assertEquals("edge/person_knows_person/", edgeInfo.getPrefix().toJavaString());
+        Assert.assertEquals("gar/v1", edgeInfo.getVersion());
+
+        //edge adjlist
+        AdjListType ordered_by_source = AdjListType.ordered_by_source;
+        AdjListType ordered_by_dest = AdjListType.ordered_by_dest;
+        Assert.assertTrue(edgeInfo.containAdjList(ordered_by_source));
+        Assert.assertEquals("ordered_by_source/", edgeInfo.getAdjListPathPrefix(ordered_by_source).toJavaString());
+        Assert.assertEquals("csv", edgeInfo.getFileType(ordered_by_source).toJavaString());
+
+        Assert.assertTrue(edgeInfo.containAdjList(ordered_by_dest));
+        Assert.assertEquals("ordered_by_dest/", edgeInfo.getAdjListPathPrefix(ordered_by_dest).toJavaString());
+        Assert.assertEquals("csv", edgeInfo.getFileType(ordered_by_dest).toJavaString());
+        
+}
 
     @Ignore(
             "Problem about arrow 12.0.0 with S3, see https://github.com/apache/incubator-graphar/issues/187")
