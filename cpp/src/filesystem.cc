@@ -21,6 +21,7 @@ limitations under the License.
 #include "arrow/ipc/writer.h"
 #include "parquet/arrow/writer.h"
 
+#include "thirdparty/simple-uri-parser/uri_parser.h"
 #include "gar/util/expression.h"
 #include "gar/util/filesystem.h"
 
@@ -73,11 +74,6 @@ static Status CastToLargeOffsetArray(
   return Status::OK();
 }
 
-Result<arrow::internal::Uri> ParseFileSystemUri(const std::string& uri_string) {
-  arrow::internal::Uri uri;
-  RETURN_NOT_ARROW_OK(uri.Parse(uri_string));
-  return std::move(uri);
-}
 }  // namespace detail
 
 std::shared_ptr<ds::FileFormat> FileSystem::GetFileFormat(
@@ -281,15 +277,16 @@ Result<std::shared_ptr<FileSystem>> FileSystemFromUriOrPath(
 
   GAR_RETURN_ON_ARROW_ERROR_AND_ASSIGN(
       auto arrow_fs, arrow::fs::FileSystemFromUriOrPath(uri_string));
-  GAR_ASSIGN_OR_RAISE(auto uri, detail::ParseFileSystemUri(uri_string));
+  auto uri = uri::parse_uri(uri_string);
+    if (uri.error != uri::Error::None) {
+    return Status::Invalid("Failed to parse URI: ", uri_string);
+  }
   if (out_path != nullptr) {
-    if (uri.scheme() == "file" || uri.scheme() == "hdfs" ||
-        uri.scheme().empty()) {
-      *out_path = uri.path();
-    } else if (uri.scheme() == "s3" || uri.scheme() == "gs") {
+    if (uri.scheme == "file" || uri.scheme == "hdfs" || uri.scheme.empty()) {
+      *out_path = uri.path;
+    } else if (uri.scheme == "s3" || uri.scheme == "gs") {
       // bucket name is the host, path is the path
-      // the arrow parser would delete the trailing slash which we don't want to
-      *out_path = uri.host() + uri.path();
+      *out_path = uri.authority.host + uri.path;
     } else {
       return Status::Invalid("Unrecognized filesystem type in URI: ",
                              uri_string);
