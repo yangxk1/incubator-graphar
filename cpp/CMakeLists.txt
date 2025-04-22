@@ -200,6 +200,7 @@ macro(build_gar)
     target_include_directories(gar PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
                                           $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                                           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/mini-yaml>
+                                          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/thirdparty>
     )
     if(BUILD_ARROW_FROM_SOURCE)
         target_include_directories(gar SYSTEM BEFORE PRIVATE ${GAR_ARROW_INCLUDE_DIR})
