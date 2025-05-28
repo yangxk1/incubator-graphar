@@ -95,9 +95,7 @@ BENCHMARK_DEFINE_F(BenchmarkFixture, VertexPropertyArrowChunkReaderReadChunk)
   }
 }
 // benchmark for select columns
-BENCHMARK_DEFINE_F(
-    BenchmarkFixture,
-    VertexPropertyArrowChunkReaderReadChunkSelectAllColumnsInFirstGraph)
+BENCHMARK_DEFINE_F(BenchmarkFixture, VertexPropertySelectAllColumnsInFirstGraph)
 (::benchmark::State& state) {  // NOLINT
   auto gp = graph_info_->GetVertexInfo("person")->GetPropertyGroup("gender");
   auto maybe_reader =
@@ -114,9 +112,24 @@ BENCHMARK_DEFINE_F(
   }
 }
 
-BENCHMARK_DEFINE_F(
-    BenchmarkFixture,
-    VertexPropertyArrowChunkReaderReadChunkSelectOneColumnInFirstGraph)
+BENCHMARK_DEFINE_F(BenchmarkFixture,
+                   VertexPropertySelectAllColumnsInFirstGraphV2)
+(::benchmark::State& state) {  // NOLINT
+  auto gp = graph_info_->GetVertexInfo("person")->GetPropertyGroup("gender");
+  auto maybe_reader =
+      VertexPropertyArrowChunkReader::Make(graph_info_, "person", gp);
+  if (maybe_reader.has_error()) {
+    state.SkipWithError(maybe_reader.status().message().c_str());
+    return;
+  }
+  auto reader = maybe_reader.value();
+  for (auto _ : state) {
+    assert(reader->seek(0).ok());
+    assert(reader->GetChunkV2().status().ok());
+    assert(reader->next_chunk().ok());
+  }
+}
+BENCHMARK_DEFINE_F(BenchmarkFixture, VertexPropertySelectOneColumnInFirstGraph)
 (::benchmark::State& state) {  // NOLINT
   auto maybe_reader =
       VertexPropertyArrowChunkReader::Make(graph_info_, "person", "gender");
@@ -132,9 +145,23 @@ BENCHMARK_DEFINE_F(
   }
 }
 
-BENCHMARK_DEFINE_F(
-    BenchmarkFixture,
-    VertexPropertyArrowChunkReaderReadChunkSelectTwoColumnsInFirstGraph)
+BENCHMARK_DEFINE_F(BenchmarkFixture,
+                   VertexPropertySelectOneColumnInFirstGraphV2)
+(::benchmark::State& state) {  // NOLINT
+  auto maybe_reader =
+      VertexPropertyArrowChunkReader::Make(graph_info_, "person", "gender");
+  if (maybe_reader.has_error()) {
+    state.SkipWithError(maybe_reader.status().message().c_str());
+    return;
+  }
+  auto reader = maybe_reader.value();
+  for (auto _ : state) {
+    assert(reader->seek(0).ok());
+    assert(reader->GetChunkV2().status().ok());
+    assert(reader->next_chunk().ok());
+  }
+}
+BENCHMARK_DEFINE_F(BenchmarkFixture, VertexPropertySelectTwoColumnsInFirstGraph)
 (::benchmark::State& state) {  // NOLINT
   auto maybe_reader = VertexPropertyArrowChunkReader::Make(
       graph_info_, "person", {"gender", "lastName"}, SelectType::PROPERTIES);
@@ -150,12 +177,27 @@ BENCHMARK_DEFINE_F(
   }
 }
 
-BENCHMARK_DEFINE_F(
-    BenchmarkFixture,
-    VertexPropertyArrowChunkReaderReadChunkSelectAllColumnsInSecondGraph)
+BENCHMARK_DEFINE_F(BenchmarkFixture,
+                   VertexPropertySelectTwoColumnsInFirstGraphV2)
 (::benchmark::State& state) {  // NOLINT
-  auto gp = second_graph_info_->GetVertexInfo("organisation")
-                ->GetPropertyGroup("id");
+  auto maybe_reader = VertexPropertyArrowChunkReader::Make(
+      graph_info_, "person", {"gender", "lastName"}, SelectType::PROPERTIES);
+  if (maybe_reader.has_error()) {
+    state.SkipWithError(maybe_reader.status().message().c_str());
+    return;
+  }
+  auto reader = maybe_reader.value();
+  for (auto _ : state) {
+    assert(reader->seek(0).ok());
+    assert(reader->GetChunkV2().status().ok());
+    assert(reader->next_chunk().ok());
+  }
+}
+BENCHMARK_DEFINE_F(BenchmarkFixture,
+                   VertexPropertySelectAllColumnsInSecondGraph)
+(::benchmark::State& state) {  // NOLINT
+  auto gp =
+      second_graph_info_->GetVertexInfo("organisation")->GetPropertyGroup("id");
   auto maybe_reader = VertexPropertyArrowChunkReader::Make(second_graph_info_,
                                                            "organisation", gp);
   if (maybe_reader.has_error()) {
@@ -169,10 +211,26 @@ BENCHMARK_DEFINE_F(
     assert(reader->next_chunk().ok());
   }
 }
+BENCHMARK_DEFINE_F(BenchmarkFixture,
+                   VertexPropertySelectAllColumnsInSecondGraphV2)
+(::benchmark::State& state) {  // NOLINT
+  auto gp =
+      second_graph_info_->GetVertexInfo("organisation")->GetPropertyGroup("id");
+  auto maybe_reader = VertexPropertyArrowChunkReader::Make(second_graph_info_,
+                                                           "organisation", gp);
+  if (maybe_reader.has_error()) {
+    state.SkipWithError(maybe_reader.status().message().c_str());
+    return;
+  }
+  auto reader = maybe_reader.value();
+  for (auto _ : state) {
+    assert(reader->seek(0).ok());
+    assert(reader->GetChunkV2().status().ok());
+    assert(reader->next_chunk().ok());
+  }
+}
 
-BENCHMARK_DEFINE_F(
-    BenchmarkFixture,
-    VertexPropertyArrowChunkReaderReadChunkSelectOneColumnInSecondGraph)
+BENCHMARK_DEFINE_F(BenchmarkFixture, VertexPropertySelectOneColumnInSecondGraph)
 (::benchmark::State& state) {  // NOLINT
   auto maybe_reader = VertexPropertyArrowChunkReader::Make(
       second_graph_info_, "organisation", "id");
@@ -188,7 +246,24 @@ BENCHMARK_DEFINE_F(
   }
 }
 
-BENCHMARK_DEFINE_F(BenchmarkFixture, VertexPropertyArrowChunkReaderReadChunkSelectTwoColumnsInSecondGraph)
+BENCHMARK_DEFINE_F(BenchmarkFixture,
+                   VertexPropertySelectOneColumnInSecondGraphV2)
+(::benchmark::State& state) {  // NOLINT
+  auto maybe_reader = VertexPropertyArrowChunkReader::Make(
+      second_graph_info_, "organisation", "id");
+  if (maybe_reader.has_error()) {
+    state.SkipWithError(maybe_reader.status().message().c_str());
+    return;
+  }
+  auto reader = maybe_reader.value();
+  for (auto _ : state) {
+    assert(reader->seek(0).ok());
+    assert(reader->GetChunkV2().status().ok());
+    assert(reader->next_chunk().ok());
+  }
+}
+BENCHMARK_DEFINE_F(BenchmarkFixture,
+                   VertexPropertySelectTwoColumnsInSecondGraph)
 (::benchmark::State& state) {  // NOLINT
   auto maybe_reader = VertexPropertyArrowChunkReader::Make(
       second_graph_info_, "organisation", {"id", "name"},
@@ -201,6 +276,24 @@ BENCHMARK_DEFINE_F(BenchmarkFixture, VertexPropertyArrowChunkReaderReadChunkSele
   for (auto _ : state) {
     assert(reader->seek(0).ok());
     assert(reader->GetChunk().status().ok());
+    assert(reader->next_chunk().ok());
+  }
+}
+
+BENCHMARK_DEFINE_F(BenchmarkFixture,
+                   VertexPropertySelectTwoColumnsInSecondGraphV2)
+(::benchmark::State& state) {  // NOLINT
+  auto maybe_reader = VertexPropertyArrowChunkReader::Make(
+      second_graph_info_, "organisation", {"id", "name"},
+      SelectType::PROPERTIES);
+  if (maybe_reader.has_error()) {
+    state.SkipWithError(maybe_reader.status().message().c_str());
+    return;
+  }
+  auto reader = maybe_reader.value();
+  for (auto _ : state) {
+    assert(reader->seek(0).ok());
+    assert(reader->GetChunkV2().status().ok());
     assert(reader->next_chunk().ok());
   }
 }
@@ -266,16 +359,28 @@ BENCHMARK_REGISTER_F(BenchmarkFixture, AdjListOffsetArrowChunkReaderReadChunk);
 BENCHMARK_REGISTER_F(BenchmarkFixture, AdjListOffsetArrowChunkReaderReadChunk);
 
 BENCHMARK_REGISTER_F(BenchmarkFixture,
-                     VertexPropertyArrowChunkReaderReadChunkSelectAllColumnsInFirstGraph);
+                     VertexPropertySelectAllColumnsInFirstGraph);
 BENCHMARK_REGISTER_F(BenchmarkFixture,
-                     VertexPropertyArrowChunkReaderReadChunkSelectOneColumnInFirstGraph);
+                     VertexPropertySelectAllColumnsInFirstGraphV2);
 BENCHMARK_REGISTER_F(BenchmarkFixture,
-                     VertexPropertyArrowChunkReaderReadChunkSelectTwoColumnsInFirstGraph);
+                     VertexPropertySelectOneColumnInFirstGraph);
+BENCHMARK_REGISTER_F(BenchmarkFixture,
+                     VertexPropertySelectOneColumnInFirstGraphV2);
+BENCHMARK_REGISTER_F(BenchmarkFixture,
+                     VertexPropertySelectTwoColumnsInFirstGraph);
+BENCHMARK_REGISTER_F(BenchmarkFixture,
+                     VertexPropertySelectTwoColumnsInFirstGraphV2);
 
 BENCHMARK_REGISTER_F(BenchmarkFixture,
-                     VertexPropertyArrowChunkReaderReadChunkSelectAllColumnsInSecondGraph);
+                     VertexPropertySelectAllColumnsInSecondGraph);
 BENCHMARK_REGISTER_F(BenchmarkFixture,
-                     VertexPropertyArrowChunkReaderReadChunkSelectOneColumnInSecondGraph);
+                     VertexPropertySelectAllColumnsInSecondGraphV2);
 BENCHMARK_REGISTER_F(BenchmarkFixture,
-                     VertexPropertyArrowChunkReaderReadChunkSelectTwoColumnsInSecondGraph);
+                     VertexPropertySelectOneColumnInSecondGraph);
+BENCHMARK_REGISTER_F(BenchmarkFixture,
+                     VertexPropertySelectOneColumnInSecondGraphV2);
+BENCHMARK_REGISTER_F(BenchmarkFixture,
+                     VertexPropertySelectTwoColumnsInSecondGraph);
+BENCHMARK_REGISTER_F(BenchmarkFixture,
+                     VertexPropertySelectTwoColumnsInSecondGraphV2);
 }  // namespace graphar

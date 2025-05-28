@@ -80,6 +80,11 @@ class FileSystem {
       const std::string& path, FileType file_type,
       const util::FilterOptions& options = {}) const noexcept;
 
+  Result<std::shared_ptr<arrow::Table>> ReadFileToTableV2(
+      const std::string& path, FileType file_type,
+      const std::vector<int>& column_indices = {},
+      const util::FilterOptions& options = {}) const noexcept;
+
   /**
    * @brief Read a file and convert its bytes to a value of type T.
    *
@@ -100,8 +105,8 @@ class FileSystem {
    * @return A Status indicating OK if successful, or an error if unsuccessful.
    */
   template <typename T>
-  Status WriteValueToFile(const T& value, const std::string& path) const
-      noexcept;
+  Status WriteValueToFile(const T& value,
+                          const std::string& path) const noexcept;
 
   /**
    * @brief Write a table to a file with a specific type.
@@ -111,8 +116,8 @@ class FileSystem {
    * @return A Status indicating OK if successful, or an error if unsuccessful.
    */
   Status WriteTableToFile(const std::shared_ptr<arrow::Table>& table,
-                          FileType file_type, const std::string& path) const
-      noexcept;
+                          FileType file_type,
+                          const std::string& path) const noexcept;
 
   /**
    * @brief Write a label table to a file with parquet type.
