@@ -227,15 +227,30 @@ VertexPropertyArrowChunkReader::GetChunkV2() {
     GAR_ASSIGN_OR_RAISE(
         auto chunk_file_path,
         vertex_info_->GetFilePath(property_group_, chunk_index_));
-    std::string path = prefix_ + chunk_file_path;
     std::vector<int> column_indices = {};
-    for (const auto& col : property_names_) {
+    std::vector<std::string> property_names;
+    if (!filter_options_.columns && !property_names_.empty()) {
+      property_names = property_names_;
+    } else {
+      if (!property_names_.empty()) {
+        for (const auto& col : filter_options_.columns.value().get()) {
+          if (std::find(property_names_.begin(), property_names_.end(), col) ==
+              property_names_.end()) {
+            return Status::Invalid("Column ", col,
+                                   " is not in select properties.");
+          }
+          property_names.push_back(col);
+        }
+      }
+    }
+    for (const auto& col : property_names) {
       auto field_index = schema_->GetFieldIndex(col);
       if (field_index == -1) {
         return Status::Invalid("Column ", col, " is not in select properties.");
       }
       column_indices.push_back(field_index);
     }
+    std::string path = prefix_ + chunk_file_path;
     GAR_ASSIGN_OR_RAISE(chunk_table_, fs_->ReadFileToTableV2(
                                           path, property_group_->GetFileType(),
                                           column_indices, filter_options_));
