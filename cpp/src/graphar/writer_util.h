@@ -86,7 +86,8 @@ class WriterOptions {
     // ::parquet::ParquetVersion::type version =
     //     ::parquet::ParquetVersion::PARQUET_2_6;
     // ::parquet::Encoding::type encoding = ::parquet::Encoding::PLAIN;
-    // std::unordered_map<std::string, ::parquet::Encoding::type> column_encoding;
+    // std::unordered_map<std::string, ::parquet::Encoding::type>
+    // column_encoding;
     arrow::Compression::type compression = arrow::Compression::UNCOMPRESSED;
     std::unordered_map<std::string, arrow::Compression::type>
         column_compression;
@@ -94,7 +95,8 @@ class WriterOptions {
     std::unordered_map<std::string, int> column_compression_level;
     size_t max_statistics_size = 4096;  // 4KB
     std::unordered_map<std::string, size_t> column_max_statistics_size;
-    // std::shared_ptr<::parquet::FileEncryptionProperties> encryption_properties;
+    // std::shared_ptr<::parquet::FileEncryptionProperties>
+    // encryption_properties;
     bool enable_statistics = true;
     std::unordered_map<std::string, bool> column_statistics;
     // std::vector<::parquet::SortingColumn> sorting_columns;
@@ -165,9 +167,9 @@ class WriterOptions {
     // void data_page_version(::parquet::ParquetDataPageVersion version) {
     //   option->data_page_version = version;
     // }
-    // void version(::parquet::ParquetVersion::type ver) { option->version = ver; }
-    // void encoding(::parquet::Encoding::type enc) { option->encoding = enc; }
-    // void column_encoding(
+    // void version(::parquet::ParquetVersion::type ver) { option->version =
+    // ver; } void encoding(::parquet::Encoding::type enc) { option->encoding =
+    // enc; } void column_encoding(
     //     const std::unordered_map<std::string, ::parquet::Encoding::type>&
     //         encodings) {
     //   option->column_encoding = encodings;
@@ -200,7 +202,8 @@ class WriterOptions {
     void column_statistics(const std::unordered_map<std::string, bool>& stats) {
       option->column_statistics = stats;
     }
-    // void sorting_columns(const std::vector<::parquet::SortingColumn>& columns) {
+    // void sorting_columns(const std::vector<::parquet::SortingColumn>&
+    // columns) {
     //   option->sorting_columns = columns;
     // }
     void enable_store_decimal_as_integer(bool enable) {
