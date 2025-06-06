@@ -204,8 +204,8 @@ TEST_CASE_METHOD(GlobalFixture, "TestVertexPropertyWriter") {
     options_parquet_Builder->enable_statistics(false);
     parquet::SortingColumn sc;
     sc.column_idx = 1;
-    std::vector<::parquet::SortingColumn> columns = {sc};
-    options_parquet_Builder->sorting_columns(columns);
+    // std::vector<::parquet::SortingColumn> columns = {sc};
+    // options_parquet_Builder->sorting_columns(columns);
     options_parquet_Builder->enable_store_decimal_as_integer(true);
     options_parquet_Builder->max_row_group_length(10);
     maybe_writer = VertexPropertyWriter::Make(

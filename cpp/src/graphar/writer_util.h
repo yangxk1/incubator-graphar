@@ -81,12 +81,12 @@ class WriterOptions {
     int64_t write_batch_size = 1024;
     int64_t max_row_group_length = 1024 * 1024;  // 1Mi rows
     int64_t data_pagesize = 1024 * 1024;         // 1MB
-    ::parquet::ParquetDataPageVersion data_page_version =
-        ::parquet::ParquetDataPageVersion::V1;
-    ::parquet::ParquetVersion::type version =
-        ::parquet::ParquetVersion::PARQUET_2_6;
-    ::parquet::Encoding::type encoding = ::parquet::Encoding::PLAIN;
-    std::unordered_map<std::string, ::parquet::Encoding::type> column_encoding;
+    // ::parquet::ParquetDataPageVersion data_page_version =
+    //     ::parquet::ParquetDataPageVersion::V1;
+    // ::parquet::ParquetVersion::type version =
+    //     ::parquet::ParquetVersion::PARQUET_2_6;
+    // ::parquet::Encoding::type encoding = ::parquet::Encoding::PLAIN;
+    // std::unordered_map<std::string, ::parquet::Encoding::type> column_encoding;
     arrow::Compression::type compression = arrow::Compression::UNCOMPRESSED;
     std::unordered_map<std::string, arrow::Compression::type>
         column_compression;
@@ -94,10 +94,10 @@ class WriterOptions {
     std::unordered_map<std::string, int> column_compression_level;
     size_t max_statistics_size = 4096;  // 4KB
     std::unordered_map<std::string, size_t> column_max_statistics_size;
-    std::shared_ptr<::parquet::FileEncryptionProperties> encryption_properties;
+    // std::shared_ptr<::parquet::FileEncryptionProperties> encryption_properties;
     bool enable_statistics = true;
     std::unordered_map<std::string, bool> column_statistics;
-    std::vector<::parquet::SortingColumn> sorting_columns;
+    // std::vector<::parquet::SortingColumn> sorting_columns;
     bool enable_store_decimal_as_integer = false;
     bool enable_write_page_index = false;
     std::unordered_map<std::string, bool> column_write_page_index;
@@ -162,16 +162,16 @@ class WriterOptions {
       option->max_row_group_length = length;
     }
     void data_pagesize(int64_t pagesize) { option->data_pagesize = pagesize; }
-    void data_page_version(::parquet::ParquetDataPageVersion version) {
-      option->data_page_version = version;
-    }
-    void version(::parquet::ParquetVersion::type ver) { option->version = ver; }
-    void encoding(::parquet::Encoding::type enc) { option->encoding = enc; }
-    void column_encoding(
-        const std::unordered_map<std::string, ::parquet::Encoding::type>&
-            encodings) {
-      option->column_encoding = encodings;
-    }
+    // void data_page_version(::parquet::ParquetDataPageVersion version) {
+    //   option->data_page_version = version;
+    // }
+    // void version(::parquet::ParquetVersion::type ver) { option->version = ver; }
+    // void encoding(::parquet::Encoding::type enc) { option->encoding = enc; }
+    // void column_encoding(
+    //     const std::unordered_map<std::string, ::parquet::Encoding::type>&
+    //         encodings) {
+    //   option->column_encoding = encodings;
+    // }
     void compression(arrow::Compression::type comp) {
       option->compression = comp;
     }
@@ -192,17 +192,17 @@ class WriterOptions {
         const std::unordered_map<std::string, size_t>& sizes) {
       option->column_max_statistics_size = sizes;
     }
-    void encryption_properties(
-        const std::shared_ptr<::parquet::FileEncryptionProperties>& props) {
-      option->encryption_properties = props;
-    }
+    // void encryption_properties(
+    //     const std::shared_ptr<::parquet::FileEncryptionProperties>& props) {
+    //   option->encryption_properties = props;
+    // }
     void enable_statistics(bool enable) { option->enable_statistics = enable; }
     void column_statistics(const std::unordered_map<std::string, bool>& stats) {
       option->column_statistics = stats;
     }
-    void sorting_columns(const std::vector<::parquet::SortingColumn>& columns) {
-      option->sorting_columns = columns;
-    }
+    // void sorting_columns(const std::vector<::parquet::SortingColumn>& columns) {
+    //   option->sorting_columns = columns;
+    // }
     void enable_store_decimal_as_integer(bool enable) {
       option->enable_store_decimal_as_integer = enable;
     }

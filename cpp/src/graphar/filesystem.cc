@@ -398,13 +398,13 @@ void buildParquetWriteOptionsWithWriterOptions(
   writer_porpertices_builder->max_row_group_length(
       parquetOption->max_row_group_length);
   writer_porpertices_builder->data_pagesize(parquetOption->data_pagesize);
-  writer_porpertices_builder->data_page_version(
-      parquetOption->data_page_version);
-  writer_porpertices_builder->version(parquetOption->version);
-  writer_porpertices_builder->encoding(parquetOption->encoding);
-  for (const auto& kv : parquetOption->column_encoding) {
-    writer_porpertices_builder->encoding(kv.first, kv.second);
-  }
+  // writer_porpertices_builder->data_page_version(
+  //     parquetOption->data_page_version);
+  // writer_porpertices_builder->version(parquetOption->version);
+  // writer_porpertices_builder->encoding(parquetOption->encoding);
+  // for (const auto& kv : parquetOption->column_encoding) {
+  //   writer_porpertices_builder->encoding(kv.first, kv.second);
+  // }
   writer_porpertices_builder->compression(parquetOption->compression);
   for (const auto& kv : parquetOption->column_compression) {
     writer_porpertices_builder->compression(kv.first, kv.second);
@@ -416,10 +416,10 @@ void buildParquetWriteOptionsWithWriterOptions(
   }
   writer_porpertices_builder->max_statistics_size(
       parquetOption->max_statistics_size);
-  if (parquetOption->encryption_properties) {
-    writer_porpertices_builder->encryption(
-        parquetOption->encryption_properties);
-  }
+  // if (parquetOption->encryption_properties) {
+  //   writer_porpertices_builder->encryption(
+  //       parquetOption->encryption_properties);
+  // }
   if (!parquetOption->enable_statistics) {
     writer_porpertices_builder->disable_statistics();
   }
@@ -428,10 +428,10 @@ void buildParquetWriteOptionsWithWriterOptions(
       writer_porpertices_builder->disable_statistics(path_st.first);
     }
   }
-  if (!parquetOption->sorting_columns.empty()) {
-    writer_porpertices_builder->set_sorting_columns(
-        parquetOption->sorting_columns);
-  }
+  // if (!parquetOption->sorting_columns.empty()) {
+  //   writer_porpertices_builder->set_sorting_columns(
+  //       parquetOption->sorting_columns);
+  // }
   if (parquetOption->enable_store_decimal_as_integer) {
     writer_porpertices_builder->enable_store_decimal_as_integer();
   }
