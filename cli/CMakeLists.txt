@@ -34,7 +34,6 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../cpp ${CMAKE_BINARY_DIR}/graphar)
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 find_package(Arrow REQUIRED)
-message(STATUS "Arrow version: ${Arrow_VERSION}")
 # Check if ORC is enabled.
 if (NOT ${ARROW_ORC})
     message(WARNING "apache-arrow is built without ORC extension, ORC related functionalities will be disabled.")
