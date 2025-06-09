@@ -199,7 +199,7 @@ jobs:
           - architecture: ARM64
             macos-version: "14"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
           submodules: true
 
@@ -237,7 +237,7 @@ jobs:
 
     - name: Upload libgraphar.a artifact
       if: github.event_name == 'push'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: macos-${{ matrix.macos-version }}-libgraphar.a
         path: cpp/build-static/libgraphar.a  
