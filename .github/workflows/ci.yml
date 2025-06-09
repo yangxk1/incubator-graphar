@@ -64,7 +64,7 @@ jobs:
         sudo apt-get install -y libboost-graph-dev ccache libcurl4-openssl-dev doxygen lcov
 
         git clone https://github.com/abseil/abseil-cpp.git 
-        push abseil-cpp
+        pushd abseil-cpp
         mkdir build
         cd build
         cmake -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release ..
