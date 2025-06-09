@@ -297,6 +297,7 @@ macro(build_graphar)
         endif()
     else()
         if(USE_STATIC_ARROW)
+            message(("--------------\n${absl_DIR--------------n"))
             find_package(absl REQUIRED)
             message(${absl_VERSION})
             target_link_libraries(graphar PRIVATE -Wl,--exclude-libs,ALL -Wl,--whole-archive
@@ -304,6 +305,7 @@ macro(build_graphar)
                 Parquet::parquet_static
                 ArrowDataset::arrow_dataset_static
                 ArrowAcero::arrow_acero_static -Wl,--no-whole-archive)
+            message(("--------------\n${absl::base_DIR}--------------n"))
         else()
             target_link_libraries(graphar PRIVATE -Wl,--exclude-libs,ALL -Wl,--whole-archive Arrow::arrow_shared
                 Parquet::parquet_shared
