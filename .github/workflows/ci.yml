@@ -182,6 +182,10 @@ jobs:
       working-directory: "cpp"
       run: |
         sudo apt-get install -y libabsl-dev
+        echo "absl1:"
+        ls /usr/lib/x86_64-linux-gnu/cmake/ | grep absl
+        echo "absl2:"
+        ls /usr/local/lib/cmake/ | grep absl
         mkdir build-static
         pushd build-static
         cmake .. -DUSE_STATIC_ARROW=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -DBUILD_BENCHMARKS=ON
