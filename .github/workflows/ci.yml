@@ -63,7 +63,13 @@ jobs:
                             libparquet-dev=17.0.0-1
         sudo apt-get install -y libboost-graph-dev ccache libcurl4-openssl-dev doxygen lcov
 
-        sudo apt-get install -y libabsl-dev
+        git clone https://github.com/abseil/abseil-cpp.git 
+        push abseil-cpp
+        mkdir build
+        cd build
+        cmake -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release ..
+        sudo make install
+        popd
         # install benchmark
         git clone --branch v1.8.3 https://github.com/google/benchmark.git --depth 1
         pushd benchmark
