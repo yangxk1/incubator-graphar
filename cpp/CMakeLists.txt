@@ -279,11 +279,13 @@ macro(build_graphar)
 
     if(APPLE)
         if(USE_STATIC_ARROW)
+            find_package(absl REQUIRED)
             target_link_libraries(graphar PRIVATE -Wl,-force_load
                 Arrow::arrow_static
                 Parquet::parquet_static
                 ArrowDataset::arrow_dataset_static
-                ArrowAcero::arrow_acero_static)
+                ArrowAcero::arrow_acero_static
+                absl::base absl::strings absl::synchronization absl::utility absl::raw_hash_set absl::hash)
         else()
             target_link_libraries(graphar PRIVATE -Wl,-force_load Arrow::arrow_shared
                 Parquet::parquet_shared
