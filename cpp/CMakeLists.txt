@@ -316,7 +316,9 @@ macro(build_graphar)
                 absl::strings
                 absl::synchronization
                 absl::time
-                absl::utility)
+                absl::utility
+                absl::raw_hash_set
+                absl::hash)
         else()
             target_link_libraries(graphar PRIVATE -Wl,--exclude-libs,ALL -Wl,--whole-archive Arrow::arrow_shared
                 Parquet::parquet_shared
