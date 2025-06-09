@@ -304,7 +304,7 @@ macro(build_graphar)
                 Parquet::parquet_static
                 ArrowDataset::arrow_dataset_static
                 ArrowAcero::arrow_acero_static -Wl,--no-whole-archive
-                absl)
+                absl::base absl::strings absl::synchronization absl::utility absl::raw_hash_set absl::hash)
         else()
             target_link_libraries(graphar PRIVATE -Wl,--exclude-libs,ALL -Wl,--whole-archive Arrow::arrow_shared
                 Parquet::parquet_shared
