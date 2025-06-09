@@ -304,7 +304,19 @@ macro(build_graphar)
                 Parquet::parquet_static
                 ArrowDataset::arrow_dataset_static
                 ArrowAcero::arrow_acero_static -Wl,--no-whole-archive
-                absl::base absl::strings absl::synchronization absl::utility absl::raw_hash_set absl::hash absl::time absl::time_zone absl::civil_time absl::int128 absl::optional absl::variant absl::any absl::bad_optional_access absl::bad_variant_access absl::throw_delegate absl::cord absl::status absl::statusor absl::span absl::str_format_internal absl::str_format absl::memory absl::type_traits absl::strings_internal)
+                absl::algorithm
+                absl::base
+                absl::debugging
+                absl::flat_hash_map
+                absl::flags
+                absl::memory
+                absl::meta
+                absl::numeric
+                absl::random_random
+                absl::strings
+                absl::synchronization
+                absl::time
+                absl::utility)
         else()
             target_link_libraries(graphar PRIVATE -Wl,--exclude-libs,ALL -Wl,--whole-archive Arrow::arrow_shared
                 Parquet::parquet_shared
