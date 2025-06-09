@@ -132,6 +132,18 @@ jobs:
             exit -1
         fi
 
+    - name: Use Static Arrow
+      working-directory: "cpp"
+      run: |
+        mkdir build-static
+        pushd build-static
+        cmake .. -DUSE_STATIC_ARROW=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -DBUILD_BENCHMARKS=ON
+        make -j$(nproc)
+        export ASAN_OPTIONS=detect_leaks=0
+        export ASAN_OPTIONS=detect_container_overflow=0
+        ctest --output-on-failure
+        popd
+
     - name: Build Docs
       working-directory: "cpp/build"
       run: |
@@ -223,18 +235,6 @@ jobs:
       run: |
         export ASAN_OPTIONS=detect_leaks=0
         ctest --output-on-failure
-
-    - name: Use Static Arrow
-      working-directory: "cpp"
-      run: |
-        mkdir build-static
-        pushd build-static
-        cmake .. -DUSE_STATIC_ARROW=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -DBUILD_BENCHMARKS=ON
-        make -j$(nproc)
-        export ASAN_OPTIONS=detect_leaks=0
-        export ASAN_OPTIONS=detect_container_overflow=0
-        ctest --output-on-failure
-        popd
 
     - name: Upload libgraphar.a artifact
       if: github.event_name == 'push'
