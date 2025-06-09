@@ -297,7 +297,7 @@ macro(build_graphar)
         endif()
     else()
         if(USE_STATIC_ARROW)
-            message(("--------------\n${absl_DIR--------------n"))
+            message(("--------------\n${absl_DIR}--------------n"))
             find_package(absl REQUIRED)
             message(${absl_VERSION})
             target_link_libraries(graphar PRIVATE -Wl,--exclude-libs,ALL -Wl,--whole-archive
