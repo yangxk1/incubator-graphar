@@ -299,7 +299,7 @@ macro(build_graphar)
         if(USE_STATIC_ARROW)
             find_package(absl REQUIRED)
             message(STATUS "absl version: ${absl_VERSION}")
-            target_link_libraries(graphar PRIVATE -Wl,--exclude-libs,ALL -Wl,--whole-archive
+            target_link_libraries(graphar PRIVATE -Wl,--whole-archive
                 Arrow::arrow_static
                 Parquet::parquet_static
                 ArrowDataset::arrow_dataset_static
