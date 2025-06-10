@@ -20,7 +20,7 @@
 package org.apache.graphar.util;
 
 public class CppClassName {
-    public static final String GAR_NAMESPACE = "GraphArchive";
+    public static final String GAR_NAMESPACE = "graphar
     // arrow
     public static final String ARROW_RESULT = "arrow::Result";
     public static final String ARROW_STATUS = "arrow::Status";
@@ -36,71 +36,71 @@ public class CppClassName {
     public static final String STD_SHARED_PTR = "std::shared_ptr";
 
     // util
-    public static final String GAR_INFO_VERSION = "GraphArchive::InfoVersion";
-    public static final String GAR_STATUS_CODE = "GraphArchive::StatusCode";
-    public static final String GAR_STATUS = "GraphArchive::Status";
-    public static final String GAR_RESULT = "GraphArchive::Result";
-    public static final String GAR_GRAPH_INFO = "GraphArchive::GraphInfo";
-    public static final String GAR_VERTEX_INFO = "GraphArchive::VertexInfo";
-    public static final String GAR_EDGE_INFO = "GraphArchive::EdgeInfo";
-    public static final String GAR_PROPERTY = "GraphArchive::Property";
-    public static final String GAR_PROPERTY_GROUP = "GraphArchive::PropertyGroup";
-    public static final String GAR_UTIL_INDEX_CONVERTER = "GraphArchive::util::IndexConverter";
-    public static final String GAR_UTIL_FILTER_OPTIONS = "GraphArchive::util::FilterOptions";
-    public static final String GAR_YAML = "GraphArchive::Yaml";
+    public static final String GAR_INFO_VERSION = "grapharoVersion";
+    public static final String GAR_STATUS_CODE = "graphartusCode";
+    public static final String GAR_STATUS = "graphartus";
+    public static final String GAR_RESULT = "grapharult";
+    public static final String GAR_GRAPH_INFO = "grapharphInfo";
+    public static final String GAR_VERTEX_INFO = "graphartexInfo";
+    public static final String GAR_EDGE_INFO = "graphareInfo";
+    public static final String GAR_PROPERTY = "grapharperty";
+    public static final String GAR_PROPERTY_GROUP = "grapharpertyGroup";
+    public static final String GAR_UTIL_INDEX_CONVERTER = "grapharl::IndexConverter";
+    public static final String GAR_UTIL_FILTER_OPTIONS = "grapharl::FilterOptions";
+    public static final String GAR_YAML = "grapharl";
 
     // types
-    public static final String GAR_ID_TYPE = "GraphArchive::IdType";
-    public static final String GAR_TYPE = "GraphArchive::Type";
-    public static final String GAR_DATA_TYPE = "GraphArchive::DataType";
-    public static final String GAR_ADJ_LIST_TYPE = "GraphArchive::AdjListType";
-    public static final String GAR_FILE_TYPE = "GraphArchive::FileType";
-    public static final String GAR_VALIDATE_LEVEL = "GraphArchive::ValidateLevel";
+    public static final String GAR_ID_TYPE = "grapharype";
+    public static final String GAR_TYPE = "graphare";
+    public static final String GAR_DATA_TYPE = "grapharaType";
+    public static final String GAR_ADJ_LIST_TYPE = "grapharListType";
+    public static final String GAR_FILE_TYPE = "graphareType";
+    public static final String GAR_VALIDATE_LEVEL = "grapharidateLevel";
 
     // vertices
-    public static final String GAR_VERTEX = "GraphArchive::Vertex";
-    public static final String GAR_VERTEX_ITER = "GraphArchive::VertexIter";
-    public static final String GAR_VERTICES_COLLECTION = "GraphArchive::VerticesCollection";
+    public static final String GAR_VERTEX = "graphartex";
+    public static final String GAR_VERTEX_ITER = "graphartexIter";
+    public static final String GAR_VERTICES_COLLECTION = "grapharticesCollection";
 
     // edges
-    public static final String GAR_EDGE = "GraphArchive::Edge";
-    public static final String GAR_EDGE_ITER = "GraphArchive::EdgeIter";
-    public static final String GAR_EDGES_COLLECTION = "GraphArchive::EdgesCollection";
+    public static final String GAR_EDGE = "graphare";
+    public static final String GAR_EDGE_ITER = "graphareIter";
+    public static final String GAR_EDGES_COLLECTION = "grapharesCollection";
     public static final String GAR_EDGES_COLLECTION_ORDERED_BY_SOURCE =
-            "GraphArchive::EdgesCollection<GraphArchive::AdjListType::ordered_by_source>";
+            "grapharesCollection<graphgrapharype::ordered_by_source>";
     public static final String GAR_EDGES_COLLECTION_ORDERED_BY_DEST =
-            "GraphArchive::EdgesCollection<GraphArchive::AdjListType::ordered_by_dest>";
+            "grapharesCollection<graphgrapharype::ordered_by_dest>";
     public static final String GAR_EDGES_COLLECTION_UNORDERED_BY_SOURCE =
-            "GraphArchive::EdgesCollection<GraphArchive::AdjListType::unordered_by_source>";
+            "grapharesCollection<graphgrapharype::unordered_by_source>";
     public static final String GAR_EDGES_COLLECTION_UNORDERED_BY_DEST =
-            "GraphArchive::EdgesCollection<GraphArchive::AdjListType::unordered_by_dest>";
+            "grapharesCollection<graphgrapharype::unordered_by_dest>";
 
     // readers.chunkinfo
     public static final String GAR_VERTEX_PROPERTY_CHUNK_INFO_READER =
-            "GraphArchive::VertexPropertyChunkInfoReader";
+            "graphartexPropertyChunkInfoReader";
     public static final String GAR_ADJ_LIST_CHUNK_INFO_READER =
-            "GraphArchive::AdjListChunkInfoReader";
+            "grapharListChunkInfoReader";
     public static final String GAR_ADJ_LIST_PROPERTY_CHUNK_INFO_READER =
-            "GraphArchive::AdjListPropertyChunkInfoReader";
+            "grapharListPropertyChunkInfoReader";
 
     // readers.arrowchunk
     public static final String GAR_VERTEX_PROPERTY_ARROW_CHUNK_READER =
-            "GraphArchive::VertexPropertyArrowChunkReader";
+            "graphartexPropertyArrowChunkReader";
     public static final String GAR_ADJ_LIST_ARROW_CHUNK_READER =
-            "GraphArchive::AdjListArrowChunkReader";
+            "grapharListArrowChunkReader";
     public static final String GAR_ADJ_LIST_OFFSET_ARROW_CHUNK_READER =
-            "GraphArchive::AdjListOffsetArrowChunkReader";
+            "grapharListOffsetArrowChunkReader";
     public static final String GAR_ADJ_LIST_PROPERTY_ARROW_CHUNK_READER =
-            "GraphArchive::AdjListPropertyArrowChunkReader";
+            "grapharListPropertyArrowChunkReader";
 
     // writers
     public static final String GAR_BUILDER_VERTEX_PROPERTY_WRITER =
-            "GraphArchive::VertexPropertyWriter";
-    public static final String GAR_EDGE_CHUNK_WRITER = "GraphArchive::EdgeChunkWriter";
+            "graphartexPropertyWriter";
+    public static final String GAR_EDGE_CHUNK_WRITER = "graphareChunkWriter";
     // writers.builder
-    public static final String GAR_BUILDER_VERTEX = "GraphArchive::builder::Vertex";
+    public static final String GAR_BUILDER_VERTEX = "grapharlder::Vertex";
     public static final String GAR_BUILDER_VERTICES_BUILDER =
-            "GraphArchive::builder::VerticesBuilder";
-    public static final String GAR_BUILDER_EDGE = "GraphArchive::builder::Edge";
-    public static final String GAR_BUILDER_EDGES_BUILDER = "GraphArchive::builder::EdgesBuilder";
+            "grapharlder::VerticesBuilder";
+    public static final String GAR_BUILDER_EDGE = "grapharlder::Edge";
+    public static final String GAR_BUILDER_EDGES_BUILDER = "grapharlder::EdgesBuilder";
 }
