@@ -279,16 +279,11 @@ macro(build_graphar)
 
     if(APPLE)
         if(USE_STATIC_ARROW)
-            find_package(absl REQUIRED)
-            message(${absl_VERSION})
-            message(("==============\n${absl_DIR}=============\n"))
             target_link_libraries(graphar PRIVATE -Wl,-force_load
                 Arrow::arrow_static
                 Parquet::parquet_static
                 ArrowDataset::arrow_dataset_static
-                ArrowAcero::arrow_acero_static
-                absl::base absl::strings absl::synchronization absl::utility absl::raw_hash_set absl::hash)
-            message(("==============\n${absl::base_DIR}=============\n"))
+                ArrowAcero::arrow_acero_static)
         else()
             target_link_libraries(graphar PRIVATE -Wl,-force_load Arrow::arrow_shared
                 Parquet::parquet_shared
@@ -297,28 +292,11 @@ macro(build_graphar)
         endif()
     else()
         if(USE_STATIC_ARROW)
-            find_package(absl REQUIRED)
-            message(STATUS "absl version: ${absl_VERSION}")
-            target_link_libraries(graphar PRIVATE -Wl,--whole-archive
+            target_link_libraries(graphar PRIVATE -Wl,--exclude-libs,ALL -Wl,--whole-archive
                 Arrow::arrow_static
                 Parquet::parquet_static
                 ArrowDataset::arrow_dataset_static
-                ArrowAcero::arrow_acero_static -Wl,--no-whole-archive
-                absl::algorithm
-                absl::base
-                absl::debugging
-                absl::flat_hash_map
-                absl::flags
-                absl::memory
-                absl::meta
-                absl::numeric
-                absl::random_random
-                absl::strings
-                absl::synchronization
-                absl::time
-                absl::utility
-                absl::raw_hash_set
-                absl::hash)
+                ArrowAcero::arrow_acero_static -Wl,--no-whole-archive)
         else()
             target_link_libraries(graphar PRIVATE -Wl,--exclude-libs,ALL -Wl,--whole-archive Arrow::arrow_shared
                 Parquet::parquet_shared

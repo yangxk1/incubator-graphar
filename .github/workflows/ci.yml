@@ -63,13 +63,6 @@ jobs:
                             libparquet-dev=17.0.0-1
         sudo apt-get install -y libboost-graph-dev ccache libcurl4-openssl-dev doxygen lcov
 
-        git clone https://github.com/abseil/abseil-cpp.git 
-        pushd abseil-cpp
-        mkdir build
-        cd build
-        cmake -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release ..
-        sudo make install
-        popd
         # install benchmark
         git clone --branch v1.8.3 https://github.com/google/benchmark.git --depth 1
         pushd benchmark
@@ -138,18 +131,6 @@ jobs:
             echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
             exit -1
         fi
-
-    - name: Use Static Arrow
-      working-directory: "cpp"
-      run: |
-        mkdir build-static
-        pushd build-static
-        cmake .. -DUSE_STATIC_ARROW=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -DBUILD_BENCHMARKS=ON
-        make -j$(nproc)
-        export ASAN_OPTIONS=detect_leaks=0
-        export ASAN_OPTIONS=detect_container_overflow=0
-        ctest --output-on-failure
-        popd
 
     - name: Build Docs
       working-directory: "cpp/build"
@@ -241,6 +222,18 @@ jobs:
       run: |
         export ASAN_OPTIONS=detect_leaks=0
         ctest --output-on-failure
+
+    - name: Use Static Arrow
+      working-directory: "cpp"
+      run: |
+        mkdir build-static
+        pushd build-static
+        cmake .. -DUSE_STATIC_ARROW=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -DBUILD_BENCHMARKS=ON
+        make -j$(nproc)
+        export ASAN_OPTIONS=detect_leaks=0
+        export ASAN_OPTIONS=detect_container_overflow=0
+        ctest --output-on-failure
+        popd
 
     - name: Upload libgraphar.a artifact
       if: github.event_name == 'push'
