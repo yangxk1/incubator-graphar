@@ -78,29 +78,25 @@ public class CppClassName {
     // readers.chunkinfo
     public static final String GAR_VERTEX_PROPERTY_CHUNK_INFO_READER =
             "graphar::VertexPropertyChunkInfoReader";
-    public static final String GAR_ADJ_LIST_CHUNK_INFO_READER =
-            "graphar::AdjListChunkInfoReader";
+    public static final String GAR_ADJ_LIST_CHUNK_INFO_READER = "graphar::AdjListChunkInfoReader";
     public static final String GAR_ADJ_LIST_PROPERTY_CHUNK_INFO_READER =
             "graphar::AdjListPropertyChunkInfoReader";
 
     // readers.arrowchunk
     public static final String GAR_VERTEX_PROPERTY_ARROW_CHUNK_READER =
             "graphar::VertexPropertyArrowChunkReader";
-    public static final String GAR_ADJ_LIST_ARROW_CHUNK_READER =
-            "graphar::AdjListArrowChunkReader";
+    public static final String GAR_ADJ_LIST_ARROW_CHUNK_READER = "graphar::AdjListArrowChunkReader";
     public static final String GAR_ADJ_LIST_OFFSET_ARROW_CHUNK_READER =
             "graphar::AdjListOffsetArrowChunkReader";
     public static final String GAR_ADJ_LIST_PROPERTY_ARROW_CHUNK_READER =
             "graphar::AdjListPropertyArrowChunkReader";
 
     // writers
-    public static final String GAR_BUILDER_VERTEX_PROPERTY_WRITER =
-            "graphar::VertexPropertyWriter";
+    public static final String GAR_BUILDER_VERTEX_PROPERTY_WRITER = "graphar::VertexPropertyWriter";
     public static final String GAR_EDGE_CHUNK_WRITER = "graphar::EdgeChunkWriter";
     // writers.builder
     public static final String GAR_BUILDER_VERTEX = "graphar::builder::Vertex";
-    public static final String GAR_BUILDER_VERTICES_BUILDER =
-            "graphar::builder::VerticesBuilder";
+    public static final String GAR_BUILDER_VERTICES_BUILDER = "graphar::builder::VerticesBuilder";
     public static final String GAR_BUILDER_EDGE = "graphar::builder::Edge";
     public static final String GAR_BUILDER_EDGES_BUILDER = "graphar::builder::EdgesBuilder";
 }
