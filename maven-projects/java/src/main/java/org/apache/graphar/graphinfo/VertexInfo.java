@@ -166,7 +166,7 @@ public interface VertexInfo extends CXXPointer {
      */
     @FFINameAlias("IsPrimaryKey")
     @CXXValue
-    @FFITypeAlias("graphar::Result<bool>")
+    @FFITypeAlias("GraphArchive::Result<bool>")
     Result<Boolean> isPrimaryKey(@CXXReference StdString propertyName);
 
     /**

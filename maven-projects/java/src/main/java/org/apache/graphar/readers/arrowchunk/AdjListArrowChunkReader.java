@@ -85,7 +85,7 @@ public interface AdjListArrowChunkReader extends CXXPointer {
     /** Get the number of rows of the current chunk table. */
     @FFINameAlias("GetRowNumOfChunk")
     @CXXValue
-    @FFITypeAlias("graphar::Result<long>")
+    @FFITypeAlias("GraphArchive::Result<long>")
     Result<Long> getRowNumOfChunk();
 
     /**

@@ -125,7 +125,7 @@ public class EdgeInfoTest {
         property.setType(DataType.factory.create(Type.STRING));
         property.setPrimary(false);
         StdVector.Factory<Property> propertyVecFactory =
-                StdVector.getStdVectorFactory("std::vector<graphar::Property>");
+                StdVector.getStdVectorFactory("std::vector<GraphArchive::Property>");
         StdVector<Property> propertyStdVector = propertyVecFactory.create();
         propertyStdVector.push_back(property);
         PropertyGroup propertyGroup = PropertyGroup.factory.create(propertyStdVector, fileType);

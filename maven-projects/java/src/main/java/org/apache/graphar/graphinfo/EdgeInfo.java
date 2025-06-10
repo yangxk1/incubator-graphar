@@ -227,7 +227,7 @@ public interface EdgeInfo extends CXXPointer {
      */
     @FFINameAlias("GetPropertyGroups")
     @CXXValue
-    @FFITypeAlias("graphar::Result<const std::vector<graphar::PropertyGroup>>")
+    @FFITypeAlias("GraphArchive::Result<const std::vector<GraphArchive::PropertyGroup>>")
     Result<@CXXReference StdVector<PropertyGroup>> getPropertyGroups(
             @CXXValue AdjListType adjListType);
 
@@ -364,7 +364,7 @@ public interface EdgeInfo extends CXXPointer {
      */
     @FFINameAlias("IsPrimaryKey")
     @CXXValue
-    @FFITypeAlias("graphar::Result<bool>")
+    @FFITypeAlias("GraphArchive::Result<bool>")
     Result<Boolean> isPrimaryKey(@CXXReference StdString propertyName);
 
     /**

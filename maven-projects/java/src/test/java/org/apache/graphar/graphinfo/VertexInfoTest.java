@@ -48,7 +48,7 @@ public class VertexInfoTest {
         property.setType(DataType.factory.create(Type.INT32));
         property.setPrimary(true);
         StdVector.Factory<Property> propertyFactory =
-                StdVector.getStdVectorFactory("std::vector<graphar::Property>");
+                StdVector.getStdVectorFactory("std::vector<GraphArchive::Property>");
         StdVector<Property> propertyStdVector = propertyFactory.create();
         propertyStdVector.push_back(property);
         PropertyGroup propertyGroup = PropertyGroup.factory.create(propertyStdVector, FileType.CSV);

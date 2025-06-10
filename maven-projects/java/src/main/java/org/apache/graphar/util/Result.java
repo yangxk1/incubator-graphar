@@ -73,10 +73,10 @@ import com.alibaba.fastffi.FFITypeAlias;
 @CXXTemplate(cxx = GAR_FILE_TYPE, java = "org.apache.graphar.types.FileType")
 @CXXTemplate(cxx = GAR_INFO_VERSION, java = "org.apache.graphar.util.InfoVersion")
 @CXXTemplate(
-        cxx = STD_SHARED_PTR + "<graphar::Yaml>",
+        cxx = STD_SHARED_PTR + "<GraphArchive::Yaml>",
         java = "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.util.Yaml>")
 @CXXTemplate(
-        cxx = STD_PAIR + "<graphar::IdType,graphar::IdType>",
+        cxx = STD_PAIR + "<GraphArchive::IdType,GraphArchive::IdType>",
         java = "org.apache.graphar.stdcxx.StdPair<Long,Long>")
 @CXXTemplate(
         cxx = GAR_ADJ_LIST_ARROW_CHUNK_READER,
