@@ -81,3 +81,6 @@ jobs:
           export LLVM11_HOME=/usr/lib/llvm-11
           export GAR_TEST_DATA=$PWD/../../testing/
           mvn --no-transfer-progress clean test -Dspotless.check.skip=true
+          
+      - name: Setup TMate Session
+        uses: mxschmitt/action-tmate@v3
