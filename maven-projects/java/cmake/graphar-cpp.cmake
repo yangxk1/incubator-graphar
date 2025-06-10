@@ -65,7 +65,7 @@ function(build_graphar_cpp)
     set(GAR_INCLUDE_DIR "${GAR_PREFIX}/include" CACHE INTERNAL "graphar cpp include directory")
     set(GAR_BUILD_BYPRODUCTS "${GAR_SHARED_LIB}")
 
-    set(GAR_VERSION_TO_BUILD "v0.10.0")
+    set(GAR_VERSION_TO_BUILD "v0.12.0")
 
     include(ExternalProject)
     ExternalProject_Add(graphar_ep
