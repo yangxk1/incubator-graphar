@@ -34,13 +34,16 @@ import com.alibaba.fastffi.FFINameAlias;
 import com.alibaba.fastffi.FFITypeAlias;
 import com.alibaba.fastffi.FFITypeFactory;
 import org.apache.graphar.stdcxx.StdMap;
+import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.util.InfoVersion;
 import org.apache.graphar.util.Result;
 import org.apache.graphar.util.Status;
 
-/** GraphInfo is a class to store the graph meta information. */
+/**
+ * GraphInfo is a class to store the graph meta information.
+ */
 @FFIGen
 @FFITypeAlias(GAR_GRAPH_INFO)
 @CXXHead(GAR_GRAPH_INFO_H)
@@ -62,11 +65,11 @@ public interface GraphInfo extends CXXPointer {
      *
      * @param path The path of the YAML file.
      * @return A Result object containing the GraphInfo instance, or a Status object indicating an
-     *     error.
+     * error.
      */
-    static Result<GraphInfo> load(String path) {
+    static Result<StdSharedPtr<GraphInfo>> load(String path) {
         StdString stdString = StdString.create(path);
-        Result<GraphInfo> result = Static.INSTANCE.Load(stdString);
+        Result<StdSharedPtr<GraphInfo>> result = Static.INSTANCE.Load(stdString);
         stdString.delete();
         return result;
     }
@@ -88,9 +91,9 @@ public interface GraphInfo extends CXXPointer {
      * Get the edge info with the given source vertex label, edge label, and destination vertex
      * label.
      *
-     * @param srcLabel The label of the source vertex.
+     * @param srcLabel  The label of the source vertex.
      * @param edgeLabel The label of the edge.
-     * @param dstLabel The label of the destination vertex.
+     * @param dstLabel  The label of the destination vertex.
      * @return A Result object containing the edge info, or a Status object indicating an error.
      */
     default Result<@CXXReference EdgeInfo> getEdgeInfo(
@@ -109,7 +112,7 @@ public interface GraphInfo extends CXXPointer {
     /**
      * Get the property group of vertex by label and property
      *
-     * @param label vertex label
+     * @param label    vertex label
      * @param property vertex property that belongs to the group
      */
     @FFINameAlias("GetVertexPropertyGroup")
@@ -120,10 +123,10 @@ public interface GraphInfo extends CXXPointer {
     /**
      * Get the property group of edge by label, property and adj list type
      *
-     * @param srcLabel source vertex label
-     * @param edgeLabel edge label
-     * @param dstLabel destination vertex label
-     * @param property edge property that belongs to the group
+     * @param srcLabel    source vertex label
+     * @param edgeLabel   edge label
+     * @param dstLabel    destination vertex label
+     * @param property    edge property that belongs to the group
      * @param adjListType adj list type of edge
      */
     @FFINameAlias("GetEdgePropertyGroup")
@@ -140,7 +143,7 @@ public interface GraphInfo extends CXXPointer {
      *
      * @param vertexInfo The vertex info to add.
      * @return A Status object indicating the success or failure of the operation. Returns
-     *     InvalidOperation if the vertex info is already contained.
+     * InvalidOperation if the vertex info is already contained.
      */
     @FFINameAlias("AddVertex")
     @CXXValue
@@ -151,7 +154,7 @@ public interface GraphInfo extends CXXPointer {
      *
      * @param edgeInfo The edge info to add.
      * @return A Status object indicating the success or failure of the operation. Returns
-     *     `InvalidOperation` if the edge info is already contained.
+     * `InvalidOperation` if the edge info is already contained.
      */
     @FFINameAlias("AddEdge")
     @CXXValue
@@ -261,8 +264,8 @@ public interface GraphInfo extends CXXPointer {
          * Constructs a GraphInfo instance.
          *
          * @param graphName The name of the graph.
-         * @param version The version of the graph info.
-         * @param prefix The absolute path prefix to store chunk files of the graph.
+         * @param version   The version of the graph info.
+         * @param prefix    The absolute path prefix to store chunk files of the graph.
          */
         GraphInfo create(
                 @CXXReference StdString graphName,
@@ -273,7 +276,7 @@ public interface GraphInfo extends CXXPointer {
          * Constructs a GraphInfo instance.
          *
          * @param graphName The name of the graph.
-         * @param version The version of the graph info.
+         * @param version   The version of the graph info.
          */
         GraphInfo create(@CXXReference StdString graphName, @CXXReference InfoVersion version);
     }
@@ -285,6 +288,6 @@ public interface GraphInfo extends CXXPointer {
         Static INSTANCE = FFITypeFactory.getLibrary(Static.class);
 
         @CXXValue
-        Result<GraphInfo> Load(@CXXReference StdString path);
+        Result<StdSharedPtr<GraphInfo>> Load(@CXXReference StdString path);
     }
 }
