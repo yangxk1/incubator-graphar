@@ -22,13 +22,13 @@ on:
   # but only for the main branch
   push:
     branches:
-      - main
+      - "**"
     paths:
       - 'maven-projects/java/**'
       - '.github/workflows/java.yml'
   pull_request:
     branches:
-      - main
+      - "**"
     paths:
       - 'maven-projects/java/**'
       - '.github/workflows/java.yml'
@@ -39,7 +39,7 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ !contains(github.event.pull_request.title, 'WIP') && github.event.pull_request.draft == false }}
     steps:
       - uses: actions/checkout@v4
@@ -54,10 +54,10 @@ jobs:
           sudo apt-get install -y /tmp/apache-arrow-apt-source-latest-"$(lsb_release --codename --short)".deb
           sudo apt-get update -y
           # TODO: ISSUE-241
-          sudo apt install -y libarrow-dev=14.0.1-1 \
-                            libarrow-dataset-dev=14.0.1-1 \
-                            libarrow-acero-dev=14.0.1-1 \
-                            libparquet-dev=14.0.1-1
+          sudo apt install -y libarrow-dev=17.0.0-1 \
+                              libarrow-dataset-dev=17.0.0-1 \
+                              libarrow-acero-dev=17.0.0-1 \
+                              libparquet-dev=17.0.0-1
           sudo apt-get install libcurl4-openssl-dev -y
           sudo apt-get install llvm-11 clang-11 lld-11 libclang-11-dev libz-dev -y
           
