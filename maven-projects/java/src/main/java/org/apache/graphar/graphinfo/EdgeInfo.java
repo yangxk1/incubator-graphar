@@ -438,7 +438,7 @@ public interface EdgeInfo extends CXXPointer {
     @FFINameAlias("IsValidated")
     boolean isValidated();
 
-    static Result<EdgeInfo> load(StdSharedPtr<Yaml> yaml) {
+    static Result<StdSharedPtr<EdgeInfo>> load(StdSharedPtr<Yaml> yaml) {
         return Static.INSTANCE.Load(yaml);
     }
 
@@ -502,6 +502,6 @@ public interface EdgeInfo extends CXXPointer {
         Static INSTANCE = FFITypeFactory.getLibrary(EdgeInfo.Static.class);
 
         @CXXValue
-        Result<EdgeInfo> Load(@CXXValue StdSharedPtr<Yaml> yaml);
+        Result<StdSharedPtr<EdgeInfo>> Load(@CXXValue StdSharedPtr<Yaml> yaml);
     }
 }

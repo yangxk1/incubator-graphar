@@ -41,7 +41,7 @@ public class EdgesBuilderTest {
         // construct edge builder
         String edgeMetaFile = root + "/ldbc_sample/parquet/" + "person_knows_person.edge.yml";
         StdSharedPtr<Yaml> edgeMeta = Yaml.loadFile(StdString.create(edgeMetaFile)).value();
-        EdgeInfo edgeInfo = EdgeInfo.load(edgeMeta).value();
+        EdgeInfo edgeInfo = EdgeInfo.load(edgeMeta).value().get();
         long verticesNum = 903;
         EdgesBuilder builder =
                 EdgesBuilder.factory.create(
