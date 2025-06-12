@@ -146,8 +146,9 @@ public class EdgeInfoTest {
                 StdVector.getStdVectorFactory("std::vector<graphar::Property>");
         StdVector<Property> propertyStdVector = propertyVecFactory.create();
         propertyStdVector.push_back(property);
-        PropertyGroup propertyGroup = PropertyGroup.factory.create(propertyStdVector, fileType);
-        StdVector<PropertyGroup> propertyGroups = edgeInfo.getPropertyGroups();
+        StdSharedPtr<PropertyGroup> propertyGroup =
+                GrapharStaticFunctions.INSTANCE.createPropertyGroup(propertyStdVector, fileType);
+        StdVector<StdSharedPtr<PropertyGroup>> propertyGroups = edgeInfo.getPropertyGroups();
         Assert.assertEquals(0, propertyGroups.size());
         Assert.assertTrue(edgeInfo.addPropertyGroup(propertyGroup).status().ok());
         Assert.assertTrue(edgeInfo.hasPropertyGroup(propertyGroup));
@@ -156,10 +157,11 @@ public class EdgeInfoTest {
         StdSharedPtr<PropertyGroup> propertyGroupResult =
                 edgeInfo.getPropertyGroup(property.getName());
         Assert.assertNotNull(propertyGroupResult);
-        Assert.assertTrue(propertyGroup.eq(propertyGroupResult.get()));
-        Result<DataType> dataTypeResult = edgeInfo.getPropertyType(property.getName());
+        Assert.assertTrue(propertyGroup.get().eq(propertyGroupResult.get()));
+        Result<StdSharedPtr<DataType>> dataTypeResult =
+                edgeInfo.getPropertyType(property.getName());
         Assert.assertFalse(dataTypeResult.hasError());
-        Assert.assertTrue(property.getType().get().eq(dataTypeResult.value()));
+        Assert.assertTrue(property.getType().get().eq(dataTypeResult.value().get()));
         boolean isPrimaryResult = edgeInfo.isPrimaryKey(property.getName());
         Assert.assertEquals(property.isPrimary(), isPrimaryResult);
         Result<StdString> propertyPathPrefix =
@@ -168,7 +170,7 @@ public class EdgeInfoTest {
         Assert.assertEquals(
                 edgeInfo.getPrefix().toJavaString()
                         + prefixOfAdjListType.toJavaString()
-                        + propertyGroup.getPrefix().toJavaString(),
+                        + propertyGroup.get().getPrefix().toJavaString(),
                 propertyPathPrefix.value().toJavaString());
         Result<StdString> propertyFilePath =
                 edgeInfo.getPropertyFilePath(propertyGroup, adjListType, 0, 0);
@@ -183,7 +185,8 @@ public class EdgeInfoTest {
         Assert.assertTrue(edgeInfo.getPropertyType(propertyNotExist).status().isKeyError());
 
         // test property group not exist
-        PropertyGroup propertyGroupNotExist = PropertyGroup.factory.create();
+        StdSharedPtr<PropertyGroup> propertyGroupNotExist =
+                GrapharStaticFunctions.INSTANCE.createPropertyGroup(propertyStdVector, fileType);
         Assert.assertTrue(
                 edgeInfo.getPropertyFilePath(propertyGroupNotExist, adjListType, 0, 0)
                         .status()

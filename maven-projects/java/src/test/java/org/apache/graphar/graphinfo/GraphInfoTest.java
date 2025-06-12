@@ -61,9 +61,11 @@ public class GraphInfoTest {
         StdString vertexPrefix = StdString.create("test_vertex_prefix");
         StdString vertexInfoPath = StdString.create("/tmp/test_vertex.vertex.yml");
         StdString unknownLabel = StdString.create("text_not_exist");
-        StdVector.Factory<PropertyGroup> propertyGroupVecFactory =
-                StdVector.getStdVectorFactory("std::vector<graphar::PropertyGroup>");
-        StdVector<PropertyGroup> propertyGroupStdVector = propertyGroupVecFactory.create();
+        StdVector.Factory<StdSharedPtr<PropertyGroup>> propertyGroupVecFactory =
+                StdVector.getStdVectorFactory(
+                        "std::vector<std::shared_ptr<graphar::PropertyGroup>>");
+        StdVector<StdSharedPtr<PropertyGroup>> propertyGroupStdVector =
+                propertyGroupVecFactory.create();
         StdSharedPtr<VertexInfo> vertexInfo =
                 GrapharStaticFunctions.INSTANCE.createVertexInfo(
                         vertexLabel,
@@ -91,9 +93,11 @@ public class GraphInfoTest {
         StdString dstLabel = StdString.create("test_vertex");
         long edgeChunkSize = 1024;
         StdString edgeInfoPath = StdString.create("/tmp/test_edge.edge.yml");
-        StdVector.Factory<AdjacentList> adjancyListVecFactory =
-                StdVector.getStdVectorFactory("std::vector<graphar::AdjacentList>");
-        StdVector<AdjacentList> adjacentListStdVector = adjancyListVecFactory.create();
+        StdVector.Factory<StdSharedPtr<AdjacentList>> adjancyListVecFactory =
+                StdVector.getStdVectorFactory(
+                        "std::vector<std::shared_ptr<graphar::AdjacentList>>");
+        StdVector<StdSharedPtr<AdjacentList>> adjacentListStdVector =
+                adjancyListVecFactory.create();
         StdSharedPtr<EdgeInfo> edgeInfo =
                 GrapharStaticFunctions.INSTANCE.createEdgeInfo(
                         srcLabel,

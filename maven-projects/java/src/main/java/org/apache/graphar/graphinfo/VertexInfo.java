@@ -106,7 +106,7 @@ public interface VertexInfo extends CXXPointer {
     @FFINameAlias("GetPropertyGroups")
     @FFIConst
     @CXXReference
-    StdVector<PropertyGroup> getPropertyGroups();
+    StdVector<StdSharedPtr<PropertyGroup>> getPropertyGroups();
 
     /**
      * Get the property group that contains the specified property.
@@ -177,7 +177,7 @@ public interface VertexInfo extends CXXPointer {
      * @return True if the property group exists in the vertex info, False otherwise.
      */
     @FFINameAlias("HasPropertyGroup")
-    boolean hasPropertyGroup(StdSharedPtr<PropertyGroup> propertyGroup);
+    boolean hasPropertyGroup(@CXXReference StdSharedPtr<PropertyGroup> propertyGroup);
 
     /**
      * Get the file path for the specified property group and chunk index.

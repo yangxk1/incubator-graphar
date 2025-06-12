@@ -150,7 +150,7 @@ public interface EdgeInfo extends CXXPointer {
      * @return True if the edge info contains the property group, false otherwise.
      */
     @FFINameAlias("HasPropertyGroup")
-    boolean hasPropertyGroup(@CXXReference PropertyGroup propertyGroup);
+    boolean hasPropertyGroup(@CXXReference StdSharedPtr<PropertyGroup> propertyGroup);
 
     /**
      * Returns whether the edge info contains the given property for any adjacency list type.
@@ -168,7 +168,7 @@ public interface EdgeInfo extends CXXPointer {
     @FFINameAlias("GetPropertyGroups")
     @FFIConst
     @CXXReference
-    StdVector<PropertyGroup> getPropertyGroups();
+    StdVector<StdSharedPtr<PropertyGroup>> getPropertyGroups();
 
     /**
      * Get the property group containing the given property.
@@ -262,7 +262,7 @@ public interface EdgeInfo extends CXXPointer {
     @FFINameAlias("GetPropertyFilePath")
     @CXXValue
     Result<StdString> getPropertyFilePath(
-            @CXXReference PropertyGroup propertyGroup,
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
             @CXXValue AdjListType adjListType,
             @FFINameAlias(GAR_ID_TYPE) long vertexChunkIndex,
             @FFITypeAlias(GAR_ID_TYPE) long edgeChunkIndex);
@@ -277,7 +277,8 @@ public interface EdgeInfo extends CXXPointer {
     @FFINameAlias("GetPropertyGroupPathPrefix")
     @CXXValue
     Result<StdString> getPropertyGroupPathPrefix(
-            @CXXReference PropertyGroup propertyGroup, @CXXValue AdjListType adjListType);
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
+            @CXXValue AdjListType adjListType);
 
     /**
      * Get the data type of the specified property.
@@ -288,7 +289,7 @@ public interface EdgeInfo extends CXXPointer {
      */
     @FFINameAlias("GetPropertyType")
     @CXXValue
-    Result<DataType> getPropertyType(@CXXReference StdString propertyName);
+    Result<StdSharedPtr<DataType>> getPropertyType(@CXXReference StdString propertyName);
 
     /**
      * Returns whether the specified property is a primary key.

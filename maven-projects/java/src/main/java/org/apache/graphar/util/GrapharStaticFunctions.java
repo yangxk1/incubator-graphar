@@ -261,7 +261,7 @@ public interface GrapharStaticFunctions {
     StdSharedPtr<VertexInfo> createVertexInfo(
             @CXXReference StdString label,
             @FFITypeAlias(GAR_ID_TYPE) long chunk_size,
-            @CXXReference StdVector<PropertyGroup> propertyGroups,
+            @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
             @CXXReference StdString prefix,
             StdSharedPtr<InfoVersion> version);
 
@@ -275,8 +275,8 @@ public interface GrapharStaticFunctions {
             @FFITypeAlias(GAR_ID_TYPE) long srcChunkSize,
             @FFITypeAlias(GAR_ID_TYPE) long dstChunkSize,
             boolean directed,
-            @CXXReference StdVector<AdjacentList> adjacentLists,
-            @CXXReference StdVector<PropertyGroup> propertyGroups,
+            @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
+            @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
             @CXXReference StdString prefix);
 
     @FFINameAlias("CreateEdgeInfo")
@@ -289,15 +289,15 @@ public interface GrapharStaticFunctions {
             @FFITypeAlias(GAR_ID_TYPE) long srcChunkSize,
             @FFITypeAlias(GAR_ID_TYPE) long dstChunkSize,
             boolean directed,
-            @CXXReference StdVector<AdjacentList> adjacentLists,
-            @CXXReference StdVector<PropertyGroup> propertyGroups);
+            @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
+            @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups);
 
     @FFINameAlias("CreateGraphInfo")
     @CXXValue
     StdSharedPtr<GraphInfo> createGraphInfo(
             @CXXReference StdString name,
-            @CXXReference StdVector<VertexInfo> vertexInfos,
-            @CXXReference StdVector<EdgeInfo> edgeInfos,
+            @CXXReference StdVector<StdSharedPtr<VertexInfo>> vertexInfos,
+            @CXXReference StdVector<StdSharedPtr<EdgeInfo>> edgeInfos,
             @CXXReference StdString prefix,
             StdSharedPtr<InfoVersion> version);
 
