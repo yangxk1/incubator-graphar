@@ -41,7 +41,7 @@ public interface AdjacentList extends FFIPointer {
     @CXXReference
     StdString getPrefix();
 
-    @FFINameAlias("isValidated")
+    @FFINameAlias("IsValidated")
     boolean isValidated();
 
     @FFIFactory
