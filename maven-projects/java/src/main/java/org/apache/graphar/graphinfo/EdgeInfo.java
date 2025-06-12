@@ -42,12 +42,12 @@ public interface EdgeInfo extends CXXPointer {
 
     @FFINameAlias("AddAdjacentList")
     @CXXValue
-    Result<StdSharedPtr<EdgeInfo>> addAdjacentList(StdSharedPtr<AdjacentList> adjList);
+    Result<StdSharedPtr<EdgeInfo>> addAdjacentList(@CXXValue StdSharedPtr<AdjacentList> adjList);
 
     /** Add a property group to edge info for the given adjacency list type. */
     @FFINameAlias("AddPropertyGroup")
     @CXXValue
-    Result<StdSharedPtr<EdgeInfo>> addPropertyGroup(StdSharedPtr<PropertyGroup> propertyGroup);
+    Result<StdSharedPtr<EdgeInfo>> addPropertyGroup(@CXXValue StdSharedPtr<PropertyGroup> propertyGroup);
 
     /**
      * Get the label of the source vertex.

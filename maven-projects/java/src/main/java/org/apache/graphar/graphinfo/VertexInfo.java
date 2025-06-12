@@ -55,7 +55,7 @@ public interface VertexInfo extends CXXPointer {
      */
     @FFINameAlias("AddPropertyGroup")
     @CXXValue
-    Result<StdSharedPtr<VertexInfo>> addPropertyGroup(StdSharedPtr<PropertyGroup> propertyGroup);
+    Result<StdSharedPtr<VertexInfo>> addPropertyGroup(@CXXValue StdSharedPtr<PropertyGroup> propertyGroup);
 
     /**
      * Get the label of the vertex.
@@ -198,7 +198,7 @@ public interface VertexInfo extends CXXPointer {
      */
     @FFINameAlias("GetPathPrefix")
     @CXXValue
-    Result<StdString> getPathPrefix(StdSharedPtr<PropertyGroup> propertyGroup);
+    Result<StdString> getPathPrefix(@CXXValue StdSharedPtr<PropertyGroup> propertyGroup);
 
     /**
      * Get the file path for the number of vertices.
