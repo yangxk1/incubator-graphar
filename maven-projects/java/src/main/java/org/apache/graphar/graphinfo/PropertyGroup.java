@@ -89,6 +89,7 @@ public interface PropertyGroup extends CXXPointer {
      */
     @FFINameAlias("GetPrefix")
     @CXXReference
+    @FFIConst
     StdString getPrefix();
 
     @CXXOperator("==")

@@ -37,7 +37,6 @@ public interface AdjacentList extends FFIPointer {
     FileType getFileType();
 
     @FFINameAlias("GetPrefix")
-    @CXXValue
     @FFIConst
     @CXXReference
     StdString getPrefix();

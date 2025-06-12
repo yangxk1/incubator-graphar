@@ -112,7 +112,8 @@ public interface EdgeInfo extends CXXPointer {
      * @return The path prefix of the edge.
      */
     @FFINameAlias("GetPrefix")
-    @CXXValue
+    @FFIConst
+    @CXXReference
     StdString getPrefix();
 
     /**

@@ -84,7 +84,8 @@ public interface VertexInfo extends CXXPointer {
      * @return The path prefix of the vertex.
      */
     @FFINameAlias("GetPrefix")
-    @CXXValue
+    @CXXReference
+    @FFIConst
     StdString getPrefix();
 
     /**

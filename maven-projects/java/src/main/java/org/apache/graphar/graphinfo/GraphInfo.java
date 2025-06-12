@@ -201,7 +201,8 @@ public interface GraphInfo extends CXXPointer {
      * @return The absolute path prefix of the chunk files.
      */
     @FFINameAlias("GetPrefix")
-    @CXXValue
+    @FFIConst
+    @CXXReference
     StdString getPrefix();
 
     /**
