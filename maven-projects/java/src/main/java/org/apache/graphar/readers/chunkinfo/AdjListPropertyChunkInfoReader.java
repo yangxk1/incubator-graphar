@@ -101,11 +101,11 @@ public interface AdjListPropertyChunkInfoReader extends CXXPointer {
      * @param adjListType The adj list type for the edges.
      */
     static Result<AdjListPropertyChunkInfoReader> constructAdjListPropertyChunkInfoReader(
-            @CXXReference GraphInfo graphInfo,
+            @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
             @CXXReference StdString dstLabel,
-            @CXXReference PropertyGroup propertyGroup,
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
             @CXXValue AdjListType adjListType) {
         return GrapharStaticFunctions.INSTANCE.constructAdjListPropertyChunkInfoReader(
                 graphInfo, srcLabel, edgeLabel, dstLabel, propertyGroup, adjListType);
@@ -123,7 +123,7 @@ public interface AdjListPropertyChunkInfoReader extends CXXPointer {
          */
         AdjListPropertyChunkInfoReader create(
                 @CXXReference StdSharedPtr<EdgeInfo> edgeInfo,
-                @CXXReference PropertyGroup propertyGroup,
+                @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
                 @CXXValue AdjListType adjListType,
                 @CXXReference StdString prefix);
     }

@@ -84,9 +84,9 @@ public interface VertexPropertyChunkInfoReader extends CXXPointer {
      * @param propertyGroup The property group of the vertex.
      */
     static Result<VertexPropertyChunkInfoReader> constructVertexPropertyChunkInfoReader(
-            @CXXReference GraphInfo graphInfo,
+            @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString label,
-            @CXXReference PropertyGroup propertyGroup) {
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup) {
 
         return GrapharStaticFunctions.INSTANCE.constructVertexPropertyChunkInfoReader(
                 graphInfo, label, propertyGroup);

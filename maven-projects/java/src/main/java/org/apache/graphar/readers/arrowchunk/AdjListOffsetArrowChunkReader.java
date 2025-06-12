@@ -87,7 +87,7 @@ public interface AdjListOffsetArrowChunkReader extends CXXPointer {
      * @param adjListType The adj list type for the edges.
      */
     static Result<AdjListOffsetArrowChunkReader> constructAdjListOffsetArrowChunkReader(
-            @CXXReference GraphInfo graphInfo,
+            @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
             @CXXReference StdString dstLabel,
