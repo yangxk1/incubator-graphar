@@ -47,8 +47,10 @@ public interface AdjacentList extends FFIPointer {
     @FFIFactory
     interface Factory {
         AdjacentList create(
-                AdjListType adjListType, FileType fileType, @CXXReference StdString prefix);
+                @CXXValue AdjListType adjListType,
+                @CXXValue FileType fileType,
+                @CXXReference StdString prefix);
 
-        AdjacentList create(AdjListType adjListType, FileType fileType);
+        AdjacentList create(@CXXValue AdjListType adjListType, @CXXValue FileType fileType);
     }
 }

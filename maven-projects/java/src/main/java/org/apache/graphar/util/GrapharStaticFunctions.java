@@ -236,22 +236,25 @@ public interface GrapharStaticFunctions {
     @CXXValue
     StdSharedPtr<PropertyGroup> createPropertyGroup(
             @CXXReference StdVector<Property> properties,
-            FileType fileType,
+            @CXXValue FileType fileType,
             @CXXReference StdString prefix);
 
     @FFINameAlias("CreatePropertyGroup")
     @CXXValue
     StdSharedPtr<PropertyGroup> createPropertyGroup(
-            @CXXReference StdVector<Property> properties, FileType fileType);
+            @CXXReference StdVector<Property> properties, @CXXValue FileType fileType);
 
     @FFINameAlias("CreateAdjacentList")
     @CXXValue
     StdSharedPtr<AdjacentList> createAdjacentList(
-            AdjListType adjListType, FileType fileType, @CXXReference StdString prefix);
+            @CXXValue AdjListType adjListType,
+            @CXXValue FileType fileType,
+            @CXXReference StdString prefix);
 
     @FFINameAlias("CreateAdjacentList")
     @CXXValue
-    StdSharedPtr<AdjacentList> createAdjacentList(AdjListType adjListType, FileType fileType);
+    StdSharedPtr<AdjacentList> createAdjacentList(
+            @CXXValue AdjListType adjListType, @CXXValue FileType fileType);
 
     @FFINameAlias("CreateVertexInfo")
     @CXXValue
