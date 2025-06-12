@@ -166,7 +166,7 @@ public interface EdgeInfo extends CXXPointer {
 
     /** Get the property groups. */
     @FFINameAlias("GetPropertyGroups")
-    @CXXValue
+    @FFIConst
     @CXXReference
     StdVector<PropertyGroup> getPropertyGroups();
 
@@ -178,7 +178,7 @@ public interface EdgeInfo extends CXXPointer {
      */
     @FFINameAlias("GetPropertyGroup")
     @CXXValue
-    Result<@CXXReference PropertyGroup> getPropertyGroup(@CXXReference StdString property);
+    StdSharedPtr<PropertyGroup> getPropertyGroup(@CXXReference StdString property);
 
     /**
      * Get the file path for the number of vertices.
