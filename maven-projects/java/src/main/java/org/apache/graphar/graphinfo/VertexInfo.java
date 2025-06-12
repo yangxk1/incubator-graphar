@@ -187,7 +187,7 @@ public interface VertexInfo extends CXXPointer {
     @FFINameAlias("GetFilePath")
     @CXXValue
     Result<StdString> getFilePath(
-            StdSharedPtr<PropertyGroup> propertyGroup,
+            @CXXValue StdSharedPtr<PropertyGroup> propertyGroup,
             @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunkIndex);
 
     /**
