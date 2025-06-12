@@ -217,7 +217,7 @@ public interface GraphInfo extends CXXPointer {
             @CXXReference StdString dstLabel);
 
     /** Get the vertex info index with the given label. */
-    @FFINameAlias("GetVertexInfo")
+    @FFINameAlias("GetVertexInfoIndex")
     @FFIConst
     int getVertexInfoIndex(@CXXReference StdString label);
 
