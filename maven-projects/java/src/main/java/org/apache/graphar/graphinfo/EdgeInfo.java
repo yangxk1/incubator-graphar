@@ -160,6 +160,7 @@ public interface EdgeInfo extends CXXPointer {
     boolean hasPropertyGroup(@CXXReference StdString property);
 
     @FFINameAlias("GetAdjacentList")
+    @CXXValue
     StdSharedPtr<AdjacentList> getAdjacentList(@CXXValue AdjListType adjListType);
 
     /** Get the property groups. */
