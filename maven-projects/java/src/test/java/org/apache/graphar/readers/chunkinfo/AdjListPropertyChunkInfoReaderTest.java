@@ -21,6 +21,8 @@ package org.apache.graphar.readers.chunkinfo;
 
 import static org.apache.graphar.graphinfo.GraphInfoTest.root;
 
+import com.alibaba.fastffi.CXXReference;
+import org.apache.graphar.graphinfo.EdgeInfo;
 import org.apache.graphar.graphinfo.GraphInfo;
 import org.apache.graphar.graphinfo.PropertyGroup;
 import org.apache.graphar.stdcxx.StdSharedPtr;
@@ -44,17 +46,11 @@ public class AdjListPropertyChunkInfoReaderTest {
         StdString dstLabel = StdString.create("person");
         StdString propertyName = StdString.create("creationDate");
 
-        Result<PropertyGroup> maybeGroup =
-                graphInfo
-                        .get()
-                        .getEdgePropertyGroup(
-                                srcLabel,
-                                edgeLabel,
-                                dstLabel,
-                                propertyName,
-                                AdjListType.ordered_by_source);
-        Assert.assertTrue(maybeGroup.status().ok());
-        PropertyGroup group = maybeGroup.value();
+        StdSharedPtr<@CXXReference EdgeInfo> edgeInfo =
+                graphInfo.get().getEdgeInfo(srcLabel, edgeLabel, dstLabel);
+        StdSharedPtr<PropertyGroup> propertyGroup = edgeInfo.get().getPropertyGroup(propertyName);
+        Assert.assertNotNull(propertyGroup);
+        PropertyGroup group = propertyGroup.get();
         StdSharedPtr<PropertyGroup> groupPtr =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
                         group.getProperties(), group.getFileType(), group.getPrefix());
@@ -123,16 +119,9 @@ public class AdjListPropertyChunkInfoReaderTest {
         Assert.assertTrue(reader.seekDst(100).isInvalid());
 
         // test reader to read ordered by dest
-        maybeGroup =
-                graphInfo
-                        .get()
-                        .getEdgePropertyGroup(
-                                srcLabel,
-                                edgeLabel,
-                                dstLabel,
-                                propertyName,
-                                AdjListType.ordered_by_dest);
-        Assert.assertTrue(maybeGroup.status().ok());
+        edgeInfo = graphInfo.get().getEdgeInfo(srcLabel, edgeLabel, dstLabel);
+        propertyGroup = edgeInfo.get().getPropertyGroup(propertyName);
+        Assert.assertNotNull(propertyGroup);
         graphInfo = maybeGraphInfo.value();
         Result<AdjListPropertyChunkInfoReader> maybeDstReader =
                 GrapharStaticFunctions.INSTANCE.constructAdjListPropertyChunkInfoReader(

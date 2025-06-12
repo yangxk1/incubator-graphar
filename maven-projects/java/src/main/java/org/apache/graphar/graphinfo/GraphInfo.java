@@ -35,7 +35,6 @@ import com.alibaba.fastffi.FFITypeFactory;
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
-import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.util.InfoVersion;
 import org.apache.graphar.util.Result;
 import org.apache.graphar.util.Status;
@@ -65,9 +64,9 @@ public interface GraphInfo extends CXXPointer {
      * @param label The label of the vertex.
      * @return A Result object containing the vertex info, or a Status object indicating an error.
      */
-    default StdSharedPtr<@CXXReference VertexInfo> getVertexInfo(String label) {
+    default StdSharedPtr<VertexInfo> getVertexInfo(String label) {
         StdString stdString = StdString.create(label);
-        StdSharedPtr<@CXXReference VertexInfo> result = getVertexInfo(stdString);
+        StdSharedPtr<VertexInfo> result = getVertexInfo(stdString);
         stdString.delete();
         return result;
     }
@@ -116,35 +115,6 @@ public interface GraphInfo extends CXXPointer {
         stdStrDstLabel.delete();
         return index;
     }
-
-    /**
-     * Get the property group of vertex by label and property
-     *
-     * @param label vertex label
-     * @param property vertex property that belongs to the group
-     */
-    @FFINameAlias("GetVertexPropertyGroup")
-    @CXXValue
-    Result<@CXXReference PropertyGroup> getVertexPropertyGroup(
-            @CXXReference StdString label, @CXXReference StdString property);
-
-    /**
-     * Get the property group of edge by label, property and adj list type
-     *
-     * @param srcLabel source vertex label
-     * @param edgeLabel edge label
-     * @param dstLabel destination vertex label
-     * @param property edge property that belongs to the group
-     * @param adjListType adj list type of edge
-     */
-    @FFINameAlias("GetEdgePropertyGroup")
-    @CXXValue
-    Result<@CXXReference PropertyGroup> getEdgePropertyGroup(
-            @CXXReference StdString srcLabel,
-            @CXXReference StdString edgeLabel,
-            @CXXReference StdString dstLabel,
-            @CXXReference StdString property,
-            @CXXValue AdjListType adjListType);
 
     /**
      * Adds a vertex info to the GraphInfo instance and returns a new GraphInfo.
@@ -235,9 +205,8 @@ public interface GraphInfo extends CXXPointer {
     boolean isValidated();
 
     @FFINameAlias("GetVertexInfo")
-    @FFIConst
     @CXXValue
-    StdSharedPtr<@CXXReference VertexInfo> getVertexInfo(@CXXReference StdString label);
+    StdSharedPtr<VertexInfo> getVertexInfo(@CXXReference StdString label);
 
     @FFINameAlias("GetEdgeInfo")
     @FFIConst
@@ -271,6 +240,7 @@ public interface GraphInfo extends CXXPointer {
 
     @FFINameAlias("GetEdgeInfoByIndex")
     @FFIConst
+    @CXXValue
     StdSharedPtr<EdgeInfo> getEdgeInfoByIndex(int index);
 
     @FFINameAlias("version")

@@ -43,10 +43,10 @@ public class VertexPropertyArrowChunkReaderTest {
         StdString label = StdString.create("person");
         StdString propertyName = StdString.create("id");
         Assert.assertNotNull(graphInfo.get().getVertexInfo(label));
-        Result<PropertyGroup> maybeGroup =
-                graphInfo.get().getVertexPropertyGroup(label, propertyName);
-        Assert.assertTrue(maybeGroup.status().ok());
-        PropertyGroup group = maybeGroup.value();
+        StdSharedPtr<PropertyGroup> groupStdSharedPtr =
+                graphInfo.get().getVertexInfo(label).get().getPropertyGroup(propertyName);
+        Assert.assertNotNull(groupStdSharedPtr);
+        PropertyGroup group = groupStdSharedPtr.get();
         StdSharedPtr<PropertyGroup> groupPtr =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
                         group.getProperties(), group.getFileType(), group.getPrefix());

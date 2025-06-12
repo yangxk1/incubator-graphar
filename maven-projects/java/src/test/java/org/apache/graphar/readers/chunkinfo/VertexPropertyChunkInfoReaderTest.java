@@ -21,8 +21,10 @@ package org.apache.graphar.readers.chunkinfo;
 
 import static org.apache.graphar.graphinfo.GraphInfoTest.root;
 
+import com.alibaba.fastffi.CXXReference;
 import org.apache.graphar.graphinfo.GraphInfo;
 import org.apache.graphar.graphinfo.PropertyGroup;
+import org.apache.graphar.graphinfo.VertexInfo;
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.util.GrapharStaticFunctions;
@@ -44,11 +46,13 @@ public class VertexPropertyChunkInfoReaderTest {
         // construct vertex property info reader
         StdString label = StdString.create("person");
         StdString propertyName = StdString.create("id");
-        Assert.assertNotNull(graphInfo.get().getVertexInfo(label));
-        Result<PropertyGroup> maybeGroup =
-                graphInfo.get().getVertexPropertyGroup(label, propertyName);
-        Assert.assertFalse(maybeGroup.hasError());
-        PropertyGroup group = maybeGroup.value();
+        StdSharedPtr<@CXXReference VertexInfo> vertexInfoStdSharedPtr =
+                graphInfo.get().getVertexInfo(label);
+        Assert.assertNotNull(vertexInfoStdSharedPtr);
+        StdSharedPtr<PropertyGroup> groupStdSharedPtr =
+                vertexInfoStdSharedPtr.get().getPropertyGroup(propertyName);
+        Assert.assertNotNull(groupStdSharedPtr);
+        PropertyGroup group = groupStdSharedPtr.get();
         StdSharedPtr<PropertyGroup> groupPtr =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
                         group.getProperties(), group.getFileType(), group.getPrefix());
