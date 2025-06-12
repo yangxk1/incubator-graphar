@@ -20,7 +20,6 @@
 package org.apache.graphar.graphinfo;
 
 import java.io.File;
-
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
@@ -44,11 +43,15 @@ public class EdgeInfoTest {
         long dstChunkSize = 100;
         boolean directed = true;
         StdVector.Factory<StdSharedPtr<AdjacentList>> adjancyListVecFactory =
-                StdVector.getStdVectorFactory("std::vector<std::shared_ptr<graphar::AdjacentList>>");
-        StdVector<StdSharedPtr<AdjacentList>> adjacentListStdVector = adjancyListVecFactory.create();
+                StdVector.getStdVectorFactory(
+                        "std::vector<std::shared_ptr<graphar::AdjacentList>>");
+        StdVector<StdSharedPtr<AdjacentList>> adjacentListStdVector =
+                adjancyListVecFactory.create();
         StdVector.Factory<StdSharedPtr<PropertyGroup>> propertyGroupVecFactory =
-                StdVector.getStdVectorFactory("std::vector<std::shared_ptr<graphar::PropertyGroup>>");
-        StdVector<StdSharedPtr<PropertyGroup>> propertyGroupStdVector = propertyGroupVecFactory.create();
+                StdVector.getStdVectorFactory(
+                        "std::vector<std::shared_ptr<graphar::PropertyGroup>>");
+        StdVector<StdSharedPtr<PropertyGroup>> propertyGroupStdVector =
+                propertyGroupVecFactory.create();
         InfoVersion infoVersion = InfoVersion.create(1);
         StdString prefix = StdString.create("");
         EdgeInfo edgeInfo =
