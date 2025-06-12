@@ -75,6 +75,8 @@ public class CppClassName {
     public static final String GAR_EDGES_COLLECTION_UNORDERED_BY_DEST =
             "graphar::EdgesCollection<graphar::AdjListType::unordered_by_dest>";
 
+    public static final String GAR_ADJACENT_LIST = "graphar::AdjacentList";
+
     // readers.chunkinfo
     public static final String GAR_VERTEX_PROPERTY_CHUNK_INFO_READER =
             "graphar::VertexPropertyChunkInfoReader";

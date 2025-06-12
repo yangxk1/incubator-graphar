@@ -37,7 +37,7 @@ public class EdgesCollectionTest {
         StdString srcLabel = StdString.create("person");
         StdString edgeLabel = StdString.create("knows");
         StdString dstLabel = StdString.create("person");
-        GraphInfo graphInfo = GraphInfo.load(path).value();
+        StdSharedPtr<GraphInfo> graphInfo = GraphInfo.load(path).value();
 
         // iterate edges of vertex chunk 0
         Result<StdSharedPtr<EdgesCollection>> maybeEdges =

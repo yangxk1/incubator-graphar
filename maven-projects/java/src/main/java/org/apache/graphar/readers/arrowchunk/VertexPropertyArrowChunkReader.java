@@ -103,8 +103,8 @@ public interface VertexPropertyArrowChunkReader extends CXXPointer {
          * @param prefix The absolute prefix.
          */
         VertexPropertyArrowChunkReader create(
-                @CXXReference VertexInfo vertexInfo,
-                @CXXReference PropertyGroup propertyGroup,
+                @CXXReference StdSharedPtr<VertexInfo> vertexInfo,
+                @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
                 @CXXReference StdString prefix);
     }
 }

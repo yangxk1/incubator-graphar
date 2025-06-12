@@ -20,11 +20,14 @@
 package org.apache.graphar.graphinfo;
 
 import java.io.File;
+
+import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
 import org.apache.graphar.types.DataType;
 import org.apache.graphar.types.FileType;
 import org.apache.graphar.types.Type;
+import org.apache.graphar.util.GrapharStaticFunctions;
 import org.apache.graphar.util.InfoVersion;
 import org.apache.graphar.util.Result;
 import org.junit.Assert;
@@ -45,52 +48,55 @@ public class VertexInfoTest {
         // test add property group
         Property property = Property.factory.create();
         property.setName(StdString.create("id"));
-        property.setType(DataType.factory.create(Type.INT32));
+        property.setType(GrapharStaticFunctions.INSTANCE.int32Type());
         property.setPrimary(true);
         StdVector.Factory<Property> propertyFactory =
                 StdVector.getStdVectorFactory("std::vector<graphar::Property>");
         StdVector<Property> propertyStdVector = propertyFactory.create();
         propertyStdVector.push_back(property);
-        PropertyGroup propertyGroup = PropertyGroup.factory.create(propertyStdVector, FileType.CSV);
-        PropertyGroup propertyGroup2 =
-                PropertyGroup.factory.create(propertyStdVector, FileType.PARQUET);
+        StdSharedPtr<PropertyGroup> propertyGroup = GrapharStaticFunctions.INSTANCE.createPropertyGroup(propertyStdVector, FileType.CSV);
+        StdSharedPtr<PropertyGroup> propertyGroup2 = GrapharStaticFunctions.INSTANCE.createPropertyGroup(propertyStdVector, FileType.PARQUET);
         Assert.assertEquals(0, vertexInfo.getPropertyGroups().size());
-        Assert.assertTrue(vertexInfo.addPropertyGroup(propertyGroup).ok());
+        Result<StdSharedPtr<VertexInfo>> stdSharedPtrResult = vertexInfo.addPropertyGroup(propertyGroup);
+        Assert.assertTrue(stdSharedPtrResult.status().ok());
+        vertexInfo = stdSharedPtrResult.value().get();
         // same property group can not be added twice
-        Assert.assertTrue(vertexInfo.addPropertyGroup(propertyGroup).isInvalid());
+        stdSharedPtrResult = vertexInfo.addPropertyGroup(propertyGroup);
+        Assert.assertTrue(stdSharedPtrResult.status().isInvalid());
         // same property can not be put in different property group
-        Assert.assertTrue(vertexInfo.addPropertyGroup(propertyGroup2).isInvalid());
+        Assert.assertTrue(vertexInfo.addPropertyGroup(propertyGroup2).status().isInvalid());
         Assert.assertEquals(1, vertexInfo.getPropertyGroups().size());
 
         Property property2 = Property.factory.create();
         property2.setName(StdString.create("name"));
-        property2.setType(DataType.factory.create(Type.STRING));
+        property2.setType(GrapharStaticFunctions.INSTANCE.stringType());
         property2.setPrimary(false);
         StdVector<Property> propertyStdVector2 = propertyFactory.create();
         propertyStdVector2.push_back(property2);
-        PropertyGroup propertyGroup3 =
-                PropertyGroup.factory.create(propertyStdVector2, FileType.CSV);
-        Assert.assertTrue(vertexInfo.addPropertyGroup(propertyGroup3).ok());
+        StdSharedPtr<PropertyGroup> propertyGroup3 = GrapharStaticFunctions.INSTANCE.createPropertyGroup(propertyStdVector2, FileType.CSV);
+        stdSharedPtrResult = vertexInfo.addPropertyGroup(propertyGroup3);
+        Assert.assertTrue(stdSharedPtrResult.status().ok());
+        vertexInfo = stdSharedPtrResult.value().get();
 
         // test get property meta
         StdString notExistKey = StdString.create("not_exist_key");
         Assert.assertTrue(
-                property.getType().eq(vertexInfo.getPropertyType(property.getName()).value()));
+                property.getType().get().eq(vertexInfo.getPropertyType(property.getName()).value().get()));
         Assert.assertEquals(
                 property.isPrimary(), vertexInfo.isPrimaryKey(property.getName()).value());
         Assert.assertTrue(vertexInfo.isPrimaryKey(notExistKey).status().isKeyError());
-        Assert.assertTrue(vertexInfo.containPropertyGroup(propertyGroup));
-        Assert.assertFalse(vertexInfo.containPropertyGroup(propertyGroup2));
-        Result<PropertyGroup> propertyGroupResult = vertexInfo.getPropertyGroup(property.getName());
-        Assert.assertFalse(propertyGroupResult.hasError());
+        Assert.assertTrue(vertexInfo.hasPropertyGroup(propertyGroup));
+        Assert.assertFalse(vertexInfo.hasPropertyGroup(propertyGroup2));
+        StdSharedPtr<PropertyGroup> propertyGroupResult = vertexInfo.getPropertyGroup(property.getName());
+        Assert.assertNull(propertyGroupResult);
         Assert.assertTrue(
                 property.getName()
-                        .eq(propertyGroupResult.value().getProperties().get(0).getName()));
-        Assert.assertTrue(vertexInfo.getPropertyGroup(notExistKey).status().isKeyError());
+                        .eq(propertyGroupResult.get().getProperties().get(0).getName()));
+        Assert.assertNull(vertexInfo.getPropertyGroup(notExistKey));
 
         // test get dir path
         String expectedDirPath =
-                vertexInfo.getPrefix().toJavaString() + propertyGroup.getPrefix().toJavaString();
+                vertexInfo.getPrefix().toJavaString() + propertyGroup.get().getPrefix().toJavaString();
         Result<StdString> maybeDirPath = vertexInfo.getPathPrefix(propertyGroup);
         Assert.assertFalse(maybeDirPath.hasError());
         Assert.assertEquals(expectedDirPath, maybeDirPath.value().toJavaString());

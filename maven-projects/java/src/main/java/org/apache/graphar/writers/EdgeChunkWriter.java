@@ -226,7 +226,7 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status writePropertyChunk(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @CXXReference PropertyGroup propertyGroup,
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
             @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
             @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
             @CXXValue ValidateLevel validateLevel);
@@ -300,7 +300,7 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status writePropertyTable(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @CXXReference PropertyGroup propertyGroup,
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
             @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
             @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
             @CXXValue ValidateLevel validateLevel);
@@ -389,7 +389,7 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status sortAndWritePropertyTable(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @CXXReference PropertyGroup propertyGroup,
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
             @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
             @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
             @CXXValue ValidateLevel validateLevel);
@@ -460,7 +460,7 @@ public interface EdgeChunkWriter extends CXXPointer {
          *     ValidateLevel::strong_validate, but could not be ValidateLevel::default_validate.
          */
         EdgeChunkWriter create(
-                @CXXReference EdgeInfo edgeInfo,
+                @CXXReference StdSharedPtr<EdgeInfo> edgeInfo,
                 @CXXReference StdString prefix,
                 @CXXValue AdjListType adjListType,
                 @CXXValue ValidateLevel validateLevel);
@@ -473,7 +473,7 @@ public interface EdgeChunkWriter extends CXXPointer {
          * @param adjListType The adj list type for the edges.
          */
         EdgeChunkWriter create(
-                @CXXReference EdgeInfo edgeInfo,
+                @CXXReference StdSharedPtr<EdgeInfo> edgeInfo,
                 @CXXReference StdString prefix,
                 @CXXValue AdjListType adjListType);
 
@@ -483,6 +483,6 @@ public interface EdgeChunkWriter extends CXXPointer {
          * @param edgeInfo The edge info that describes the edge type.
          * @param prefix The absolute prefix.
          */
-        EdgeChunkWriter create(@CXXReference EdgeInfo edgeInfo, @CXXReference StdString prefix);
+        EdgeChunkWriter create(@CXXReference StdSharedPtr<EdgeInfo> edgeInfo, @CXXReference StdString prefix);
     }
 }

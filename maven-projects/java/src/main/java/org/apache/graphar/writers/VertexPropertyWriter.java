@@ -120,7 +120,7 @@ public interface VertexPropertyWriter extends CXXPointer {
     @CXXValue
     Status writeChunk(
             @CXXReference StdString fileName,
-            @CXXReference PropertyGroup propertyGroup,
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
             @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
@@ -138,7 +138,7 @@ public interface VertexPropertyWriter extends CXXPointer {
     @CXXValue
     Status writeChunk(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @CXXReference PropertyGroup propertyGroup,
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
             @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
@@ -185,7 +185,7 @@ public interface VertexPropertyWriter extends CXXPointer {
     @CXXValue
     Status writeTable(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @CXXReference PropertyGroup propertyGroup,
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
             @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
@@ -230,7 +230,7 @@ public interface VertexPropertyWriter extends CXXPointer {
          *     ValidateLevel::strong_validate, but could not be ValidateLevel::default_validate.
          */
         VertexPropertyWriter create(
-                @CXXReference VertexInfo vertexInfo,
+                @CXXReference StdSharedPtr<VertexInfo> vertexInfo,
                 @CXXReference StdString prefix,
                 @CXXValue ValidateLevel validateLevel);
 
@@ -241,6 +241,6 @@ public interface VertexPropertyWriter extends CXXPointer {
          * @param prefix The absolute prefix.
          */
         VertexPropertyWriter create(
-                @CXXReference VertexInfo vertexInfo, @CXXReference StdString prefix);
+                @CXXReference StdSharedPtr<VertexInfo> vertexInfo, @CXXReference StdString prefix);
     }
 }

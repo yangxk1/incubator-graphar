@@ -36,26 +36,27 @@ public class AdjListPropertyArrowChunkReaderTest {
     @Test
     public void test1() {
         String path = root + "/ldbc_sample/parquet/ldbc_sample.graph.yml";
-        Result<GraphInfo> maybeGraphInfo = GraphInfo.load(path);
+        Result<StdSharedPtr<GraphInfo>> maybeGraphInfo = GraphInfo.load(path);
         Assert.assertTrue(maybeGraphInfo.status().ok());
-        GraphInfo graphInfo = maybeGraphInfo.value();
+        StdSharedPtr<GraphInfo> graphInfo = maybeGraphInfo.value();
 
         StdString srcLabel = StdString.create("person");
         StdString edgeLabel = StdString.create("knows");
         StdString dstLabel = StdString.create("person");
         StdString propertyName = StdString.create("creationDate");
         Result<PropertyGroup> maybeGroup =
-                graphInfo.getEdgePropertyGroup(
+                graphInfo.get().getEdgePropertyGroup(
                         srcLabel, edgeLabel, dstLabel, propertyName, AdjListType.ordered_by_source);
         Assert.assertTrue(maybeGroup.status().ok());
         PropertyGroup group = maybeGroup.value();
+        StdSharedPtr<PropertyGroup> groupPtr = GrapharStaticFunctions.INSTANCE.createPropertyGroup(group.getProperties(), group.getFileType(), group.getPrefix());
         Result<AdjListPropertyArrowChunkReader> maybeReader =
                 GrapharStaticFunctions.INSTANCE.constructAdjListPropertyArrowChunkReader(
                         graphInfo,
                         srcLabel,
                         edgeLabel,
                         dstLabel,
-                        group,
+                        groupPtr,
                         AdjListType.ordered_by_source);
         Assert.assertTrue(maybeReader.status().ok());
         AdjListPropertyArrowChunkReader reader = maybeReader.value();

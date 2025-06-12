@@ -21,21 +21,11 @@ package org.apache.graphar.util;
 
 import static org.apache.graphar.util.CppClassName.GAR_ID_TYPE;
 import static org.apache.graphar.util.CppClassName.GAR_NAMESPACE;
-import static org.apache.graphar.util.CppHeaderName.GAR_ARROW_CHUNK_READER_H;
-import static org.apache.graphar.util.CppHeaderName.GAR_CHUNK_INFO_READER_H;
-import static org.apache.graphar.util.CppHeaderName.GAR_GRAPH_H;
+import static org.apache.graphar.util.CppHeaderName.*;
 
-import com.alibaba.fastffi.CXXHead;
-import com.alibaba.fastffi.CXXReference;
-import com.alibaba.fastffi.CXXValue;
-import com.alibaba.fastffi.FFIGen;
-import com.alibaba.fastffi.FFILibrary;
-import com.alibaba.fastffi.FFINameAlias;
-import com.alibaba.fastffi.FFITypeAlias;
-import com.alibaba.fastffi.FFITypeFactory;
+import com.alibaba.fastffi.*;
 import org.apache.graphar.edges.EdgesCollection;
-import org.apache.graphar.graphinfo.GraphInfo;
-import org.apache.graphar.graphinfo.PropertyGroup;
+import org.apache.graphar.graphinfo.*;
 import org.apache.graphar.readers.arrowchunk.AdjListArrowChunkReader;
 import org.apache.graphar.readers.arrowchunk.AdjListOffsetArrowChunkReader;
 import org.apache.graphar.readers.arrowchunk.AdjListPropertyArrowChunkReader;
@@ -45,13 +35,17 @@ import org.apache.graphar.readers.chunkinfo.AdjListPropertyChunkInfoReader;
 import org.apache.graphar.readers.chunkinfo.VertexPropertyChunkInfoReader;
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
+import org.apache.graphar.stdcxx.StdVector;
 import org.apache.graphar.types.AdjListType;
+import org.apache.graphar.types.DataType;
+import org.apache.graphar.types.FileType;
 import org.apache.graphar.vertices.VerticesCollection;
 
 @FFIGen
 @CXXHead(GAR_CHUNK_INFO_READER_H)
 @CXXHead(GAR_ARROW_CHUNK_READER_H)
 @CXXHead(GAR_GRAPH_H)
+@CXXHead(GAR_FWD_H)
 @FFILibrary(value = GAR_NAMESPACE, namespace = GAR_NAMESPACE)
 public interface GrapharStaticFunctions {
     GrapharStaticFunctions INSTANCE = FFITypeFactory.getLibrary(GrapharStaticFunctions.class);
@@ -61,50 +55,50 @@ public interface GrapharStaticFunctions {
     /**
      * Helper function to Construct VertexPropertyChunkInfoReader.
      *
-     * @param graphInfo The graph info to describe the graph.
-     * @param label label name of the vertex.
+     * @param graphInfo     The graph info to describe the graph.
+     * @param label         label name of the vertex.
      * @param propertyGroup The property group of the vertex.
      */
-    @FFINameAlias("ConstructVertexPropertyChunkInfoReader")
+    @FFINameAlias("VertexPropertyChunkInfoReader::Make")
     @CXXValue
     Result<VertexPropertyChunkInfoReader> constructVertexPropertyChunkInfoReader(
-            @CXXReference GraphInfo graphInfo,
+            @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString label,
-            @CXXReference PropertyGroup propertyGroup);
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup);
 
     /**
      * Helper function to Construct AdjListPropertyChunkInfoReader.
      *
-     * @param graphInfo The graph info to describe the graph.
-     * @param srcLabel label of source vertex.
-     * @param edgeLabel label of edge.
-     * @param dstLabel label of destination vertex.
+     * @param graphInfo     The graph info to describe the graph.
+     * @param srcLabel      label of source vertex.
+     * @param edgeLabel     label of edge.
+     * @param dstLabel      label of destination vertex.
      * @param propertyGroup The property group of the edge.
-     * @param adjListType The adj list type for the edges.
+     * @param adjListType   The adj list type for the edges.
      */
-    @FFINameAlias("ConstructAdjListPropertyChunkInfoReader")
+    @FFINameAlias("AdjListPropertyChunkInfoReader::Make")
     @CXXValue
     Result<AdjListPropertyChunkInfoReader> constructAdjListPropertyChunkInfoReader(
-            @CXXReference GraphInfo graphInfo,
+            @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
             @CXXReference StdString dstLabel,
-            @CXXReference PropertyGroup propertyGroup,
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
             @CXXValue AdjListType adjListType);
 
     /**
      * Helper function to Construct AdjListChunkInfoReader.
      *
-     * @param graphInfo The graph info to describe the graph.
-     * @param srcLabel label of source vertex.
-     * @param edgeLabel label of edge.
-     * @param dstLabel label of destination vertex.
+     * @param graphInfo   The graph info to describe the graph.
+     * @param srcLabel    label of source vertex.
+     * @param edgeLabel   label of edge.
+     * @param dstLabel    label of destination vertex.
      * @param adjListType The adj list type for the edges.
      */
-    @FFINameAlias("ConstructAdjListChunkInfoReader")
+    @FFINameAlias("AdjListChunkInfoReader::Make")
     @CXXValue
     Result<AdjListChunkInfoReader> constructAdjListChunkInfoReader(
-            @CXXReference GraphInfo graphInfo,
+            @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
             @CXXReference StdString dstLabel,
@@ -115,30 +109,30 @@ public interface GrapharStaticFunctions {
     /**
      * Helper function to Construct VertexPropertyArrowChunkReader.
      *
-     * @param graphInfo The graph info to describe the graph.
-     * @param label label of the vertex.
+     * @param graphInfo     The graph info to describe the graph.
+     * @param label         label of the vertex.
      * @param propertyGroup The property group of the vertex.
      */
-    @FFINameAlias("ConstructVertexPropertyArrowChunkReader")
+    @FFINameAlias("VertexPropertyArrowChunkReader::Make")
     @CXXValue
     Result<VertexPropertyArrowChunkReader> constructVertexPropertyArrowChunkReader(
-            @CXXReference GraphInfo graphInfo,
+            @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString label,
-            @CXXReference PropertyGroup propertyGroup);
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup);
 
     /**
      * Helper function to Construct AdjListArrowChunkReader.
      *
-     * @param graphInfo The graph info to describe the graph.
-     * @param srcLabel label of source vertex.
-     * @param edgeLabel label of edge.
-     * @param dstLabel label of destination vertex.
+     * @param graphInfo   The graph info to describe the graph.
+     * @param srcLabel    label of source vertex.
+     * @param edgeLabel   label of edge.
+     * @param dstLabel    label of destination vertex.
      * @param adjListType The adj list type for the edges.
      */
-    @FFINameAlias("ConstructAdjListArrowChunkReader")
+    @FFINameAlias("AdjListArrowChunkReader::Make")
     @CXXValue
     Result<AdjListArrowChunkReader> constructAdjListArrowChunkReader(
-            @CXXReference GraphInfo graphInfo,
+            @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
             @CXXReference StdString dstLabel,
@@ -147,16 +141,16 @@ public interface GrapharStaticFunctions {
     /**
      * Helper function to Construct AdjListOffsetArrowChunkReader.
      *
-     * @param graphInfo The graph info to describe the graph.
-     * @param srcLabel label of source vertex.
-     * @param edgeLabel label of edge.
-     * @param dstLabel label of destination vertex.
+     * @param graphInfo   The graph info to describe the graph.
+     * @param srcLabel    label of source vertex.
+     * @param edgeLabel   label of edge.
+     * @param dstLabel    label of destination vertex.
      * @param adjListType The adj list type for the edges.
      */
-    @FFINameAlias("ConstructAdjListOffsetArrowChunkReader")
+    @FFINameAlias("AdjListOffsetArrowChunkReader::Make")
     @CXXValue
     Result<AdjListOffsetArrowChunkReader> constructAdjListOffsetArrowChunkReader(
-            @CXXReference GraphInfo graphInfo,
+            @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
             @CXXReference StdString dstLabel,
@@ -165,21 +159,21 @@ public interface GrapharStaticFunctions {
     /**
      * Helper function to Construct AdjListPropertyArrowChunkReader.
      *
-     * @param graphInfo The graph info to describe the graph.
-     * @param srcLabel label of source vertex.
-     * @param edgeLabel label of edge.
-     * @param dstLabel label of destination vertex.
+     * @param graphInfo     The graph info to describe the graph.
+     * @param srcLabel      label of source vertex.
+     * @param edgeLabel     label of edge.
+     * @param dstLabel      label of destination vertex.
      * @param propertyGroup The property group of the edge.
-     * @param adjListType The adj list type for the edges.
+     * @param adjListType   The adj list type for the edges.
      */
-    @FFINameAlias("ConstructAdjListPropertyArrowChunkReader")
+    @FFINameAlias("AdjListPropertyArrowChunkReader::Make")
     @CXXValue
     Result<AdjListPropertyArrowChunkReader> constructAdjListPropertyArrowChunkReader(
-            @CXXReference GraphInfo graphInfo,
+            @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
             @CXXReference StdString dstLabel,
-            @CXXReference PropertyGroup propertyGroup,
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
             @CXXValue AdjListType adjListType);
 
     // graph
@@ -188,30 +182,30 @@ public interface GrapharStaticFunctions {
      * Construct the collection for vertices with specific label.
      *
      * @param graphInfo The GraphInfo for the graph.
-     * @param label The vertex label.
+     * @param label     The vertex label.
      * @return The constructed collection or error.
      */
-    @FFINameAlias("ConstructVerticesCollection")
+    @FFINameAlias("VerticesCollection::Make")
     @CXXValue
     Result<StdSharedPtr<VerticesCollection>> constructVerticesCollection(
-            @CXXReference GraphInfo graphInfo, @CXXReference StdString label);
+            @CXXReference StdSharedPtr<GraphInfo> graphInfo, @CXXReference StdString label);
 
     /**
      * Construct the collection for a range of edges.
      *
-     * @param graphInfo The GraphInfo for the graph.
-     * @param srcLabel The source vertex label.
-     * @param edgeLabel The edge label.
-     * @param dstLabel The destination vertex label.
-     * @param adjListType The adjList type.
+     * @param graphInfo        The GraphInfo for the graph.
+     * @param srcLabel         The source vertex label.
+     * @param edgeLabel        The edge label.
+     * @param dstLabel         The destination vertex label.
+     * @param adjListType      The adjList type.
      * @param vertexChunkBegin The index of the beginning vertex chunk.
-     * @param vertexChunkEnd The index of the end vertex chunk (not included).
+     * @param vertexChunkEnd   The index of the end vertex chunk (not included).
      * @return The constructed collection or error.
      */
-    @FFINameAlias("ConstructEdgesCollection")
+    @FFINameAlias("EdgesCollection::Make")
     @CXXValue
     Result<StdSharedPtr<EdgesCollection>> constructEdgesCollection(
-            @CXXReference GraphInfo graphInfo,
+            @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
             @CXXReference StdString dstLabel,
@@ -222,19 +216,83 @@ public interface GrapharStaticFunctions {
     /**
      * Construct the collection for a range of edges.
      *
-     * @param graphInfo The GraphInfo for the graph.
-     * @param srcLabel The source vertex label.
-     * @param edgeLabel The edge label.
-     * @param dstLabel The destination vertex label.
+     * @param graphInfo   The GraphInfo for the graph.
+     * @param srcLabel    The source vertex label.
+     * @param edgeLabel   The edge label.
+     * @param dstLabel    The destination vertex label.
      * @param adjListType The adjList type.
      * @return The constructed collection or error.
      */
-    @FFINameAlias("ConstructEdgesCollection")
+    @FFINameAlias("EdgesCollection::Make")
     @CXXValue
     Result<StdSharedPtr<EdgesCollection>> constructEdgesCollection(
-            @CXXReference GraphInfo graphInfo,
+            @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
             @CXXReference StdString dstLabel,
             @CXXValue AdjListType adjListType);
+
+
+    @FFINameAlias("CreatePropertyGroup")
+    @CXXValue
+    StdSharedPtr<PropertyGroup> createPropertyGroup(@CXXReference StdVector<Property> properties, FileType fileType, @CXXReference StdString prefix);
+
+    @FFINameAlias("CreatePropertyGroup")
+    @CXXValue
+    StdSharedPtr<PropertyGroup> createPropertyGroup(@CXXReference StdVector<Property> properties, FileType fileType);
+
+    @FFINameAlias("CreateAdjacentList")
+    @CXXValue
+    StdSharedPtr<AdjacentList> createAdjacentList(AdjListType adjListType, FileType fileType, @CXXReference StdString prefix);
+
+    @FFINameAlias("CreateAdjacentList")
+    @CXXValue
+    StdSharedPtr<AdjacentList> createAdjacentList(AdjListType adjListType, FileType fileType);
+
+    @FFINameAlias("CreateVertexInfo")
+    @CXXValue
+    StdSharedPtr<VertexInfo> createVertexInfo(@CXXReference StdString label, @FFITypeAlias(GAR_ID_TYPE) long chunk_size, @CXXReference StdVector<PropertyGroup> propertyGroups, @CXXReference StdString prefix, StdSharedPtr<InfoVersion> version);
+
+    @FFINameAlias("CreateEdgeInfo")
+    @CXXValue
+    StdSharedPtr<EdgeInfo> createEdgeInfo(StdString srcLabel, StdString edgeLabel, StdString dstLabel, @FFITypeAlias(GAR_ID_TYPE) long chunkSize, @FFITypeAlias(GAR_ID_TYPE) long srcChunkSize, @FFITypeAlias(GAR_ID_TYPE) long dstChunkSize, boolean directed, @CXXReference StdVector<AdjacentList> adjacentLists, @CXXReference StdVector<PropertyGroup> propertyGroups, @CXXReference StdString prefix);
+
+    @FFINameAlias("CreateEdgeInfo")
+    @CXXValue
+    StdSharedPtr<EdgeInfo> createEdgeInfo(StdString srcLabel, StdString edgeLabel, StdString dstLabel, @FFITypeAlias(GAR_ID_TYPE) long chunkSize, @FFITypeAlias(GAR_ID_TYPE) long srcChunkSize, @FFITypeAlias(GAR_ID_TYPE) long dstChunkSize, boolean directed, @CXXReference StdVector<AdjacentList> adjacentLists, @CXXReference StdVector<PropertyGroup> propertyGroups);
+
+    @FFINameAlias("CreateGraphInfo")
+    @CXXValue
+    StdSharedPtr<GraphInfo> createGraphInfo(@CXXReference StdString name, @CXXReference StdVector<VertexInfo> vertexInfos, @CXXReference StdVector<EdgeInfo> edgeInfos, @CXXReference StdString prefix, StdSharedPtr<InfoVersion> version);
+
+    @FFINameAlias("boolean")
+    @CXXValue
+    @FFIConst
+    StdSharedPtr<DataType> booleanType();
+
+    @FFINameAlias("int32")
+    @CXXValue
+    @FFIConst
+    StdSharedPtr<DataType> int32Type();
+
+    @FFINameAlias("int64")
+    @CXXValue
+    @FFIConst
+    StdSharedPtr<DataType> int64Type();
+
+    @FFINameAlias("float32")
+    @CXXValue
+    @FFIConst
+    StdSharedPtr<DataType> float32Type();
+
+    @FFINameAlias("float64")
+    @CXXValue
+    @FFIConst
+    StdSharedPtr<DataType> float64Type();
+
+    @FFINameAlias("string")
+    @CXXValue
+    @FFIConst
+    StdSharedPtr<DataType> stringType();
+
 }

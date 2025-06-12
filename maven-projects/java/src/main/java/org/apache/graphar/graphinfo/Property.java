@@ -32,10 +32,13 @@ import com.alibaba.fastffi.FFINameAlias;
 import com.alibaba.fastffi.FFISetter;
 import com.alibaba.fastffi.FFITypeAlias;
 import com.alibaba.fastffi.FFITypeFactory;
+import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.types.DataType;
 
-/** Property is a class to store the property information for a group. */
+/**
+ * Property is a class to store the property information for a group.
+ */
 @FFIGen
 @FFITypeAlias(GAR_PROPERTY)
 @CXXHead(GAR_GRAPH_INFO_H)
@@ -54,11 +57,11 @@ public interface Property extends CXXPointer {
     @FFIGetter
     @FFINameAlias("type")
     @CXXValue
-    DataType getType();
+    StdSharedPtr<DataType> getType();
 
     @FFISetter
     @FFINameAlias("type")
-    void setType(@CXXValue DataType type);
+    void setType(StdSharedPtr<@CXXValue DataType> type);
 
     @FFIGetter
     @FFINameAlias("is_primary")
@@ -72,5 +75,17 @@ public interface Property extends CXXPointer {
     interface Factory {
         @CXXValue
         Property create();
+
+        @CXXValue
+        Property create(StdString name,
+                        StdSharedPtr<DataType> type,
+                        boolean is_primary);
+
+        @CXXValue
+        Property create(StdString name,
+                        StdSharedPtr<DataType> type);
+
+        @CXXValue
+        Property create(StdString name);
     }
 }

@@ -107,7 +107,7 @@ public interface AdjListOffsetArrowChunkReader extends CXXPointer {
          * @param prefix The absolute prefix.
          */
         AdjListOffsetArrowChunkReader create(
-                @CXXReference EdgeInfo edgeInfo,
+                @CXXReference StdSharedPtr<EdgeInfo> edgeInfo,
                 @CXXValue AdjListType adjListType,
                 @CXXReference StdString prefix);
     }

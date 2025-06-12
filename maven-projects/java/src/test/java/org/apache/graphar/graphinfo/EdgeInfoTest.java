@@ -20,12 +20,16 @@
 package org.apache.graphar.graphinfo;
 
 import java.io.File;
+
+import com.alibaba.fastffi.CXXReference;
+import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
 import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.types.DataType;
 import org.apache.graphar.types.FileType;
 import org.apache.graphar.types.Type;
+import org.apache.graphar.util.GrapharStaticFunctions;
 import org.apache.graphar.util.InfoVersion;
 import org.apache.graphar.util.Result;
 import org.junit.Assert;
@@ -41,6 +45,10 @@ public class EdgeInfoTest {
         long srcChunkSize = 100;
         long dstChunkSize = 100;
         boolean directed = true;
+        StdVector.Factory<AdjacentList> adjancyListVecFactory = StdVector.getStdVectorFactory("std::vector<graphar::AdjacentList>");
+        StdVector<AdjacentList> adjacentListStdVector = adjancyListVecFactory.create();
+        StdVector.Factory<PropertyGroup> propertyGroupVecFactory = StdVector.getStdVectorFactory("std::vector<graphar::PropertyGroup>");
+        StdVector<PropertyGroup> propertyGroupStdVector = propertyGroupVecFactory.create();
         InfoVersion infoVersion = InfoVersion.create(1);
         StdString prefix = StdString.create("");
         EdgeInfo edgeInfo =
@@ -52,8 +60,10 @@ public class EdgeInfoTest {
                         srcChunkSize,
                         dstChunkSize,
                         directed,
-                        infoVersion,
-                        prefix);
+                        adjacentListStdVector,
+                        propertyGroupStdVector,
+                        prefix,
+                        infoVersion);
         Assert.assertEquals(srcLabel.toJavaString(), edgeInfo.getSrcLabel().toJavaString());
         Assert.assertEquals(edgeLabel.toJavaString(), edgeInfo.getEdgeLabel().toJavaString());
         Assert.assertEquals(dstLabel.toJavaString(), edgeInfo.getDstLabel().toJavaString());
@@ -74,13 +84,14 @@ public class EdgeInfoTest {
         // test add adjList
         AdjListType adjListType = AdjListType.ordered_by_source;
         FileType fileType = FileType.PARQUET;
-        Assert.assertTrue(edgeInfo.addAdjList(adjListType, fileType).ok());
-        Assert.assertTrue(edgeInfo.containAdjList(adjListType));
+        StdSharedPtr<AdjacentList> adjacentList = GrapharStaticFunctions.INSTANCE.createAdjacentList(adjListType, fileType);
+        Assert.assertTrue(edgeInfo.addAdjacentList(adjacentList).status().ok());
+        Assert.assertTrue(edgeInfo.hasAdjacentListType(adjListType));
         // same adj list type can not be added twice
-        Assert.assertTrue(edgeInfo.addAdjList(adjListType, fileType).isKeyError());
-        Result<FileType> fileTypeResult = edgeInfo.getFileType(adjListType);
-        Assert.assertFalse(fileTypeResult.hasError());
-        Assert.assertEquals(fileType, fileTypeResult.value());
+        StdSharedPtr<AdjacentList> adjacentListTwice = GrapharStaticFunctions.INSTANCE.createAdjacentList(adjListType, fileType);
+        Assert.assertTrue(edgeInfo.addAdjacentList(adjacentListTwice).hasError());
+        FileType fileTypeResult = edgeInfo.getAdjacentList(adjListType).get().getFileType();
+        Assert.assertEquals(fileType, fileTypeResult);
         StdString prefixOfAdjListType =
                 StdString.create(AdjListType.adjListType2String(adjListType) + "/");
         Result<StdString> adjListPathPrefix = edgeInfo.getAdjListPathPrefix(adjListType);
@@ -110,8 +121,8 @@ public class EdgeInfoTest {
 
         // adj list type not exist
         AdjListType adjListTypeNotExist = AdjListType.ordered_by_dest;
-        Assert.assertFalse(edgeInfo.containAdjList(adjListTypeNotExist));
-        Assert.assertTrue(edgeInfo.getFileType(adjListTypeNotExist).status().isKeyError());
+        Assert.assertFalse(edgeInfo.hasAdjacentListType(adjListTypeNotExist));
+        Assert.assertNull(edgeInfo.getAdjacentList(adjListTypeNotExist).get());
         Assert.assertTrue(
                 edgeInfo.getAdjListFilePath(0, 0, adjListTypeNotExist).status().isKeyError());
         Assert.assertTrue(edgeInfo.getAdjListPathPrefix(adjListTypeNotExist).status().isKeyError());
@@ -122,31 +133,28 @@ public class EdgeInfoTest {
         // test add property group
         Property property = Property.factory.create();
         property.setName(StdString.create("creationDate"));
-        property.setType(DataType.factory.create(Type.STRING));
+        property.setType(GrapharStaticFunctions.INSTANCE.stringType());
         property.setPrimary(false);
         StdVector.Factory<Property> propertyVecFactory =
                 StdVector.getStdVectorFactory("std::vector<graphar::Property>");
         StdVector<Property> propertyStdVector = propertyVecFactory.create();
         propertyStdVector.push_back(property);
         PropertyGroup propertyGroup = PropertyGroup.factory.create(propertyStdVector, fileType);
-        Result<StdVector<PropertyGroup>> propertyGroups = edgeInfo.getPropertyGroups(adjListType);
-        Assert.assertTrue(propertyGroups.status().ok());
-        Assert.assertEquals(0, propertyGroups.value().size());
-        Assert.assertTrue(edgeInfo.addPropertyGroup(propertyGroup, adjListType).ok());
-        Assert.assertTrue(edgeInfo.containPropertyGroup(propertyGroup, adjListType));
-        propertyGroups = edgeInfo.getPropertyGroups(adjListType);
-        Assert.assertTrue(propertyGroups.status().ok());
-        Assert.assertEquals(1, propertyGroups.value().size());
+        StdVector<PropertyGroup> propertyGroups = edgeInfo.getPropertyGroups();
+        Assert.assertEquals(0, propertyGroups.size());
+        Assert.assertTrue(edgeInfo.addPropertyGroup(propertyGroup).status().ok());
+        Assert.assertTrue(edgeInfo.hasPropertyGroup(propertyGroup));
+        propertyGroups = edgeInfo.getPropertyGroups();
+        Assert.assertEquals(1, propertyGroups.size());
         Result<PropertyGroup> propertyGroupResult =
-                edgeInfo.getPropertyGroup(property.getName(), adjListType);
+                edgeInfo.getPropertyGroup(property.getName());
         Assert.assertFalse(propertyGroupResult.hasError());
         Assert.assertTrue(propertyGroup.eq(propertyGroupResult.value()));
         Result<DataType> dataTypeResult = edgeInfo.getPropertyType(property.getName());
         Assert.assertFalse(dataTypeResult.hasError());
-        Assert.assertTrue(property.getType().eq(dataTypeResult.value()));
-        Result<Boolean> isPrimaryResult = edgeInfo.isPrimaryKey(property.getName());
-        Assert.assertFalse(isPrimaryResult.hasError());
-        Assert.assertEquals(property.isPrimary(), isPrimaryResult.value());
+        Assert.assertTrue(property.getType().get().eq(dataTypeResult.value()));
+        boolean isPrimaryResult = edgeInfo.isPrimaryKey(property.getName());
+        Assert.assertEquals(property.isPrimary(), isPrimaryResult);
         Result<StdString> propertyPathPrefix =
                 edgeInfo.getPropertyGroupPathPrefix(propertyGroup, adjListType);
         Assert.assertFalse(propertyPathPrefix.hasError());
@@ -165,9 +173,8 @@ public class EdgeInfoTest {
         // test property not exist
         StdString propertyNotExist = StdString.create("p_not_exist");
         Assert.assertTrue(
-                edgeInfo.getPropertyGroup(propertyNotExist, adjListType).status().isKeyError());
+                edgeInfo.getPropertyGroup(propertyNotExist).status().isKeyError());
         Assert.assertTrue(edgeInfo.getPropertyType(propertyNotExist).status().isKeyError());
-        Assert.assertTrue(edgeInfo.isPrimaryKey(propertyNotExist).status().isKeyError());
 
         // test property group not exist
         PropertyGroup propertyGroupNotExist = PropertyGroup.factory.create();
@@ -181,11 +188,6 @@ public class EdgeInfoTest {
                         .isKeyError());
 
         // test adj list not exist
-        Assert.assertTrue(edgeInfo.getPropertyGroups(adjListTypeNotExist).status().isKeyError());
-        Assert.assertTrue(
-                edgeInfo.getPropertyGroup(property.getName(), adjListTypeNotExist)
-                        .status()
-                        .isKeyError());
         Assert.assertTrue(
                 edgeInfo.getPropertyFilePath(propertyGroup, adjListTypeNotExist, 0, 0)
                         .status()

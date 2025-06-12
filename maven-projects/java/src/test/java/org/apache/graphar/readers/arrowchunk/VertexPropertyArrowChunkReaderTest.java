@@ -35,20 +35,21 @@ public class VertexPropertyArrowChunkReaderTest {
     @Test
     public void test1() {
         String path = root + "/ldbc_sample/parquet/ldbc_sample.graph.yml";
-        Result<GraphInfo> maybeGraphInfo = GraphInfo.load(path);
+        Result<StdSharedPtr<GraphInfo>> maybeGraphInfo = GraphInfo.load(path);
         Assert.assertTrue(maybeGraphInfo.status().ok());
-        GraphInfo graphInfo = maybeGraphInfo.value();
+        StdSharedPtr<GraphInfo> graphInfo = maybeGraphInfo.value();
 
         // construct vertex chunk reader
         StdString label = StdString.create("person");
         StdString propertyName = StdString.create("id");
-        Assert.assertTrue(graphInfo.getVertexInfo(label).status().ok());
-        Result<PropertyGroup> maybeGroup = graphInfo.getVertexPropertyGroup(label, propertyName);
+        Assert.assertNotNull(graphInfo.get().getVertexInfo(label));
+        Result<PropertyGroup> maybeGroup = graphInfo.get().getVertexPropertyGroup(label, propertyName);
         Assert.assertTrue(maybeGroup.status().ok());
         PropertyGroup group = maybeGroup.value();
+        StdSharedPtr<PropertyGroup> groupPtr = GrapharStaticFunctions.INSTANCE.createPropertyGroup(group.getProperties(), group.getFileType(), group.getPrefix());
         Result<VertexPropertyArrowChunkReader> maybeReader =
                 GrapharStaticFunctions.INSTANCE.constructVertexPropertyArrowChunkReader(
-                        graphInfo, label, group);
+                        graphInfo, label, groupPtr);
         Assert.assertTrue(maybeReader.status().ok());
         VertexPropertyArrowChunkReader reader = maybeReader.value();
         Result<StdSharedPtr<ArrowTable>> result = reader.getChunk();

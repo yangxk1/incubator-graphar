@@ -35,6 +35,7 @@ import com.alibaba.fastffi.FFITypeFactory;
 import org.apache.graphar.graphinfo.GraphInfo;
 import org.apache.graphar.graphinfo.PropertyGroup;
 import org.apache.graphar.graphinfo.VertexInfo;
+import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.util.GrapharStaticFunctions;
 import org.apache.graphar.util.Result;
@@ -101,8 +102,8 @@ public interface VertexPropertyChunkInfoReader extends CXXPointer {
          * @param prefix The absolute prefix of the graph.
          */
         VertexPropertyChunkInfoReader create(
-                @CXXReference VertexInfo vertexInfo,
-                @CXXReference PropertyGroup propertyGroup,
+                @CXXReference StdSharedPtr<VertexInfo> vertexInfo,
+                @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
                 @CXXReference StdString prefix);
     }
 }

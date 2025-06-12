@@ -35,6 +35,7 @@ import com.alibaba.fastffi.FFITypeFactory;
 import org.apache.graphar.graphinfo.EdgeInfo;
 import org.apache.graphar.graphinfo.GraphInfo;
 import org.apache.graphar.graphinfo.PropertyGroup;
+import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.util.GrapharStaticFunctions;
@@ -121,7 +122,7 @@ public interface AdjListPropertyChunkInfoReader extends CXXPointer {
          * @param prefix The absolute prefix of the graph.
          */
         AdjListPropertyChunkInfoReader create(
-                @CXXReference EdgeInfo edgeInfo,
+                @CXXReference StdSharedPtr<EdgeInfo> edgeInfo,
                 @CXXReference PropertyGroup propertyGroup,
                 @CXXValue AdjListType adjListType,
                 @CXXReference StdString prefix);
