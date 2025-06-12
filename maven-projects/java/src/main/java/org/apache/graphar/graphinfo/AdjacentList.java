@@ -13,19 +13,6 @@ import org.apache.graphar.types.FileType;
 @CXXHead(GAR_GRAPH_INFO_H)
 public interface AdjacentList extends FFIPointer {
 
-    AdjacentList.Factory factory = FFITypeFactory.getFactory(AdjacentList.class);
-
-    static AdjacentList create(AdjListType type, FileType file_type, String prefix) {
-        StdString stdPrefix = StdString.create(prefix);
-        AdjacentList res = factory.create(type, file_type, stdPrefix);
-        stdPrefix.delete();
-        return res;
-    }
-
-    static AdjacentList create(AdjListType type, FileType file_type) {
-        return factory.create(type, file_type);
-    }
-
     @FFINameAlias("GetType")
     @CXXValue
     @FFIConst
@@ -43,14 +30,4 @@ public interface AdjacentList extends FFIPointer {
 
     @FFINameAlias("IsValidated")
     boolean isValidated();
-
-    @FFIFactory
-    interface Factory {
-        AdjacentList create(
-                @CXXValue AdjListType adjListType,
-                @CXXValue FileType fileType,
-                @CXXReference StdString prefix);
-
-        AdjacentList create(@CXXValue AdjListType adjListType, @CXXValue FileType fileType);
-    }
 }

@@ -56,8 +56,8 @@ public class EdgeInfoTest {
         Assert.assertTrue(infoVersionResult.status().ok());
         StdSharedPtr<InfoVersion> infoVersion = infoVersionResult.value();
         StdString prefix = StdString.create("");
-        EdgeInfo edgeInfo =
-                EdgeInfo.factory.create(
+        StdSharedPtr<EdgeInfo> edgeInfoStdSharedPtr =
+                GrapharStaticFunctions.INSTANCE.createEdgeInfo(
                         srcLabel,
                         edgeLabel,
                         dstLabel,
@@ -69,6 +69,7 @@ public class EdgeInfoTest {
                         propertyGroupStdVector,
                         prefix,
                         infoVersion);
+        EdgeInfo edgeInfo = edgeInfoStdSharedPtr.get();
         Assert.assertEquals(srcLabel.toJavaString(), edgeInfo.getSrcLabel().toJavaString());
         Assert.assertEquals(edgeLabel.toJavaString(), edgeInfo.getEdgeLabel().toJavaString());
         Assert.assertEquals(dstLabel.toJavaString(), edgeInfo.getDstLabel().toJavaString());

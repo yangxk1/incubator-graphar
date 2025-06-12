@@ -44,9 +44,10 @@ public class VertexInfoTest {
         Result<StdSharedPtr<InfoVersion>> versionParseResult = InfoVersion.parse("gar/v1");
         Assert.assertTrue(versionParseResult.status().ok());
         StdSharedPtr<InfoVersion> infoVersion = versionParseResult.value();
-        VertexInfo vertexInfo =
-                VertexInfo.factory.create(
+        StdSharedPtr<VertexInfo> vertexInfoStdSharedPtr =
+                GrapharStaticFunctions.INSTANCE.createVertexInfo(
                         label, chunkSize, propertyGroupStdVector, prefix, infoVersion);
+        VertexInfo vertexInfo = vertexInfoStdSharedPtr.get();
         Assert.assertTrue(label.eq(vertexInfo.getLabel()));
         Assert.assertEquals(chunkSize, vertexInfo.getChunkSize());
         Assert.assertEquals(label.toJavaString() + "/", vertexInfo.getPrefix().toJavaString());

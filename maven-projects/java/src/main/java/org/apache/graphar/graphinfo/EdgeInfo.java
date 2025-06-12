@@ -40,10 +40,7 @@ import org.apache.graphar.util.Yaml;
 @CXXHead(GAR_GRAPH_INFO_H)
 public interface EdgeInfo extends CXXPointer {
 
-    Factory factory = FFITypeFactory.getFactory(EdgeInfo.class);
-
     @FFINameAlias("AddAdjacentList")
-    @FFIConst
     @CXXValue
     Result<StdSharedPtr<EdgeInfo>> addAdjacentList(StdSharedPtr<AdjacentList> adjList);
 
@@ -331,62 +328,6 @@ public interface EdgeInfo extends CXXPointer {
 
     static Result<StdSharedPtr<EdgeInfo>> load(StdSharedPtr<Yaml> yaml) {
         return Static.INSTANCE.Load(yaml);
-    }
-
-    @FFIFactory
-    interface Factory {
-        /**
-         * Construct an EdgeInfo object with the given metadata information.
-         *
-         * @param srcLabel The label of the source vertex.
-         * @param edgeLabel The label of the edge.
-         * @param dstLabel The label of the destination vertex.
-         * @param chunkSize The number of edges in each edge chunk.
-         * @param srcChunkSize The number of source vertices in each vertex chunk.
-         * @param dstChunkSize The number of destination vertices in each vertex chunk.
-         * @param directed Whether the edge is directed.
-         * @param adjacentLists The adjacency list vector of the edge.
-         * @param propertyGroups The property group vector of the edge.
-         * @param prefix The path prefix of the edge info.
-         * @param version The version of the edge info.
-         */
-        EdgeInfo create(
-                @CXXReference StdString srcLabel,
-                @CXXReference StdString edgeLabel,
-                @CXXReference StdString dstLabel,
-                long chunkSize,
-                long srcChunkSize,
-                long dstChunkSize,
-                boolean directed,
-                @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
-                @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
-                @CXXReference StdString prefix,
-                StdSharedPtr<InfoVersion> version);
-
-        EdgeInfo create(
-                @CXXReference StdString srcLabel,
-                @CXXReference StdString edgeLabel,
-                @CXXReference StdString dstLabel,
-                long chunkSize,
-                long srcChunkSize,
-                long dstChunkSize,
-                boolean directed,
-                @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
-                @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
-                @CXXReference StdString prefix);
-
-        EdgeInfo create(
-                @CXXReference StdString srcLabel,
-                @CXXReference StdString edgeLabel,
-                @CXXReference StdString dstLabel,
-                long chunkSize,
-                long srcChunkSize,
-                long dstChunkSize,
-                boolean directed,
-                @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
-                @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups);
-
-        EdgeInfo create(@CXXReference EdgeInfo other);
     }
 
     @FFIGen

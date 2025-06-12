@@ -48,9 +48,14 @@ public class GraphInfoTest {
         Result<StdSharedPtr<InfoVersion>> parsedVersion = InfoVersion.parse("gar/v1");
         Assert.assertTrue(parsedVersion.status().ok());
         StdSharedPtr<InfoVersion> version = parsedVersion.value();
-        GraphInfo graphInfo =
-                GraphInfo.create(
-                        graphName, vertexInfoVector, edgeInfoVector, prefix, version.get());
+        StdSharedPtr<GraphInfo> graphInfoStdSharedPtr =
+                GrapharStaticFunctions.INSTANCE.createGraphInfo(
+                        StdString.create(graphName),
+                        vertexInfoVector,
+                        edgeInfoVector,
+                        StdString.create(prefix),
+                        version);
+        GraphInfo graphInfo = graphInfoStdSharedPtr.get();
         Assert.assertEquals(graphName, graphInfo.getName().toJavaString());
         Assert.assertEquals(prefix, graphInfo.getPrefix().toJavaString());
         Assert.assertTrue(version.get().eq(graphInfo.getInfoVersion().get()));

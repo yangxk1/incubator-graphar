@@ -27,7 +27,6 @@ import com.alibaba.fastffi.CXXPointer;
 import com.alibaba.fastffi.CXXReference;
 import com.alibaba.fastffi.CXXValue;
 import com.alibaba.fastffi.FFIConst;
-import com.alibaba.fastffi.FFIFactory;
 import com.alibaba.fastffi.FFIGen;
 import com.alibaba.fastffi.FFILibrary;
 import com.alibaba.fastffi.FFINameAlias;
@@ -46,23 +45,6 @@ import org.apache.graphar.util.Status;
 @FFITypeAlias(GAR_GRAPH_INFO)
 @CXXHead(GAR_GRAPH_INFO_H)
 public interface GraphInfo extends CXXPointer {
-
-    Factory factory = FFITypeFactory.getFactory(GraphInfo.class);
-
-    static GraphInfo create(
-            String graphName,
-            StdVector<StdSharedPtr<VertexInfo>> vertexInfos,
-            StdVector<StdSharedPtr<EdgeInfo>> edgeInfos,
-            String prefix,
-            InfoVersion version) {
-        StdString stdGraphName = StdString.create(graphName);
-        StdString stdPrefix = StdString.create(prefix);
-        GraphInfo res = factory.create(stdGraphName, vertexInfos, edgeInfos, stdPrefix, version);
-        stdGraphName.delete();
-        stdPrefix.delete();
-        return res;
-    }
-
     /**
      * Loads the input file as a `GraphInfo` instance.
      *
@@ -294,36 +276,6 @@ public interface GraphInfo extends CXXPointer {
     @FFINameAlias("version")
     @CXXReference
     StdSharedPtr<InfoVersion> getInfoVersion();
-
-    @FFIFactory
-    interface Factory {
-        /**
-         * Constructs a GraphInfo instance.
-         *
-         * @param graphName The name of the graph.
-         * @param vertexInfos The vertex info vector of the graph.
-         * @param edgeInfos The edge info vector of the graph.
-         * @param prefix The absolute path prefix to store chunk files of the graph.
-         * @param version The version of the graph info.
-         */
-        GraphInfo create(
-                @CXXReference StdString graphName,
-                @CXXReference StdVector<StdSharedPtr<VertexInfo>> vertexInfos,
-                @CXXReference StdVector<StdSharedPtr<EdgeInfo>> edgeInfos,
-                @CXXReference StdString prefix,
-                @CXXReference InfoVersion version);
-
-        GraphInfo create(
-                @CXXReference StdString graphName,
-                @CXXReference StdVector<StdSharedPtr<VertexInfo>> vertexInfos,
-                @CXXReference StdVector<StdSharedPtr<EdgeInfo>> edgeInfos,
-                @CXXReference StdString prefix);
-
-        GraphInfo create(
-                @CXXReference StdString graphName,
-                @CXXReference StdVector<StdSharedPtr<VertexInfo>> vertexInfos,
-                @CXXReference StdVector<StdSharedPtr<EdgeInfo>> edgeInfos);
-    }
 
     @FFIGen
     @CXXHead(GAR_GRAPH_INFO_H)

@@ -277,6 +277,21 @@ public interface GrapharStaticFunctions {
             boolean directed,
             @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
             @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
+            @CXXReference StdString prefix,
+            StdSharedPtr<InfoVersion> version);
+
+    @FFINameAlias("CreateEdgeInfo")
+    @CXXValue
+    StdSharedPtr<EdgeInfo> createEdgeInfo(
+            StdString srcLabel,
+            StdString edgeLabel,
+            StdString dstLabel,
+            @FFITypeAlias(GAR_ID_TYPE) long chunkSize,
+            @FFITypeAlias(GAR_ID_TYPE) long srcChunkSize,
+            @FFITypeAlias(GAR_ID_TYPE) long dstChunkSize,
+            boolean directed,
+            @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
+            @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
             @CXXReference StdString prefix);
 
     @FFINameAlias("CreateEdgeInfo")

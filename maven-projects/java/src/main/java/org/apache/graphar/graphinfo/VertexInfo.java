@@ -28,7 +28,6 @@ import com.alibaba.fastffi.CXXPointer;
 import com.alibaba.fastffi.CXXReference;
 import com.alibaba.fastffi.CXXValue;
 import com.alibaba.fastffi.FFIConst;
-import com.alibaba.fastffi.FFIFactory;
 import com.alibaba.fastffi.FFIGen;
 import com.alibaba.fastffi.FFILibrary;
 import com.alibaba.fastffi.FFINameAlias;
@@ -48,9 +47,6 @@ import org.apache.graphar.util.Yaml;
 @FFITypeAlias(GAR_VERTEX_INFO)
 @CXXHead(GAR_GRAPH_INFO_H)
 public interface VertexInfo extends CXXPointer {
-
-    Factory factory = FFITypeFactory.getFactory(VertexInfo.class);
-
     /**
      * Adds a property group to the vertex info.
      *
@@ -230,51 +226,6 @@ public interface VertexInfo extends CXXPointer {
      */
     static Result<StdSharedPtr<VertexInfo>> load(StdSharedPtr<Yaml> yaml) {
         return Static.INSTANCE.Load(yaml);
-    }
-
-    @FFIFactory
-    interface Factory {
-        /**
-         * Construct a VertexInfo object with the given metadata information.
-         *
-         * @param label The label of the vertex.
-         * @param chunkSize The number of vertices in each vertex chunk.
-         * @param prefix The prefix of the vertex info.
-         * @param version The version of the vertex info.
-         */
-        VertexInfo create(
-                @CXXReference StdString label,
-                @FFITypeAlias(GAR_ID_TYPE) long chunkSize,
-                @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
-                @CXXReference StdString prefix,
-                StdSharedPtr<InfoVersion> version);
-
-        /**
-         * Construct a VertexInfo object with the given metadata information.
-         *
-         * @param label The label of the vertex.
-         * @param chunkSize The number of vertices in each vertex chunk.
-         * @param prefix The prefix of the vertex info.
-         */
-        VertexInfo create(
-                @CXXReference StdString label,
-                @FFITypeAlias(GAR_ID_TYPE) long chunkSize,
-                @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
-                @CXXReference StdString prefix);
-
-        /**
-         * Construct a VertexInfo object with the given metadata information.
-         *
-         * @param label The label of the vertex.
-         * @param chunkSize The number of vertices in each vertex chunk.
-         */
-        VertexInfo create(
-                @CXXReference StdString label,
-                @FFITypeAlias(GAR_ID_TYPE) long chunkSize,
-                @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups);
-
-        /** Copy constructor. */
-        VertexInfo create(@CXXReference VertexInfo other);
     }
 
     @FFIGen
