@@ -359,8 +359,8 @@ public interface EdgeInfo extends CXXPointer {
                 long srcChunkSize,
                 long dstChunkSize,
                 boolean directed,
-                @CXXReference StdVector<AdjacentList> adjacentLists,
-                @CXXReference StdVector<PropertyGroup> propertyGroups,
+                @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
+                @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
                 @CXXReference StdString prefix,
                 @CXXReference InfoVersion version);
 
@@ -372,8 +372,8 @@ public interface EdgeInfo extends CXXPointer {
                 long srcChunkSize,
                 long dstChunkSize,
                 boolean directed,
-                @CXXReference StdVector<AdjacentList> adjacentLists,
-                @CXXReference StdVector<PropertyGroup> propertyGroups,
+                @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
+                @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
                 @CXXReference StdString prefix);
 
         EdgeInfo create(
@@ -384,8 +384,8 @@ public interface EdgeInfo extends CXXPointer {
                 long srcChunkSize,
                 long dstChunkSize,
                 boolean directed,
-                @CXXReference StdVector<AdjacentList> adjacentLists,
-                @CXXReference StdVector<PropertyGroup> propertyGroups);
+                @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
+                @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups);
 
         EdgeInfo create(@CXXReference EdgeInfo other);
     }
