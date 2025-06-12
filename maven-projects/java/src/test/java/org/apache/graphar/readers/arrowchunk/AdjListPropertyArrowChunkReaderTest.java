@@ -45,11 +45,19 @@ public class AdjListPropertyArrowChunkReaderTest {
         StdString dstLabel = StdString.create("person");
         StdString propertyName = StdString.create("creationDate");
         Result<PropertyGroup> maybeGroup =
-                graphInfo.get().getEdgePropertyGroup(
-                        srcLabel, edgeLabel, dstLabel, propertyName, AdjListType.ordered_by_source);
+                graphInfo
+                        .get()
+                        .getEdgePropertyGroup(
+                                srcLabel,
+                                edgeLabel,
+                                dstLabel,
+                                propertyName,
+                                AdjListType.ordered_by_source);
         Assert.assertTrue(maybeGroup.status().ok());
         PropertyGroup group = maybeGroup.value();
-        StdSharedPtr<PropertyGroup> groupPtr = GrapharStaticFunctions.INSTANCE.createPropertyGroup(group.getProperties(), group.getFileType(), group.getPrefix());
+        StdSharedPtr<PropertyGroup> groupPtr =
+                GrapharStaticFunctions.INSTANCE.createPropertyGroup(
+                        group.getProperties(), group.getFileType(), group.getPrefix());
         Result<AdjListPropertyArrowChunkReader> maybeReader =
                 GrapharStaticFunctions.INSTANCE.constructAdjListPropertyArrowChunkReader(
                         graphInfo,

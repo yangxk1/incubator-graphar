@@ -100,9 +100,9 @@ public interface PropertyGroup extends CXXPointer {
          * Initialize the PropertyGroup with a list of properties, file type, and optional prefix.
          *
          * @param properties Property list of group
-         * @param fileType   File type of property group chunk file
-         * @param prefix     prefix of property group chunk file. The default prefix is the
-         *                   concatenation of property names with '_' as separator
+         * @param fileType File type of property group chunk file
+         * @param prefix prefix of property group chunk file. The default prefix is the
+         *     concatenation of property names with '_' as separator
          */
         @CXXValue
         PropertyGroup create(
@@ -114,7 +114,7 @@ public interface PropertyGroup extends CXXPointer {
          * Initialize the PropertyGroup with a list of properties, file type, and optional prefix.
          *
          * @param properties Property list of group
-         * @param fileType   File type of property group chunk file
+         * @param fileType File type of property group chunk file
          */
         @CXXValue
         PropertyGroup create(@CXXValue StdVector<Property> properties, @CXXValue FileType fileType);

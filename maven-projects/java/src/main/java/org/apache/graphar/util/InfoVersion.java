@@ -20,7 +20,6 @@
 package org.apache.graphar.util;
 
 import static org.apache.graphar.util.CppClassName.GAR_INFO_VERSION;
-import static org.apache.graphar.util.CppHeaderName.GAR_GRAPH_INFO_H;
 import static org.apache.graphar.util.CppHeaderName.GAR_VERSION_PARSER;
 
 import com.alibaba.fastffi.CXXHead;

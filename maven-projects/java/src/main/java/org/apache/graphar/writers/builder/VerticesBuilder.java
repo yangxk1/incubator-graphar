@@ -160,7 +160,8 @@ public interface VerticesBuilder extends CXXPointer {
          * @param vertexInfo The vertex info that describes the vertex type.
          * @param prefix The absolute prefix.
          */
-        VerticesBuilder create(@CXXReference StdSharedPtr<VertexInfo> vertexInfo, @CXXReference StdString prefix);
+        VerticesBuilder create(
+                @CXXReference StdSharedPtr<VertexInfo> vertexInfo, @CXXReference StdString prefix);
 
         /**
          * Initialize the VerciesBuilder.

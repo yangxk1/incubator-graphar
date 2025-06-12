@@ -36,9 +36,7 @@ import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.types.DataType;
 
-/**
- * Property is a class to store the property information for a group.
- */
+/** Property is a class to store the property information for a group. */
 @FFIGen
 @FFITypeAlias(GAR_PROPERTY)
 @CXXHead(GAR_GRAPH_INFO_H)
@@ -77,13 +75,10 @@ public interface Property extends CXXPointer {
         Property create();
 
         @CXXValue
-        Property create(StdString name,
-                        StdSharedPtr<DataType> type,
-                        boolean is_primary);
+        Property create(StdString name, StdSharedPtr<DataType> type, boolean is_primary);
 
         @CXXValue
-        Property create(StdString name,
-                        StdSharedPtr<DataType> type);
+        Property create(StdString name, StdSharedPtr<DataType> type);
 
         @CXXValue
         Property create(StdString name);

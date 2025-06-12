@@ -483,6 +483,7 @@ public interface EdgeChunkWriter extends CXXPointer {
          * @param edgeInfo The edge info that describes the edge type.
          * @param prefix The absolute prefix.
          */
-        EdgeChunkWriter create(@CXXReference StdSharedPtr<EdgeInfo> edgeInfo, @CXXReference StdString prefix);
+        EdgeChunkWriter create(
+                @CXXReference StdSharedPtr<EdgeInfo> edgeInfo, @CXXReference StdString prefix);
     }
 }

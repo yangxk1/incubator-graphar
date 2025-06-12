@@ -29,15 +29,12 @@ import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
 import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.types.DataType;
-import org.apache.graphar.types.FileType;
 import org.apache.graphar.util.InfoVersion;
 import org.apache.graphar.util.Result;
 import org.apache.graphar.util.Status;
 import org.apache.graphar.util.Yaml;
 
-/**
- * EdgeInfo is a class that stores metadata information about an edge.
- */
+/** EdgeInfo is a class that stores metadata information about an edge. */
 @FFIGen
 @FFITypeAlias(GAR_EDGE_INFO)
 @CXXHead(GAR_GRAPH_INFO_H)
@@ -48,16 +45,12 @@ public interface EdgeInfo extends CXXPointer {
     @FFINameAlias("AddAdjacentList")
     @FFIConst
     @CXXValue
-    Result<StdSharedPtr<EdgeInfo>> addAdjacentList(
-            StdSharedPtr<AdjacentList> adjList);
+    Result<StdSharedPtr<EdgeInfo>> addAdjacentList(StdSharedPtr<AdjacentList> adjList);
 
-    /**
-     * Add a property group to edge info for the given adjacency list type.
-     */
+    /** Add a property group to edge info for the given adjacency list type. */
     @FFINameAlias("AddPropertyGroup")
     @CXXValue
-    Result<StdSharedPtr<EdgeInfo>> addPropertyGroup(
-            @CXXReference PropertyGroup propertyGroup);
+    Result<StdSharedPtr<EdgeInfo>> addPropertyGroup(@CXXReference PropertyGroup propertyGroup);
 
     /**
      * Get the label of the source vertex.
@@ -156,8 +149,7 @@ public interface EdgeInfo extends CXXPointer {
      * @return True if the edge info contains the property group, false otherwise.
      */
     @FFINameAlias("HasPropertyGroup")
-    boolean hasPropertyGroup(
-            @CXXReference PropertyGroup propertyGroup);
+    boolean hasPropertyGroup(@CXXReference PropertyGroup propertyGroup);
 
     /**
      * Returns whether the edge info contains the given property for any adjacency list type.
@@ -170,9 +162,7 @@ public interface EdgeInfo extends CXXPointer {
 
     @FFINameAlias("GetAdjacentList")
     StdSharedPtr<AdjacentList> getAdjacentList(AdjListType adjListType);
-    /**
-     * Get the property groups.
-     */
+    /** Get the property groups. */
     @FFINameAlias("GetPropertyGroups")
     @CXXValue
     @CXXReference
@@ -180,20 +170,20 @@ public interface EdgeInfo extends CXXPointer {
 
     /**
      * Get the property group containing the given property.
+     *
      * @param property Property name.
      * @return Property group may be nullptr if the property is not found.
      */
     @FFINameAlias("GetPropertyGroup")
     @CXXValue
-    Result<@CXXReference PropertyGroup> getPropertyGroup(
-            @CXXReference StdString property);
+    Result<@CXXReference PropertyGroup> getPropertyGroup(@CXXReference StdString property);
 
     /**
      * Get the file path for the number of vertices.
      *
      * @param adjListType The adjacency list type.
      * @return A Result object containing the file path for the number of edges, or a Status object
-     * indicating an error.
+     *     indicating an error.
      */
     @FFINameAlias("GetVerticesNumFilePath")
     @CXXValue
@@ -203,9 +193,9 @@ public interface EdgeInfo extends CXXPointer {
      * Get the file path for the number of edges.
      *
      * @param vertexChunkIndex the vertex chunk index
-     * @param adjListType      The adjacency list type.
+     * @param adjListType The adjacency list type.
      * @return A Result object containing the file path for the number of edges, or a Status object
-     * indicating an error.
+     *     indicating an error.
      */
     @FFINameAlias("GetEdgesNumFilePath")
     @CXXValue
@@ -216,8 +206,8 @@ public interface EdgeInfo extends CXXPointer {
      * Get the file path of adj list topology chunk
      *
      * @param vertexChunkIndex the vertex chunk index
-     * @param edgeChunkIndex   index of edge adj list chunk of the vertex chunk
-     * @param adjListType      The adjacency list type.
+     * @param edgeChunkIndex index of edge adj list chunk of the vertex chunk
+     * @param adjListType The adjacency list type.
      */
     @FFINameAlias("GetAdjListFilePath")
     @CXXValue
@@ -241,7 +231,7 @@ public interface EdgeInfo extends CXXPointer {
      * with the vertex chunks
      *
      * @param vertexChunkIndex index of vertex chunk
-     * @param adjListType      The adjacency list type.
+     * @param adjListType The adjacency list type.
      */
     @FFINameAlias("GetAdjListOffsetFilePath")
     @CXXValue
@@ -262,10 +252,10 @@ public interface EdgeInfo extends CXXPointer {
      * Get the chunk file path of adj list property group the property group chunks is aligned with
      * the adj list topology chunks
      *
-     * @param propertyGroup    property group
-     * @param adjListType      adj list type that the property group belongs to
+     * @param propertyGroup property group
+     * @param adjListType adj list type that the property group belongs to
      * @param vertexChunkIndex the vertex chunk index
-     * @param edgeChunkIndex   index of edge property group chunk of the vertex chunk
+     * @param edgeChunkIndex index of edge property group chunk of the vertex chunk
      */
     @FFINameAlias("GetPropertyFilePath")
     @CXXValue
@@ -279,7 +269,7 @@ public interface EdgeInfo extends CXXPointer {
      * Get the path prefix of the property group chunk for the given adjacency list type.
      *
      * @param propertyGroup property group.
-     * @param adjListType   The adjacency list type.
+     * @param adjListType The adjacency list type.
      * @return A Result object containing the path prefix, or a Status object indicating an error.
      */
     @FFINameAlias("GetPropertyGroupPathPrefix")
@@ -292,7 +282,7 @@ public interface EdgeInfo extends CXXPointer {
      *
      * @param propertyName The name of the property.
      * @return A Result object containing the data type of the property, or a KeyError Status object
-     * if the property is not found.
+     *     if the property is not found.
      */
     @FFINameAlias("GetPropertyType")
     @CXXValue
@@ -303,7 +293,7 @@ public interface EdgeInfo extends CXXPointer {
      *
      * @param propertyName The name of the property.
      * @return A Result object containing a bool indicating whether the property is a primary key,
-     * or a KeyError Status object if the property is not found.
+     *     or a KeyError Status object if the property is not found.
      */
     @FFINameAlias("IsPrimaryKey")
     @CXXValue
@@ -347,17 +337,17 @@ public interface EdgeInfo extends CXXPointer {
         /**
          * Construct an EdgeInfo object with the given metadata information.
          *
-         * @param srcLabel       The label of the source vertex.
-         * @param edgeLabel      The label of the edge.
-         * @param dstLabel       The label of the destination vertex.
-         * @param chunkSize      The number of edges in each edge chunk.
-         * @param srcChunkSize   The number of source vertices in each vertex chunk.
-         * @param dstChunkSize   The number of destination vertices in each vertex chunk.
-         * @param directed       Whether the edge is directed.
-         * @param adjacentLists  The adjacency list vector of the edge.
+         * @param srcLabel The label of the source vertex.
+         * @param edgeLabel The label of the edge.
+         * @param dstLabel The label of the destination vertex.
+         * @param chunkSize The number of edges in each edge chunk.
+         * @param srcChunkSize The number of source vertices in each vertex chunk.
+         * @param dstChunkSize The number of destination vertices in each vertex chunk.
+         * @param directed Whether the edge is directed.
+         * @param adjacentLists The adjacency list vector of the edge.
          * @param propertyGroups The property group vector of the edge.
-         * @param prefix         The path prefix of the edge info.
-         * @param version        The version of the edge info.
+         * @param prefix The path prefix of the edge info.
+         * @param version The version of the edge info.
          */
         EdgeInfo create(
                 @CXXReference StdString srcLabel,

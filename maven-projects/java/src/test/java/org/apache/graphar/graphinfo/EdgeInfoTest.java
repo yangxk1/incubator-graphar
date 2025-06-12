@@ -20,15 +20,12 @@
 package org.apache.graphar.graphinfo;
 
 import java.io.File;
-
-import com.alibaba.fastffi.CXXReference;
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
 import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.types.DataType;
 import org.apache.graphar.types.FileType;
-import org.apache.graphar.types.Type;
 import org.apache.graphar.util.GrapharStaticFunctions;
 import org.apache.graphar.util.InfoVersion;
 import org.apache.graphar.util.Result;
@@ -45,9 +42,11 @@ public class EdgeInfoTest {
         long srcChunkSize = 100;
         long dstChunkSize = 100;
         boolean directed = true;
-        StdVector.Factory<AdjacentList> adjancyListVecFactory = StdVector.getStdVectorFactory("std::vector<graphar::AdjacentList>");
+        StdVector.Factory<AdjacentList> adjancyListVecFactory =
+                StdVector.getStdVectorFactory("std::vector<graphar::AdjacentList>");
         StdVector<AdjacentList> adjacentListStdVector = adjancyListVecFactory.create();
-        StdVector.Factory<PropertyGroup> propertyGroupVecFactory = StdVector.getStdVectorFactory("std::vector<graphar::PropertyGroup>");
+        StdVector.Factory<PropertyGroup> propertyGroupVecFactory =
+                StdVector.getStdVectorFactory("std::vector<graphar::PropertyGroup>");
         StdVector<PropertyGroup> propertyGroupStdVector = propertyGroupVecFactory.create();
         InfoVersion infoVersion = InfoVersion.create(1);
         StdString prefix = StdString.create("");
@@ -84,11 +83,13 @@ public class EdgeInfoTest {
         // test add adjList
         AdjListType adjListType = AdjListType.ordered_by_source;
         FileType fileType = FileType.PARQUET;
-        StdSharedPtr<AdjacentList> adjacentList = GrapharStaticFunctions.INSTANCE.createAdjacentList(adjListType, fileType);
+        StdSharedPtr<AdjacentList> adjacentList =
+                GrapharStaticFunctions.INSTANCE.createAdjacentList(adjListType, fileType);
         Assert.assertTrue(edgeInfo.addAdjacentList(adjacentList).status().ok());
         Assert.assertTrue(edgeInfo.hasAdjacentListType(adjListType));
         // same adj list type can not be added twice
-        StdSharedPtr<AdjacentList> adjacentListTwice = GrapharStaticFunctions.INSTANCE.createAdjacentList(adjListType, fileType);
+        StdSharedPtr<AdjacentList> adjacentListTwice =
+                GrapharStaticFunctions.INSTANCE.createAdjacentList(adjListType, fileType);
         Assert.assertTrue(edgeInfo.addAdjacentList(adjacentListTwice).hasError());
         FileType fileTypeResult = edgeInfo.getAdjacentList(adjListType).get().getFileType();
         Assert.assertEquals(fileType, fileTypeResult);
@@ -146,8 +147,7 @@ public class EdgeInfoTest {
         Assert.assertTrue(edgeInfo.hasPropertyGroup(propertyGroup));
         propertyGroups = edgeInfo.getPropertyGroups();
         Assert.assertEquals(1, propertyGroups.size());
-        Result<PropertyGroup> propertyGroupResult =
-                edgeInfo.getPropertyGroup(property.getName());
+        Result<PropertyGroup> propertyGroupResult = edgeInfo.getPropertyGroup(property.getName());
         Assert.assertFalse(propertyGroupResult.hasError());
         Assert.assertTrue(propertyGroup.eq(propertyGroupResult.value()));
         Result<DataType> dataTypeResult = edgeInfo.getPropertyType(property.getName());
@@ -172,8 +172,7 @@ public class EdgeInfoTest {
 
         // test property not exist
         StdString propertyNotExist = StdString.create("p_not_exist");
-        Assert.assertTrue(
-                edgeInfo.getPropertyGroup(propertyNotExist).status().isKeyError());
+        Assert.assertTrue(edgeInfo.getPropertyGroup(propertyNotExist).status().isKeyError());
         Assert.assertTrue(edgeInfo.getPropertyType(propertyNotExist).status().isKeyError());
 
         // test property group not exist

@@ -1,12 +1,12 @@
 package org.apache.graphar.graphinfo;
 
+import static org.apache.graphar.util.CppClassName.GAR_ADJACENT_LIST;
+import static org.apache.graphar.util.CppHeaderName.GAR_GRAPH_INFO_H;
+
 import com.alibaba.fastffi.*;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.types.FileType;
-
-import static org.apache.graphar.util.CppClassName.GAR_ADJACENT_LIST;
-import static org.apache.graphar.util.CppHeaderName.GAR_GRAPH_INFO_H;
 
 @FFIGen
 @FFITypeAlias(GAR_ADJACENT_LIST)
@@ -15,8 +15,7 @@ public interface AdjacentList extends FFIPointer {
 
     AdjacentList.Factory factory = FFITypeFactory.getFactory(AdjacentList.class);
 
-    static AdjacentList create(AdjListType type, FileType file_type,
-                               String prefix) {
+    static AdjacentList create(AdjListType type, FileType file_type, String prefix) {
         StdString stdPrefix = StdString.create(prefix);
         AdjacentList res = factory.create(type, file_type, stdPrefix);
         stdPrefix.delete();
@@ -32,7 +31,6 @@ public interface AdjacentList extends FFIPointer {
     @FFIConst
     AdjListType getType();
 
-
     @FFINameAlias("GetFileType")
     @CXXValue
     @FFIConst
@@ -44,7 +42,6 @@ public interface AdjacentList extends FFIPointer {
     @CXXReference
     StdString getPrefix();
 
-
     @FFINameAlias("isValidated")
     boolean isValidated();
 
@@ -53,7 +50,6 @@ public interface AdjacentList extends FFIPointer {
         AdjacentList create(
                 AdjListType adjListType, FileType fileType, @CXXReference StdString prefix);
 
-        AdjacentList create(
-                AdjListType adjListType, FileType fileType);
+        AdjacentList create(AdjListType adjListType, FileType fileType);
     }
 }

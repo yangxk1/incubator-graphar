@@ -20,7 +20,6 @@
 package org.apache.graphar.graphinfo;
 
 import com.alibaba.fastffi.CXXReference;
-import org.apache.graphar.stdcxx.StdMap;
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
@@ -38,16 +37,20 @@ public class GraphInfoTest {
     public void test1() {
         String graphName = "test_graph";
 
-        StdVector.Factory<StdSharedPtr<VertexInfo>> vertexInfoVecFactory = StdVector.getStdVectorFactory("std::vector<std::shared_ptr<graphar::VertexInfo>>");
+        StdVector.Factory<StdSharedPtr<VertexInfo>> vertexInfoVecFactory =
+                StdVector.getStdVectorFactory("std::vector<std::shared_ptr<graphar::VertexInfo>>");
         StdVector<StdSharedPtr<VertexInfo>> vertexInfoVector = vertexInfoVecFactory.create();
 
-        StdVector.Factory<StdSharedPtr<EdgeInfo>> edgeInfoVecFactory = StdVector.getStdVectorFactory("std::vector<std::shared_ptr<graphar::EdgeInfo>>");
+        StdVector.Factory<StdSharedPtr<EdgeInfo>> edgeInfoVecFactory =
+                StdVector.getStdVectorFactory("std::vector<std::shared_ptr<graphar::EdgeInfo>>");
         StdVector<StdSharedPtr<EdgeInfo>> edgeInfoVector = edgeInfoVecFactory.create();
         String prefix = "test_prefix";
         Result<StdSharedPtr<InfoVersion>> parsedVersion = InfoVersion.parse("gar/v1");
         Assert.assertTrue(parsedVersion.status().ok());
         StdSharedPtr<InfoVersion> version = parsedVersion.value();
-        GraphInfo graphInfo = GraphInfo.create(graphName, vertexInfoVector, edgeInfoVector, prefix, version.get());
+        GraphInfo graphInfo =
+                GraphInfo.create(
+                        graphName, vertexInfoVector, edgeInfoVector, prefix, version.get());
         Assert.assertEquals(graphName, graphInfo.getName().toJavaString());
         Assert.assertEquals(prefix, graphInfo.getPrefix().toJavaString());
         Assert.assertTrue(version.get().eq(graphInfo.getInfoVersion().get()));
@@ -58,9 +61,16 @@ public class GraphInfoTest {
         StdString vertexPrefix = StdString.create("test_vertex_prefix");
         StdString vertexInfoPath = StdString.create("/tmp/test_vertex.vertex.yml");
         StdString unknownLabel = StdString.create("text_not_exist");
-        StdVector.Factory<PropertyGroup> propertyGroupVecFactory = StdVector.getStdVectorFactory("std::vector<graphar::PropertyGroup>");
+        StdVector.Factory<PropertyGroup> propertyGroupVecFactory =
+                StdVector.getStdVectorFactory("std::vector<graphar::PropertyGroup>");
         StdVector<PropertyGroup> propertyGroupStdVector = propertyGroupVecFactory.create();
-        StdSharedPtr<VertexInfo> vertexInfo = GrapharStaticFunctions.INSTANCE.createVertexInfo(vertexLabel, vertexChunkSize, propertyGroupStdVector, vertexPrefix, version);
+        StdSharedPtr<VertexInfo> vertexInfo =
+                GrapharStaticFunctions.INSTANCE.createVertexInfo(
+                        vertexLabel,
+                        vertexChunkSize,
+                        propertyGroupStdVector,
+                        vertexPrefix,
+                        version);
         Assert.assertEquals(0, graphInfo.getVertexInfos().size());
         Result<StdSharedPtr<GraphInfo>> addVertex = graphInfo.addVertex(vertexInfo);
         Assert.assertTrue(addVertex.status().ok());
@@ -81,9 +91,21 @@ public class GraphInfoTest {
         StdString dstLabel = StdString.create("test_vertex");
         long edgeChunkSize = 1024;
         StdString edgeInfoPath = StdString.create("/tmp/test_edge.edge.yml");
-        StdVector.Factory<AdjacentList> adjancyListVecFactory = StdVector.getStdVectorFactory("std::vector<graphar::AdjacentList>");
+        StdVector.Factory<AdjacentList> adjancyListVecFactory =
+                StdVector.getStdVectorFactory("std::vector<graphar::AdjacentList>");
         StdVector<AdjacentList> adjacentListStdVector = adjancyListVecFactory.create();
-        StdSharedPtr<EdgeInfo> edgeInfo = GrapharStaticFunctions.INSTANCE.createEdgeInfo(srcLabel, edgeLabel, dstLabel, edgeChunkSize, vertexChunkSize, vertexChunkSize, true, adjacentListStdVector, propertyGroupStdVector, StdString.create(prefix));
+        StdSharedPtr<EdgeInfo> edgeInfo =
+                GrapharStaticFunctions.INSTANCE.createEdgeInfo(
+                        srcLabel,
+                        edgeLabel,
+                        dstLabel,
+                        edgeChunkSize,
+                        vertexChunkSize,
+                        vertexChunkSize,
+                        true,
+                        adjacentListStdVector,
+                        propertyGroupStdVector,
+                        StdString.create(prefix));
         Assert.assertEquals(0, graphInfo.getEdgeInfos().size());
         Result<StdSharedPtr<GraphInfo>> addEdgeGraph = graphInfo.addEdge(edgeInfo);
         Assert.assertTrue(addEdgeGraph.status().ok());
@@ -110,7 +132,8 @@ public class GraphInfoTest {
         StdSharedPtr<GraphInfo> graphInfo = graphInfoResult.value();
         Assert.assertEquals("ldbc_sample", graphInfo.get().getName().toJavaString());
         Assert.assertEquals(root + "/ldbc_sample/csv/", graphInfo.get().getPrefix().toJavaString());
-        StdVector<StdSharedPtr<@CXXReference VertexInfo>> vertexInfos = graphInfo.get().getVertexInfos();
+        StdVector<StdSharedPtr<@CXXReference VertexInfo>> vertexInfos =
+                graphInfo.get().getVertexInfos();
         StdVector<StdSharedPtr<@CXXReference EdgeInfo>> edgeInfos = graphInfo.get().getEdgeInfos();
         Assert.assertEquals(1, vertexInfos.size());
         Assert.assertEquals(1, edgeInfos.size());
@@ -130,7 +153,8 @@ public class GraphInfoTest {
         Assert.assertFalse(graphInfoResult.hasError());
         StdSharedPtr<GraphInfo> graphInfo = graphInfoResult.value();
         Assert.assertEquals("ldbc", graphInfo.get().getName().toJavaString());
-        StdVector<StdSharedPtr<@CXXReference VertexInfo>> vertexInfos = graphInfo.get().getVertexInfos();
+        StdVector<StdSharedPtr<@CXXReference VertexInfo>> vertexInfos =
+                graphInfo.get().getVertexInfos();
         StdVector<StdSharedPtr<@CXXReference EdgeInfo>> edgeInfos = graphInfo.get().getEdgeInfos();
         Assert.assertEquals(8, vertexInfos.size());
         Assert.assertEquals(23, edgeInfos.size());

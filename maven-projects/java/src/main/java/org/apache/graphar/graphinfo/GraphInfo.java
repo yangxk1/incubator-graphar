@@ -41,9 +41,7 @@ import org.apache.graphar.util.InfoVersion;
 import org.apache.graphar.util.Result;
 import org.apache.graphar.util.Status;
 
-/**
- * GraphInfo is a class to store the graph meta information.
- */
+/** GraphInfo is a class to store the graph meta information. */
 @FFIGen
 @FFITypeAlias(GAR_GRAPH_INFO)
 @CXXHead(GAR_GRAPH_INFO_H)
@@ -51,11 +49,12 @@ public interface GraphInfo extends CXXPointer {
 
     Factory factory = FFITypeFactory.getFactory(GraphInfo.class);
 
-    static GraphInfo create(String graphName,
-                            StdVector<StdSharedPtr<VertexInfo>> vertexInfos,
-                            StdVector<StdSharedPtr<EdgeInfo>> edgeInfos,
-                            String prefix,
-                            InfoVersion version) {
+    static GraphInfo create(
+            String graphName,
+            StdVector<StdSharedPtr<VertexInfo>> vertexInfos,
+            StdVector<StdSharedPtr<EdgeInfo>> edgeInfos,
+            String prefix,
+            InfoVersion version) {
         StdString stdGraphName = StdString.create(graphName);
         StdString stdPrefix = StdString.create(prefix);
         GraphInfo res = factory.create(stdGraphName, vertexInfos, edgeInfos, stdPrefix, version);
@@ -69,7 +68,7 @@ public interface GraphInfo extends CXXPointer {
      *
      * @param path The path of the YAML file.
      * @return A Result object containing the GraphInfo instance, or a Status object indicating an
-     * error.
+     *     error.
      */
     static Result<StdSharedPtr<GraphInfo>> load(String path) {
         StdString stdString = StdString.create(path);
@@ -95,9 +94,9 @@ public interface GraphInfo extends CXXPointer {
      * Get the edge info with the given source vertex label, edge label, and destination vertex
      * label.
      *
-     * @param srcLabel  The label of the source vertex.
+     * @param srcLabel The label of the source vertex.
      * @param edgeLabel The label of the edge.
-     * @param dstLabel  The label of the destination vertex.
+     * @param dstLabel The label of the destination vertex.
      * @return A Result object containing the edge info, or a Status object indicating an error.
      */
     default StdSharedPtr<@CXXReference EdgeInfo> getEdgeInfo(
@@ -113,9 +112,7 @@ public interface GraphInfo extends CXXPointer {
         return result;
     }
 
-    /**
-     * Get the vertex info index with the given label.
-     */
+    /** Get the vertex info index with the given label. */
     default int getVertexInfoIndex(String label) {
         StdString stdLabel = StdString.create(label);
         int index = getVertexInfoIndex(stdLabel);
@@ -124,16 +121,14 @@ public interface GraphInfo extends CXXPointer {
     }
 
     /**
-     * Get the edge info index with the given source vertex label, edge
-     * label, and destination label.
+     * Get the edge info index with the given source vertex label, edge label, and destination
+     * label.
      */
-    default int getEdgeInfoIndex(
-            String srcLabel, String edgeLabel, String dstLabel) {
+    default int getEdgeInfoIndex(String srcLabel, String edgeLabel, String dstLabel) {
         StdString stdStrSrcLabel = StdString.create(srcLabel);
         StdString stdStrEdgeLabel = StdString.create(edgeLabel);
         StdString stdStrDstLabel = StdString.create(dstLabel);
-        int index =
-                getEdgeInfoIndex(stdStrSrcLabel, stdStrEdgeLabel, stdStrDstLabel);
+        int index = getEdgeInfoIndex(stdStrSrcLabel, stdStrEdgeLabel, stdStrDstLabel);
         stdStrSrcLabel.delete();
         stdStrEdgeLabel.delete();
         stdStrDstLabel.delete();
@@ -143,7 +138,7 @@ public interface GraphInfo extends CXXPointer {
     /**
      * Get the property group of vertex by label and property
      *
-     * @param label    vertex label
+     * @param label vertex label
      * @param property vertex property that belongs to the group
      */
     @FFINameAlias("GetVertexPropertyGroup")
@@ -154,10 +149,10 @@ public interface GraphInfo extends CXXPointer {
     /**
      * Get the property group of edge by label, property and adj list type
      *
-     * @param srcLabel    source vertex label
-     * @param edgeLabel   edge label
-     * @param dstLabel    destination vertex label
-     * @param property    edge property that belongs to the group
+     * @param srcLabel source vertex label
+     * @param edgeLabel edge label
+     * @param dstLabel destination vertex label
+     * @param property edge property that belongs to the group
      * @param adjListType adj list type of edge
      */
     @FFINameAlias("GetEdgePropertyGroup")
@@ -174,7 +169,7 @@ public interface GraphInfo extends CXXPointer {
      *
      * @param vertexInfo The vertex info to add.
      * @return A Status object indicating the success or failure of the operation. Returns
-     * InvalidOperation if the vertex info is already contained.
+     *     InvalidOperation if the vertex info is already contained.
      */
     @FFINameAlias("AddVertex")
     @CXXValue
@@ -185,7 +180,7 @@ public interface GraphInfo extends CXXPointer {
      *
      * @param edgeInfo The edge info to add.
      * @return A Status object indicating the success or failure of the operation. Returns
-     * `InvalidOperation` if the edge info is already contained.
+     *     `InvalidOperation` if the edge info is already contained.
      */
     @FFINameAlias("AddEdge")
     @CXXValue
@@ -269,16 +264,14 @@ public interface GraphInfo extends CXXPointer {
             @CXXReference StdString edgeLabel,
             @CXXReference StdString dstLabel);
 
-    /**
-     * Get the vertex info index with the given label.
-     */
+    /** Get the vertex info index with the given label. */
     @FFINameAlias("GetVertexInfo")
     @FFIConst
     int getVertexInfoIndex(@CXXReference StdString label);
 
     /**
-     * Get the edge info index with the given source vertex label, edge
-     * label, and destination label.
+     * Get the edge info index with the given source vertex label, edge label, and destination
+     * label.
      */
     @FFINameAlias("GetEdgeInfoIndex")
     @FFIConst
@@ -306,11 +299,11 @@ public interface GraphInfo extends CXXPointer {
         /**
          * Constructs a GraphInfo instance.
          *
-         * @param graphName   The name of the graph.
+         * @param graphName The name of the graph.
          * @param vertexInfos The vertex info vector of the graph.
-         * @param edgeInfos   The edge info vector of the graph.
-         * @param prefix      The absolute path prefix to store chunk files of the graph.
-         * @param version     The version of the graph info.
+         * @param edgeInfos The edge info vector of the graph.
+         * @param prefix The absolute path prefix to store chunk files of the graph.
+         * @param version The version of the graph info.
          */
         GraphInfo create(
                 @CXXReference StdString graphName,

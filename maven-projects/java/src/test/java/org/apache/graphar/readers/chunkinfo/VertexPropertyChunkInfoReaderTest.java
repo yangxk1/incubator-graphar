@@ -45,10 +45,13 @@ public class VertexPropertyChunkInfoReaderTest {
         StdString label = StdString.create("person");
         StdString propertyName = StdString.create("id");
         Assert.assertNotNull(graphInfo.get().getVertexInfo(label));
-        Result<PropertyGroup> maybeGroup = graphInfo.get().getVertexPropertyGroup(label, propertyName);
+        Result<PropertyGroup> maybeGroup =
+                graphInfo.get().getVertexPropertyGroup(label, propertyName);
         Assert.assertFalse(maybeGroup.hasError());
         PropertyGroup group = maybeGroup.value();
-        StdSharedPtr<PropertyGroup> groupPtr = GrapharStaticFunctions.INSTANCE.createPropertyGroup(group.getProperties(), group.getFileType(), group.getPrefix());
+        StdSharedPtr<PropertyGroup> groupPtr =
+                GrapharStaticFunctions.INSTANCE.createPropertyGroup(
+                        group.getProperties(), group.getFileType(), group.getPrefix());
         Result<VertexPropertyChunkInfoReader> maybeReader =
                 GrapharStaticFunctions.INSTANCE.constructVertexPropertyChunkInfoReader(
                         graphInfo, label, groupPtr);

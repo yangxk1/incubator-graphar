@@ -39,9 +39,7 @@ import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.types.ValidateLevel;
 import org.apache.graphar.util.Status;
 
-/**
- * EdgeBuilder is designed for building and writing a collection of edges.
- */
+/** EdgeBuilder is designed for building and writing a collection of edges. */
 @FFIGen
 @FFITypeAlias(GAR_BUILDER_EDGES_BUILDER)
 @CXXHead(GAR_EDGES_BUILDER_H)
@@ -66,9 +64,7 @@ public interface EdgesBuilder extends CXXPointer {
     @CXXValue
     ValidateLevel getValidateLevel();
 
-    /**
-     * Clear the edges in this EdgessBuilder.
-     */
+    /** Clear the edges in this EdgessBuilder. */
     @FFINameAlias("Clear")
     void clear();
 
@@ -88,9 +84,9 @@ public interface EdgesBuilder extends CXXPointer {
      * <p>ValidateLevel::strong_validate: besides weak_validate, also validate the schema of the
      * edge is consistent with the info defined.
      *
-     * @param e             The edge to add.
+     * @param e The edge to add.
      * @param validateLevel The validate level for this operation, which is the builder's validate
-     *                      level by default.
+     *     level by default.
      * @return Status: ok or Status::Invalid error.
      */
     @FFINameAlias("AddEdge")
@@ -130,13 +126,13 @@ public interface EdgesBuilder extends CXXPointer {
         /**
          * Initialize the EdgesBuilder.
          *
-         * @param edgeInfo      The edge info that describes the vertex type.
-         * @param prefix        The absolute prefix.
-         * @param adjListType   The adj list type of the edges.
-         * @param numVertices   The total number of vertices for source or destination.
+         * @param edgeInfo The edge info that describes the vertex type.
+         * @param prefix The absolute prefix.
+         * @param adjListType The adj list type of the edges.
+         * @param numVertices The total number of vertices for source or destination.
          * @param validateLevel The global validate level for the writer, with no validate by
-         *                      default. It could be ValidateLevel::no_validate, ValidateLevel::weak_validate or
-         *                      ValidateLevel::strong_validate, but could not be ValidateLevel::default_validate.
+         *     default. It could be ValidateLevel::no_validate, ValidateLevel::weak_validate or
+         *     ValidateLevel::strong_validate, but could not be ValidateLevel::default_validate.
          */
         EdgesBuilder create(
                 @CXXValue StdSharedPtr<EdgeInfo> edgeInfo,
@@ -148,8 +144,8 @@ public interface EdgesBuilder extends CXXPointer {
         /**
          * Initialize the EdgesBuilder.
          *
-         * @param edgeInfo    The edge info that describes the vertex type.
-         * @param prefix      The absolute prefix.
+         * @param edgeInfo The edge info that describes the vertex type.
+         * @param prefix The absolute prefix.
          * @param adjListType The adj list type of the edges.
          * @param numVertices The total number of vertices for source or destination.
          */

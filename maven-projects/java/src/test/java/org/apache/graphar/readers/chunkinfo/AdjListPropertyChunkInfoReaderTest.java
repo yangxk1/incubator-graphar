@@ -45,11 +45,19 @@ public class AdjListPropertyChunkInfoReaderTest {
         StdString propertyName = StdString.create("creationDate");
 
         Result<PropertyGroup> maybeGroup =
-                graphInfo.get().getEdgePropertyGroup(
-                        srcLabel, edgeLabel, dstLabel, propertyName, AdjListType.ordered_by_source);
+                graphInfo
+                        .get()
+                        .getEdgePropertyGroup(
+                                srcLabel,
+                                edgeLabel,
+                                dstLabel,
+                                propertyName,
+                                AdjListType.ordered_by_source);
         Assert.assertTrue(maybeGroup.status().ok());
         PropertyGroup group = maybeGroup.value();
-        StdSharedPtr<PropertyGroup> groupPtr = GrapharStaticFunctions.INSTANCE.createPropertyGroup(group.getProperties(), group.getFileType(), group.getPrefix());
+        StdSharedPtr<PropertyGroup> groupPtr =
+                GrapharStaticFunctions.INSTANCE.createPropertyGroup(
+                        group.getProperties(), group.getFileType(), group.getPrefix());
         Result<AdjListPropertyChunkInfoReader> maybePropertyReader =
                 GrapharStaticFunctions.INSTANCE.constructAdjListPropertyChunkInfoReader(
                         graphInfo,
@@ -116,8 +124,14 @@ public class AdjListPropertyChunkInfoReaderTest {
 
         // test reader to read ordered by dest
         maybeGroup =
-                graphInfo.get().getEdgePropertyGroup(
-                        srcLabel, edgeLabel, dstLabel, propertyName, AdjListType.ordered_by_dest);
+                graphInfo
+                        .get()
+                        .getEdgePropertyGroup(
+                                srcLabel,
+                                edgeLabel,
+                                dstLabel,
+                                propertyName,
+                                AdjListType.ordered_by_dest);
         Assert.assertTrue(maybeGroup.status().ok());
         graphInfo = maybeGraphInfo.value();
         Result<AdjListPropertyChunkInfoReader> maybeDstReader =
