@@ -22,16 +22,7 @@ package org.apache.graphar.graphinfo;
 import static org.apache.graphar.util.CppClassName.GAR_PROPERTY;
 import static org.apache.graphar.util.CppHeaderName.GAR_GRAPH_INFO_H;
 
-import com.alibaba.fastffi.CXXHead;
-import com.alibaba.fastffi.CXXPointer;
-import com.alibaba.fastffi.CXXValue;
-import com.alibaba.fastffi.FFIFactory;
-import com.alibaba.fastffi.FFIGen;
-import com.alibaba.fastffi.FFIGetter;
-import com.alibaba.fastffi.FFINameAlias;
-import com.alibaba.fastffi.FFISetter;
-import com.alibaba.fastffi.FFITypeAlias;
-import com.alibaba.fastffi.FFITypeFactory;
+import com.alibaba.fastffi.*;
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.types.DataType;
@@ -59,7 +50,7 @@ public interface Property extends CXXPointer {
 
     @FFISetter
     @FFINameAlias("type")
-    void setType(StdSharedPtr<@CXXValue DataType> type);
+    void setType(@CXXValue StdSharedPtr<DataType> type);
 
     @FFIGetter
     @FFINameAlias("is_primary")
@@ -67,20 +58,36 @@ public interface Property extends CXXPointer {
 
     @FFISetter
     @FFINameAlias("is_primary")
-    void setPrimary(boolean primary);
+    void setPrimary(boolean nullable);
+
+    @FFIGetter
+    @FFINameAlias("is_nullable")
+    boolean isNullable();
+
+    @FFISetter
+    @FFINameAlias("is_nullable")
+    void setNullable(boolean nullable);
 
     @FFIFactory
     interface Factory {
-        @CXXValue
-        Property create();
 
         @CXXValue
-        Property create(StdString name, StdSharedPtr<DataType> type, boolean is_primary);
+        Property create(
+                @CXXReference StdString name,
+                @CXXReference StdSharedPtr<DataType> type,
+                boolean is_primary,
+                boolean is_nullable);
 
         @CXXValue
-        Property create(StdString name, StdSharedPtr<DataType> type);
+        Property create(
+                @CXXReference StdString name,
+                @CXXReference StdSharedPtr<DataType> type,
+                boolean is_primary);
 
         @CXXValue
-        Property create(StdString name);
+        Property create(@CXXReference StdString name, @CXXReference StdSharedPtr<DataType> type);
+
+        @CXXValue
+        Property create(@CXXReference StdString name);
     }
 }

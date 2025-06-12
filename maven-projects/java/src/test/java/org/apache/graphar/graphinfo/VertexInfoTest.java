@@ -54,10 +54,9 @@ public class VertexInfoTest {
         Assert.assertTrue(infoVersion.get().eq(vertexInfo.getVersion().get()));
 
         // test add property group
-        Property property = Property.factory.create();
-        property.setName(StdString.create("id"));
-        property.setType(GrapharStaticFunctions.INSTANCE.int32Type());
-        property.setPrimary(true);
+        Property property =
+                Property.factory.create(
+                        StdString.create("id"), GrapharStaticFunctions.INSTANCE.int32Type(), true);
         StdVector.Factory<Property> propertyFactory =
                 StdVector.getStdVectorFactory("std::vector<graphar::Property>");
         StdVector<Property> propertyStdVector = propertyFactory.create();
@@ -80,10 +79,11 @@ public class VertexInfoTest {
         Assert.assertTrue(vertexInfo.addPropertyGroup(propertyGroup2).status().isInvalid());
         Assert.assertEquals(1, vertexInfo.getPropertyGroups().size());
 
-        Property property2 = Property.factory.create();
-        property2.setName(StdString.create("name"));
-        property2.setType(GrapharStaticFunctions.INSTANCE.stringType());
-        property2.setPrimary(false);
+        Property property2 =
+                Property.factory.create(
+                        StdString.create("name"),
+                        GrapharStaticFunctions.INSTANCE.stringType(),
+                        false);
         StdVector<Property> propertyStdVector2 = propertyFactory.create();
         propertyStdVector2.push_back(property2);
         StdSharedPtr<PropertyGroup> propertyGroup3 =

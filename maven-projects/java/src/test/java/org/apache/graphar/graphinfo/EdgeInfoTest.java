@@ -139,10 +139,11 @@ public class EdgeInfoTest {
         Assert.assertTrue(edgeInfo.getOffsetPathPrefix(adjListTypeNotExist).status().isKeyError());
 
         // test add property group
-        Property property = Property.factory.create();
-        property.setName(StdString.create("creationDate"));
-        property.setType(GrapharStaticFunctions.INSTANCE.stringType());
-        property.setPrimary(false);
+        Property property =
+                Property.factory.create(
+                        StdString.create("creationDate"),
+                        GrapharStaticFunctions.INSTANCE.stringType(),
+                        false);
         StdVector.Factory<Property> propertyVecFactory =
                 StdVector.getStdVectorFactory("std::vector<graphar::Property>");
         StdVector<Property> propertyStdVector = propertyVecFactory.create();
