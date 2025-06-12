@@ -20,6 +20,7 @@
 package org.apache.graphar.graphinfo;
 
 import java.io.File;
+
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
@@ -35,12 +36,20 @@ public class VertexInfoTest {
     public void test1() {
         StdString label = StdString.create("test_vertex");
         long chunkSize = 100;
-        InfoVersion infoVersion = InfoVersion.create(1);
-        VertexInfo vertexInfo = VertexInfo.factory.create(label, chunkSize, infoVersion);
+        StdVector.Factory<StdSharedPtr<PropertyGroup>> propertyGroupVecFactory =
+                StdVector.getStdVectorFactory(
+                        "std::vector<std::shared_ptr<graphar::PropertyGroup>>");
+        StdVector<StdSharedPtr<PropertyGroup>> propertyGroupStdVector =
+                propertyGroupVecFactory.create();
+        StdString prefix = StdString.create("");
+        Result<StdSharedPtr<InfoVersion>> versionParseResult = InfoVersion.parse("gar/v1");
+        Assert.assertTrue(versionParseResult.status().ok());
+        StdSharedPtr<InfoVersion> infoVersion = versionParseResult.value();
+        VertexInfo vertexInfo = VertexInfo.factory.create(label, chunkSize, propertyGroupStdVector, prefix, infoVersion);
         Assert.assertTrue(label.eq(vertexInfo.getLabel()));
         Assert.assertEquals(chunkSize, vertexInfo.getChunkSize());
         Assert.assertEquals(label.toJavaString() + "/", vertexInfo.getPrefix().toJavaString());
-        Assert.assertTrue(infoVersion.eq(vertexInfo.getVersion()));
+        Assert.assertTrue(infoVersion.get().eq(vertexInfo.getVersion().get()));
 
         // test add property group
         Property property = Property.factory.create();

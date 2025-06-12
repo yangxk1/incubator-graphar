@@ -20,6 +20,7 @@
 package org.apache.graphar.graphinfo;
 
 import java.io.File;
+
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
@@ -52,7 +53,9 @@ public class EdgeInfoTest {
                         "std::vector<std::shared_ptr<graphar::PropertyGroup>>");
         StdVector<StdSharedPtr<PropertyGroup>> propertyGroupStdVector =
                 propertyGroupVecFactory.create();
-        InfoVersion infoVersion = InfoVersion.create(1);
+        Result<StdSharedPtr<InfoVersion>> infoVersionResult = InfoVersion.parse("gar/v1");
+        Assert.assertTrue(infoVersionResult.status().ok());
+        StdSharedPtr<InfoVersion> infoVersion = infoVersionResult.value();
         StdString prefix = StdString.create("");
         EdgeInfo edgeInfo =
                 EdgeInfo.factory.create(
@@ -82,7 +85,7 @@ public class EdgeInfoTest {
                         + dstLabel.toJavaString()
                         + "/",
                 edgeInfo.getPrefix().toJavaString());
-        Assert.assertTrue(infoVersion.eq(edgeInfo.getVersion()));
+        Assert.assertTrue(infoVersion.get().eq(edgeInfo.getVersion().get()));
 
         // test add adjList
         AdjListType adjListType = AdjListType.ordered_by_source;

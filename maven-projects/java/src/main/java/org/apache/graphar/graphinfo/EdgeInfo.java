@@ -129,9 +129,9 @@ public interface EdgeInfo extends CXXPointer {
      *
      * @return The version info of the edge.
      */
-    @FFINameAlias("GetVersion")
+    @FFINameAlias("version")
     @CXXReference
-    InfoVersion getVersion();
+    StdSharedPtr<InfoVersion> getVersion();
 
     /**
      * Return whether the edge info contains the adjacency list information.
@@ -362,7 +362,7 @@ public interface EdgeInfo extends CXXPointer {
                 @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
                 @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
                 @CXXReference StdString prefix,
-                @CXXReference InfoVersion version);
+                @CXXReference StdSharedPtr<InfoVersion> version);
 
         EdgeInfo create(
                 @CXXReference StdString srcLabel,
