@@ -335,8 +335,6 @@ public interface EdgeInfo extends CXXPointer {
 
     @FFIFactory
     interface Factory {
-        EdgeInfo create();
-
         /**
          * Construct an EdgeInfo object with the given metadata information.
          *
@@ -363,7 +361,7 @@ public interface EdgeInfo extends CXXPointer {
                 @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
                 @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
                 @CXXReference StdString prefix,
-                @CXXReference StdSharedPtr<InfoVersion> version);
+                StdSharedPtr<InfoVersion> version);
 
         EdgeInfo create(
                 @CXXReference StdString srcLabel,

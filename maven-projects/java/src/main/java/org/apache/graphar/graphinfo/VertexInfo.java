@@ -247,7 +247,7 @@ public interface VertexInfo extends CXXPointer {
                 @FFITypeAlias(GAR_ID_TYPE) long chunkSize,
                 @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
                 @CXXReference StdString prefix,
-                @CXXReference StdSharedPtr<InfoVersion> version);
+                StdSharedPtr<InfoVersion> version);
 
         /**
          * Construct a VertexInfo object with the given metadata information.
