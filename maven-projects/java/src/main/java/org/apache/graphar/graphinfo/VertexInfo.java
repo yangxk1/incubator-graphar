@@ -55,7 +55,8 @@ public interface VertexInfo extends CXXPointer {
      */
     @FFINameAlias("AddPropertyGroup")
     @CXXValue
-    Result<StdSharedPtr<VertexInfo>> addPropertyGroup(@CXXValue StdSharedPtr<PropertyGroup> propertyGroup);
+    Result<StdSharedPtr<VertexInfo>> addPropertyGroup(
+            @CXXValue StdSharedPtr<PropertyGroup> propertyGroup);
 
     /**
      * Get the label of the vertex.
