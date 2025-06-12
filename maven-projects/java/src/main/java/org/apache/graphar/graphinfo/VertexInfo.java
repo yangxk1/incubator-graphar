@@ -43,9 +43,7 @@ import org.apache.graphar.util.Result;
 import org.apache.graphar.util.Status;
 import org.apache.graphar.util.Yaml;
 
-/**
- * VertexInfo is a class that stores metadata information about a vertex.
- */
+/** VertexInfo is a class that stores metadata information about a vertex. */
 @FFIGen
 @FFITypeAlias(GAR_VERTEX_INFO)
 @CXXHead(GAR_GRAPH_INFO_H)
@@ -115,7 +113,7 @@ public interface VertexInfo extends CXXPointer {
      *
      * @param propertyName The name of the property.
      * @return A Result object containing the PropertyGroup object, or a KeyError Status object if
-     * the property is not found.
+     *     the property is not found.
      */
     @FFINameAlias("GetPropertyGroup")
     @CXXValue
@@ -126,7 +124,7 @@ public interface VertexInfo extends CXXPointer {
      *
      * @param propertyName The name of the property.
      * @return A Result object containing the data type of the property, or a KeyError Status object
-     * if the property is not found.
+     *     if the property is not found.
      */
     @FFINameAlias("GetPropertyType")
     @CXXValue
@@ -165,7 +163,7 @@ public interface VertexInfo extends CXXPointer {
      *
      * @param propertyName The name of the property.
      * @return A Result object containing a bool indicating whether the property is a primary key,
-     * or a KeyError Status object if the property is not found.
+     *     or a KeyError Status object if the property is not found.
      */
     @FFINameAlias("IsPrimaryKey")
     @CXXValue
@@ -185,9 +183,9 @@ public interface VertexInfo extends CXXPointer {
      * Get the file path for the specified property group and chunk index.
      *
      * @param propertyGroup The PropertyGroup object to get the file path for.
-     * @param chunkIndex    The chunk index.
+     * @param chunkIndex The chunk index.
      * @return A Result object containing the file path, or a KeyError Status object if the property
-     * group is not found in the vertex info.
+     *     group is not found in the vertex info.
      */
     @FFINameAlias("GetFilePath")
     @CXXValue
@@ -200,7 +198,7 @@ public interface VertexInfo extends CXXPointer {
      *
      * @param propertyGroup The PropertyGroup object to get the path prefix for.
      * @return A Result object containing the path prefix, or a KeyError Status object if the
-     * property group is not found in the vertex info.
+     *     property group is not found in the vertex info.
      */
     @FFINameAlias("GetPathPrefix")
     @CXXValue
@@ -228,7 +226,7 @@ public interface VertexInfo extends CXXPointer {
      *
      * @param yaml A shared pointer to a Yaml object containing the YAML string.
      * @return A Result object containing the VertexInfo object, or a Status object indicating an
-     * error.
+     *     error.
      */
     static Result<StdSharedPtr<VertexInfo>> load(StdSharedPtr<Yaml> yaml) {
         return Static.INSTANCE.Load(yaml);
@@ -239,10 +237,10 @@ public interface VertexInfo extends CXXPointer {
         /**
          * Construct a VertexInfo object with the given metadata information.
          *
-         * @param label     The label of the vertex.
+         * @param label The label of the vertex.
          * @param chunkSize The number of vertices in each vertex chunk.
-         * @param prefix    The prefix of the vertex info.
-         * @param version   The version of the vertex info.
+         * @param prefix The prefix of the vertex info.
+         * @param version The version of the vertex info.
          */
         VertexInfo create(
                 @CXXReference StdString label,
@@ -254,9 +252,9 @@ public interface VertexInfo extends CXXPointer {
         /**
          * Construct a VertexInfo object with the given metadata information.
          *
-         * @param label     The label of the vertex.
+         * @param label The label of the vertex.
          * @param chunkSize The number of vertices in each vertex chunk.
-         * @param prefix    The prefix of the vertex info.
+         * @param prefix The prefix of the vertex info.
          */
         VertexInfo create(
                 @CXXReference StdString label,
@@ -267,7 +265,7 @@ public interface VertexInfo extends CXXPointer {
         /**
          * Construct a VertexInfo object with the given metadata information.
          *
-         * @param label     The label of the vertex.
+         * @param label The label of the vertex.
          * @param chunkSize The number of vertices in each vertex chunk.
          */
         VertexInfo create(
@@ -275,9 +273,7 @@ public interface VertexInfo extends CXXPointer {
                 @FFITypeAlias(GAR_ID_TYPE) long chunkSize,
                 @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups);
 
-        /**
-         * Copy constructor.
-         */
+        /** Copy constructor. */
         VertexInfo create(@CXXReference VertexInfo other);
     }
 

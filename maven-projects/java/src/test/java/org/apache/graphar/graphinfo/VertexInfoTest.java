@@ -20,7 +20,6 @@
 package org.apache.graphar.graphinfo;
 
 import java.io.File;
-
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
@@ -45,7 +44,9 @@ public class VertexInfoTest {
         Result<StdSharedPtr<InfoVersion>> versionParseResult = InfoVersion.parse("gar/v1");
         Assert.assertTrue(versionParseResult.status().ok());
         StdSharedPtr<InfoVersion> infoVersion = versionParseResult.value();
-        VertexInfo vertexInfo = VertexInfo.factory.create(label, chunkSize, propertyGroupStdVector, prefix, infoVersion);
+        VertexInfo vertexInfo =
+                VertexInfo.factory.create(
+                        label, chunkSize, propertyGroupStdVector, prefix, infoVersion);
         Assert.assertTrue(label.eq(vertexInfo.getLabel()));
         Assert.assertEquals(chunkSize, vertexInfo.getChunkSize());
         Assert.assertEquals(label.toJavaString() + "/", vertexInfo.getPrefix().toJavaString());

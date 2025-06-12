@@ -20,7 +20,6 @@
 package org.apache.graphar.graphinfo;
 
 import java.io.File;
-
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
