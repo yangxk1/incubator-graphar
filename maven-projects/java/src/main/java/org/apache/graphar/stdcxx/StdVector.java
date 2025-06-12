@@ -61,34 +61,11 @@ public interface StdVector<E> extends CXXPointer, FFISettablePointer {
 
     void push_back(@CXXValue E e);
 
-    default void add(@CXXReference E value) {
-        long size = size();
-        long cap = capacity();
-        if (size == cap) {
-            reserve(cap << 1);
-        }
-        push_back(value);
-    }
-
-    default @CXXReference E append() {
-        long size = size();
-        long cap = capacity();
-        if (size == cap) {
-            reserve(cap << 1);
-        }
-        resize(size + 1);
-        return get(size);
-    }
-
     void clear();
 
     long data();
 
     long capacity();
-
-    void reserve(long size);
-
-    void resize(long size);
 
     @FFIFactory
     interface Factory<E> {
