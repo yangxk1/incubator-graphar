@@ -78,7 +78,7 @@ function(build_graphar_cpp)
             CMAKE_ARGS "${GAR_CMAKE_ARGS}"
             BUILD_BYPRODUCTS "${GAR_BUILD_BYPRODUCTS}")
 
-    set(GAR_LIBRARY_TARGET gar_shared)
+    set(GAR_LIBRARY_TARGET graphar)
 
     file(MAKE_DIRECTORY "${GAR_INCLUDE_DIR}")
     add_library(${GAR_LIBRARY_TARGET} SHARED IMPORTED)
