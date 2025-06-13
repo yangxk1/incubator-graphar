@@ -263,7 +263,7 @@ public interface GrapharStaticFunctions {
             @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunk_size,
             @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
             @CXXReference StdString prefix,
-            StdSharedPtr<InfoVersion> version);
+            @CXXValue StdSharedPtr<InfoVersion> version);
 
     @FFINameAlias("CreateVertexInfo")
     @CXXValue
@@ -329,7 +329,7 @@ public interface GrapharStaticFunctions {
             @CXXReference StdVector<StdSharedPtr<VertexInfo>> vertexInfos,
             @CXXReference StdVector<StdSharedPtr<EdgeInfo>> edgeInfos,
             @CXXReference StdString prefix,
-            StdSharedPtr<InfoVersion> version);
+            @CXXValue StdSharedPtr<InfoVersion> version);
 
     @FFINameAlias("boolean")
     @CXXReference
