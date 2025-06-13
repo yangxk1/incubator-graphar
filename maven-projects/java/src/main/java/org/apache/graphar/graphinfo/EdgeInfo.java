@@ -20,15 +20,12 @@
 package org.apache.graphar.graphinfo;
 
 import static org.apache.graphar.util.CppClassName.GAR_EDGE_INFO;
-import static org.apache.graphar.util.CppClassName.GAR_ID_TYPE;
 import static org.apache.graphar.util.CppHeaderName.GAR_GRAPH_INFO_H;
 
 import com.alibaba.fastffi.*;
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
-import org.apache.graphar.types.AdjListType;
-import org.apache.graphar.types.DataType;
 import org.apache.graphar.util.InfoVersion;
 import org.apache.graphar.util.Result;
 import org.apache.graphar.util.Status;
@@ -132,15 +129,6 @@ public interface EdgeInfo extends CXXPointer {
     StdSharedPtr<InfoVersion> getVersion();
 
     /**
-     * Return whether the edge info contains the adjacency list information.
-     *
-     * @param adjListType The adjacency list type.
-     * @return True if the edge info contains the adjacency list information, false otherwise.
-     */
-    @FFINameAlias("HasAdjacentListType")
-    boolean hasAdjacentListType(@CXXValue AdjListType adjListType);
-
-    /**
      * Returns whether the edge info contains the given property group for the specified adjacency
      * list type.
      *
@@ -149,19 +137,6 @@ public interface EdgeInfo extends CXXPointer {
      */
     @FFINameAlias("HasPropertyGroup")
     boolean hasPropertyGroup(@CXXReference StdSharedPtr<PropertyGroup> propertyGroup);
-
-    /**
-     * Returns whether the edge info contains the given property for any adjacency list type.
-     *
-     * @param property Property name to check.
-     * @return True if the edge info contains the property, false otherwise.
-     */
-    @FFINameAlias("HasProperty")
-    boolean hasPropertyGroup(@CXXReference StdString property);
-
-    @FFINameAlias("GetAdjacentList")
-    @CXXValue
-    StdSharedPtr<AdjacentList> getAdjacentList(@CXXValue AdjListType adjListType);
 
     /** Get the property groups. */
     @FFINameAlias("GetPropertyGroups")
@@ -178,117 +153,6 @@ public interface EdgeInfo extends CXXPointer {
     @FFINameAlias("GetPropertyGroup")
     @CXXValue
     StdSharedPtr<PropertyGroup> getPropertyGroup(@CXXReference StdString property);
-
-    /**
-     * Get the file path for the number of vertices.
-     *
-     * @param adjListType The adjacency list type.
-     * @return A Result object containing the file path for the number of edges, or a Status object
-     *     indicating an error.
-     */
-    @FFINameAlias("GetVerticesNumFilePath")
-    @CXXValue
-    Result<StdString> getVerticesNumFilePath(@CXXValue AdjListType adjListType);
-
-    /**
-     * Get the file path for the number of edges.
-     *
-     * @param vertexChunkIndex the vertex chunk index
-     * @param adjListType The adjacency list type.
-     * @return A Result object containing the file path for the number of edges, or a Status object
-     *     indicating an error.
-     */
-    @FFINameAlias("GetEdgesNumFilePath")
-    @CXXValue
-    Result<StdString> getEdgesNumFilePath(
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex, @CXXValue AdjListType adjListType);
-
-    /**
-     * Get the file path of adj list topology chunk
-     *
-     * @param vertexChunkIndex the vertex chunk index
-     * @param edgeChunkIndex index of edge adj list chunk of the vertex chunk
-     * @param adjListType The adjacency list type.
-     */
-    @FFINameAlias("GetAdjListFilePath")
-    @CXXValue
-    Result<StdString> getAdjListFilePath(
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long edgeChunkIndex,
-            @CXXValue AdjListType adjListType);
-
-    /**
-     * Get the path prefix of the adjacency list topology chunk for the given adjacency list type.
-     *
-     * @param adjListType The adjacency list type.
-     * @return A Result object containing the directory, or a Status object indicating an error.
-     */
-    @FFINameAlias("GetAdjListPathPrefix")
-    @CXXValue
-    Result<StdString> getAdjListPathPrefix(@CXXValue AdjListType adjListType);
-
-    /**
-     * Get the adjacency list offset chunk file path of vertex chunk the offset chunks is aligned
-     * with the vertex chunks
-     *
-     * @param vertexChunkIndex index of vertex chunk
-     * @param adjListType The adjacency list type.
-     */
-    @FFINameAlias("GetAdjListOffsetFilePath")
-    @CXXValue
-    Result<StdString> getAdjListOffsetFilePath(
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex, @CXXValue AdjListType adjListType);
-
-    /**
-     * Get the path prefix of the adjacency list offset chunk for the given adjacency list type.
-     *
-     * @param adjListType The adjacency list type.
-     * @return A Result object containing the path prefix, or a Status object indicating an error.
-     */
-    @FFINameAlias("GetOffsetPathPrefix")
-    @CXXValue
-    Result<StdString> getOffsetPathPrefix(@CXXValue AdjListType adjListType);
-
-    /**
-     * Get the chunk file path of adj list property group the property group chunks is aligned with
-     * the adj list topology chunks
-     *
-     * @param propertyGroup property group
-     * @param adjListType adj list type that the property group belongs to
-     * @param vertexChunkIndex the vertex chunk index
-     * @param edgeChunkIndex index of edge property group chunk of the vertex chunk
-     */
-    @FFINameAlias("GetPropertyFilePath")
-    @CXXValue
-    Result<StdString> getPropertyFilePath(
-            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
-            @CXXValue AdjListType adjListType,
-            @FFINameAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long edgeChunkIndex);
-
-    /**
-     * Get the path prefix of the property group chunk for the given adjacency list type.
-     *
-     * @param propertyGroup property group.
-     * @param adjListType The adjacency list type.
-     * @return A Result object containing the path prefix, or a Status object indicating an error.
-     */
-    @FFINameAlias("GetPropertyGroupPathPrefix")
-    @CXXValue
-    Result<StdString> getPropertyGroupPathPrefix(
-            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
-            @CXXValue AdjListType adjListType);
-
-    /**
-     * Get the data type of the specified property.
-     *
-     * @param propertyName The name of the property.
-     * @return A Result object containing the data type of the property, or a KeyError Status object
-     *     if the property is not found.
-     */
-    @FFINameAlias("GetPropertyType")
-    @CXXValue
-    Result<StdSharedPtr<DataType>> getPropertyType(@CXXReference StdString propertyName);
 
     /**
      * Returns whether the specified property is a primary key.
