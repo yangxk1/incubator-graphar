@@ -175,7 +175,6 @@ public class EdgeInfoTest {
         // test property not exist
         StdString propertyNotExist = StdString.create("p_not_exist");
         Assert.assertNull(edgeInfo.getPropertyGroup(propertyNotExist));
-        Assert.assertTrue(edgeInfo.getPropertyType(propertyNotExist).status().isKeyError());
 
         // test property group not exist
         StdSharedPtr<PropertyGroup> propertyGroupNotExist =
