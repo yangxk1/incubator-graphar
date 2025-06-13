@@ -36,6 +36,7 @@ import com.alibaba.fastffi.FFITypeFactory;
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
+import org.apache.graphar.types.DataType;
 import org.apache.graphar.util.InfoVersion;
 import org.apache.graphar.util.Result;
 import org.apache.graphar.util.Status;
@@ -114,6 +115,17 @@ public interface VertexInfo extends CXXPointer {
     @FFINameAlias("GetPropertyGroup")
     @CXXValue
     StdSharedPtr<PropertyGroup> getPropertyGroup(@CXXReference StdString propertyName);
+
+    /**
+     * Get the data type of the specified property.
+     *
+     * @param propertyName The name of the property.
+     * @return A Result object containing the data type of the property, or a KeyError Status object
+     *     if the property is not found.
+     */
+    @FFINameAlias("GetPropertyType")
+    @CXXValue
+    Result<StdSharedPtr<DataType>> getPropertyType(@CXXReference StdString propertyName);
 
     /**
      * Get whether the vertex info contains the specified property.
