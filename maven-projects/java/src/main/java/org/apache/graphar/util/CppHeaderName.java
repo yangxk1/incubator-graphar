@@ -27,7 +27,7 @@ public class CppHeaderName {
     public static final String GAR_VERSION_PARSER = "graphar/util/version_parser.h";
     public static final String GAR_GRAPH_H = "graphar/graph.h";
     public static final String GAR_FWD_H = "graphar/fwd.h";
-    public static final String GAR_DATA_TYPE = "graphar/util/data_type.h";
+    public static final String GAR_DATA_TYPE_H = "graphar/util/data_type.h";
     // reader
     public static final String GAR_CHUNK_INFO_READER_H = "graphar/reader/chunk_info_reader.h";
     public static final String GAR_ARROW_CHUNK_READER_H = "graphar/reader/arrow_chunk_reader.h";
