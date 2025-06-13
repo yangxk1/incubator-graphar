@@ -60,7 +60,7 @@
     </target>
 
     <target name="run-llvm4jni" depends="link-llvm-bitcode">
-        <echo message="Run LLVM4JNI" level="debug"/>
+        <echo message="Run LLVM4JNI" level="info"/>
 
         <mkdir dir="${project.build.directory}/llvm4jni-output"/>
 
@@ -83,7 +83,7 @@
             <arg value="-output" />
             <arg value="${project.build.directory}/llvm4jni-output" />
             <arg value="-v" />
-            <arg value="DEBUG" />
+            <arg value="INFO" />
             <jvmarg value="-Dllvm4jni.supportIndirectCall=simple" />
             <jvmarg value="-Dllvm4jni.supportLocalConstant=true" />
             <jvmarg value="-Dllvm4jni.maximumBytecodeSize=128" />
