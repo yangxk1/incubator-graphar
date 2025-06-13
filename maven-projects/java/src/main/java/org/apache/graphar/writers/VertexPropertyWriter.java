@@ -72,7 +72,7 @@ public interface VertexPropertyWriter extends CXXPointer {
      * @param validateLevel The validate level to set.
      */
     @FFINameAlias("SetValidateLevel")
-    void setValidateLevel(@CXXReference ValidateLevel validateLevel);
+    void setValidateLevel(@CXXValue ValidateLevel validateLevel);
 
     /**
      * Get the validate level.
