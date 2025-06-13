@@ -43,6 +43,67 @@ import com.alibaba.fastffi.FFITypeAlias;
 @CXXTemplate(cxx = "bool", java = "java.lang.Boolean")
 @CXXTemplate(cxx = "long", java = "java.lang.Long")
 @CXXTemplate(cxx = "int64_t", java = "java.lang.Long")
+@CXXTemplate(cxx = GAR_ID_TYPE, java = "java.lang.Long")
+@CXXTemplate(cxx = STD_STRING, java = "org.apache.graphar.stdcxx.StdString")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_GRAPH_INFO + ">",
+        java = "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.graphinfo.GraphInfo>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_VERTEX_INFO + ">",
+        java = "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.graphinfo.VertexInfo>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_EDGE_INFO + ">",
+        java = "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.graphinfo.EdgeInfo>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_PROPERTY_GROUP + ">",
+        java = "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.graphinfo.PropertyGroup>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_DATA_TYPE + ">",
+        java = "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.types.DataType>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_INFO_VERSION + ">",
+        java = "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.util.InfoVersion>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<graphar::Yaml>",
+        java = "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.util.Yaml>")
+@CXXTemplate(
+        cxx = STD_PAIR + "<graphar::IdType,graphar::IdType>",
+        java = "org.apache.graphar.stdcxx.StdPair<Long,Long>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_ADJ_LIST_ARROW_CHUNK_READER + ">",
+        java =
+                "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.readers.arrowchunk.AdjListArrowChunkReader>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_ADJ_LIST_OFFSET_ARROW_CHUNK_READER + ">",
+        java =
+                "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.readers.arrowchunk.AdjListOffsetArrowChunkReader>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_ADJ_LIST_PROPERTY_ARROW_CHUNK_READER + ">",
+        java =
+                "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.readers.arrowchunk.AdjListPropertyArrowChunkReader>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_VERTEX_PROPERTY_ARROW_CHUNK_READER + ">",
+        java =
+                "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.readers.arrowchunk.VertexPropertyArrowChunkReader>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_ADJ_LIST_CHUNK_INFO_READER + ">",
+        java =
+                "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.readers.chunkinfo.AdjListChunkInfoReader>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_ADJ_LIST_PROPERTY_CHUNK_INFO_READER + ">",
+        java =
+                "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.readers.chunkinfo.AdjListPropertyChunkInfoReader>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_VERTEX_PROPERTY_CHUNK_INFO_READER + ">",
+        java =
+                "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.readers.chunkinfo.VertexPropertyChunkInfoReader>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_VERTICES_COLLECTION + ">",
+        java =
+                "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.vertices.VerticesCollection>")
+@CXXTemplate(
+        cxx = STD_SHARED_PTR + "<" + GAR_EDGES_COLLECTION + ">",
+        java = "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.edges.EdgesCollection>")
 public interface Result<T> extends CXXPointer {
 
     @CXXReference
