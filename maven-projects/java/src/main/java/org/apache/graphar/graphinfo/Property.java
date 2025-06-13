@@ -23,9 +23,7 @@ import static org.apache.graphar.util.CppClassName.GAR_PROPERTY;
 import static org.apache.graphar.util.CppHeaderName.GAR_GRAPH_INFO_H;
 
 import com.alibaba.fastffi.*;
-import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
-import org.apache.graphar.types.DataType;
 
 /** Property is a class to store the property information for a group. */
 @FFIGen
@@ -42,15 +40,6 @@ public interface Property extends CXXPointer {
     @FFISetter
     @FFINameAlias("name")
     void setName(@CXXValue StdString name);
-
-    @FFIGetter
-    @FFINameAlias("type")
-    @CXXValue
-    StdSharedPtr<DataType> getType();
-
-    @FFISetter
-    @FFINameAlias("type")
-    void setType(@CXXValue StdSharedPtr<DataType> type);
 
     @FFIGetter
     @FFINameAlias("is_primary")
