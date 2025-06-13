@@ -26,12 +26,14 @@ import com.alibaba.fastffi.CXXHead;
 import com.alibaba.fastffi.CXXOperator;
 import com.alibaba.fastffi.CXXPointer;
 import com.alibaba.fastffi.CXXReference;
+import com.alibaba.fastffi.CXXValue;
 import com.alibaba.fastffi.FFIConst;
 import com.alibaba.fastffi.FFIGen;
 import com.alibaba.fastffi.FFINameAlias;
 import com.alibaba.fastffi.FFITypeAlias;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
+import org.apache.graphar.types.FileType;
 
 /**
  * PropertyGroup is a class to store the property group information.
@@ -65,6 +67,15 @@ public interface PropertyGroup extends CXXPointer {
     @FFIConst
     @CXXReference
     boolean IsValidated();
+
+    /**
+     * Get the file type of property group chunk file.
+     *
+     * @return The file type of group.
+     */
+    @FFINameAlias("GetFileType")
+    @CXXValue
+    FileType getFileType();
 
     /**
      * Get the prefix of property group chunk file.
