@@ -329,5 +329,4 @@ public interface GrapharStaticFunctions {
             @CXXReference StdVector<StdSharedPtr<EdgeInfo>> edgeInfos,
             @CXXReference StdString prefix,
             @CXXValue StdSharedPtr<InfoVersion> version);
-
 }
