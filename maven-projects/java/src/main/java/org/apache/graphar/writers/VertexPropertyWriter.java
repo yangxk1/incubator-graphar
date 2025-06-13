@@ -66,13 +66,13 @@ public interface VertexPropertyWriter extends CXXPointer {
 
     Factory factory = FFITypeFactory.getFactory(VertexPropertyWriter.class);
 
-    /**
-     * Set the validate level.
-     *
-     * @param validateLevel The validate level to set.
-     */
-    @FFINameAlias("SetValidateLevel")
-    void setValidateLevel(@CXXValue ValidateLevel validateLevel);
+    //    /**
+    //     * Set the validate level.
+    //     *
+    //     * @param validateLevel The validate level to set.
+    //     */
+    //    @FFINameAlias("SetValidateLevel")
+    //    void setValidateLevel(@CXXValue ValidateLevel validateLevel);
 
     /**
      * Get the validate level.
