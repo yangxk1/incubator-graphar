@@ -58,9 +58,6 @@ import com.alibaba.fastffi.FFITypeAlias;
         cxx = STD_SHARED_PTR + "<" + GAR_PROPERTY_GROUP + ">",
         java = "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.graphinfo.PropertyGroup>")
 @CXXTemplate(
-        cxx = STD_SHARED_PTR + "<" + GAR_DATA_TYPE + ">",
-        java = "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.types.DataType>")
-@CXXTemplate(
         cxx = STD_SHARED_PTR + "<" + GAR_INFO_VERSION + ">",
         java = "org.apache.graphar.stdcxx.StdSharedPtr<org.apache.graphar.util.InfoVersion>")
 @CXXTemplate(
