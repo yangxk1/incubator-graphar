@@ -80,8 +80,8 @@ public class VertexPropertyWriterTest {
 
         // Get & set validate level
         Assert.assertEquals(ValidateLevel.no_validate, writer.getValidateLevel());
-        //        writer.setValidateLevel(ValidateLevel.strong_validate);
-        //        Assert.assertEquals(ValidateLevel.strong_validate, writer.getValidateLevel());
+        writer.setValidateLevel(ValidateLevel.strong_validate);
+        Assert.assertEquals(ValidateLevel.strong_validate, writer.getValidateLevel());
 
         // Valid cases
         // Write the table

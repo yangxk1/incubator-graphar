@@ -49,14 +49,14 @@ public interface VerticesBuilder extends CXXPointer {
     /** Clear the vertices in this VerciesBuilder. */
     @FFINameAlias("Clear")
     void clear();
-    //
-    //    /**
-    //     * Set the validate level.
-    //     *
-    //     * @param validateLevel The validate level to set.
-    //     */
-    //    @FFINameAlias("SetValidateLevel")
-    //    void setValidateLevel(@CXXValue ValidateLevel validateLevel);
+
+    /**
+     * Set the validate level.
+     *
+     * @param validateLevel The validate level to set.
+     */
+    @FFINameAlias("SetValidateLevel")
+    void setValidateLevel(@CXXValue ValidateLevel validateLevel);
 
     /**
      * Get the validate level.
@@ -139,18 +139,20 @@ public interface VerticesBuilder extends CXXPointer {
     @FFIFactory
     interface Factory {
         /**
-         * // * Initialize the VerciesBuilder. // * // * @param vertexInfo The vertex info that
-         * describes the vertex type. // * @param prefix The absolute prefix. // * @param
-         * startVertexIndex The start index of the vertices' collection. // * @param validateLevel
-         * The global validate level for the writer, with no validate by // * default. It could be
-         * ValidateLevel::no_validate, ValidateLevel::weak_validate or // *
-         * ValidateLevel::strong_validate, but could not be ValidateLevel::default_validate. //
+         * Initialize the VerciesBuilder.
+         *
+         * @param vertexInfo The vertex info that describes the vertex type.
+         * @param prefix The absolute prefix.
+         * @param startVertexIndex The start index of the vertices' collection.
+         * @param validateLevel The global validate level for the writer, with no validate by
+         *     default. It could be ValidateLevel::no_validate, ValidateLevel::weak_validate or
+         *     ValidateLevel::strong_validate, but could not be ValidateLevel::default_validate.
          */
-        //        VerticesBuilder create(
-        //                @CXXReference StdSharedPtr<VertexInfo> vertexInfo,
-        //                @CXXReference StdString prefix,
-        //                @FFITypeAlias(GAR_ID_TYPE) long startVertexIndex,
-        //                @CXXValue ValidateLevel validateLevel);
+        VerticesBuilder create(
+                @CXXReference StdSharedPtr<VertexInfo> vertexInfo,
+                @CXXReference StdString prefix,
+                @FFITypeAlias(GAR_ID_TYPE) long startVertexIndex,
+                @CXXValue ValidateLevel validateLevel);
 
         /**
          * Initialize the VerciesBuilder.

@@ -52,8 +52,8 @@ public class EdgesBuilderTest {
 
         // get & set validate level
         Assert.assertEquals(ValidateLevel.no_validate, builder.getValidateLevel());
-        //        builder.setValidateLevel(ValidateLevel.strong_validate);
-        //        Assert.assertEquals(ValidateLevel.strong_validate, builder.getValidateLevel());
+        builder.setValidateLevel(ValidateLevel.strong_validate);
+        Assert.assertEquals(ValidateLevel.strong_validate, builder.getValidateLevel());
 
         // check different validate levels
         Edge e = Edge.factory.create(0, 1);
