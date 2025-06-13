@@ -73,7 +73,7 @@ public interface EdgeChunkWriter extends CXXPointer {
      * @param validateLevel The validate level to set.
      */
     @FFINameAlias("SetValidateLevel")
-    void setValidateLevel(@CXXValue ValidateLevel validateLevel);
+    void setValidateLevel(@CXXReference ValidateLevel validateLevel);
 
     /**
      * Get the validate level.
@@ -96,8 +96,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     @FFINameAlias("WriteEdgesNum")
     @CXXValue
     Status writeEdgesNum(
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long count,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXReference @FFITypeAlias(GAR_ID_TYPE) long count,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -111,7 +111,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     @FFINameAlias("WriteVerticesNum")
     @CXXValue
     Status writeVerticesNum(
-            @FFITypeAlias(GAR_ID_TYPE) long count, @CXXValue ValidateLevel validateLevel);
+            @CXXReference @FFITypeAlias(GAR_ID_TYPE) long count,
+            @CXXValue ValidateLevel validateLevel);
 
     /**
      * Write the number of vertices into the file.
@@ -121,7 +122,7 @@ public interface EdgeChunkWriter extends CXXPointer {
      */
     @FFINameAlias("WriteVerticesNum")
     @CXXValue
-    Status writeVerticesNum(@FFITypeAlias(GAR_ID_TYPE) long count);
+    Status writeVerticesNum(@CXXReference @FFITypeAlias(GAR_ID_TYPE) long count);
 
     /**
      * Copy a file as a offset chunk.
@@ -136,7 +137,7 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status writeOffsetChunk(
             @CXXReference StdString fileName,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -153,8 +154,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status writeAdjListChunk(
             @CXXReference StdString fileName,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -172,9 +173,9 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status writePropertyChunk(
             @CXXReference StdString fileName,
-            @CXXReference PropertyGroup propertyGroup,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
+            @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -190,7 +191,7 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status writeOffsetChunk(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -207,8 +208,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status writeAdjListChunk(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -227,8 +228,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     Status writePropertyChunk(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
             @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -245,8 +246,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status writePropertyChunk(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -263,8 +264,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status writeChunk(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -281,8 +282,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status writeAdjListTable(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -301,8 +302,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     Status writePropertyTable(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
             @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -319,8 +320,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status writePropertyTable(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -337,8 +338,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status writeTable(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -355,8 +356,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status sortAndWriteAdjListTable(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -371,8 +372,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status sortAndWriteAdjListTable(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex);
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex);
 
     /**
      * Sort the edges, and write chunks of a single property group for the edges of a vertex chunk.
@@ -390,8 +391,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     Status sortAndWritePropertyTable(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
             @CXXReference StdSharedPtr<PropertyGroup> propertyGroup,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -408,8 +409,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status sortAndWritePropertyTable(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -427,8 +428,8 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status sortAndWriteTable(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex,
             @CXXValue ValidateLevel validateLevel);
 
     /**
@@ -444,27 +445,11 @@ public interface EdgeChunkWriter extends CXXPointer {
     @CXXValue
     Status sortAndWriteTable(
             @CXXReference StdSharedPtr<ArrowTable> inputTable,
-            @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
-            @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex);
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long vertexChunkIndex,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long startChunkIndex);
 
     @FFIFactory
     interface Factory {
-        /**
-         * Initialize the EdgeChunkWriter.
-         *
-         * @param edgeInfo The edge info that describes the edge type.
-         * @param prefix The absolute prefix.
-         * @param adjListType The adj list type for the edges.
-         * @param validateLevel The global validate level for the writer, with no validate by
-         *     default. It could be ValidateLevel::no_validate, ValidateLevel::weak_validate or
-         *     ValidateLevel::strong_validate, but could not be ValidateLevel::default_validate.
-         */
-        EdgeChunkWriter create(
-                @CXXReference StdSharedPtr<EdgeInfo> edgeInfo,
-                @CXXReference StdString prefix,
-                @CXXValue AdjListType adjListType,
-                @CXXValue ValidateLevel validateLevel);
-
         /**
          * Initialize the EdgeChunkWriter.
          *
@@ -476,14 +461,5 @@ public interface EdgeChunkWriter extends CXXPointer {
                 @CXXReference StdSharedPtr<EdgeInfo> edgeInfo,
                 @CXXReference StdString prefix,
                 @CXXValue AdjListType adjListType);
-
-        /**
-         * Initialize the EdgeChunkWriter.
-         *
-         * @param edgeInfo The edge info that describes the edge type.
-         * @param prefix The absolute prefix.
-         */
-        EdgeChunkWriter create(
-                @CXXReference StdSharedPtr<EdgeInfo> edgeInfo, @CXXReference StdString prefix);
     }
 }
