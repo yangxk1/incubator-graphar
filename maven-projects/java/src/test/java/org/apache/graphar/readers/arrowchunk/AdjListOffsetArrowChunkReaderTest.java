@@ -44,11 +44,11 @@ public class AdjListOffsetArrowChunkReaderTest {
         StdString edgeLabel = StdString.create("knows");
         StdString dstLabel = StdString.create("person");
         Assert.assertNotNull(graphInfo.get().getEdgeInfo(srcLabel, edgeLabel, dstLabel));
-        Result<AdjListOffsetArrowChunkReader> maybeReader =
+        Result<StdSharedPtr<AdjListOffsetArrowChunkReader>> maybeReader =
                 GrapharStaticFunctions.INSTANCE.constructAdjListOffsetArrowChunkReader(
                         graphInfo, srcLabel, edgeLabel, dstLabel, AdjListType.ordered_by_source);
         Assert.assertTrue(maybeReader.status().ok());
-        AdjListOffsetArrowChunkReader reader = maybeReader.value();
+        AdjListOffsetArrowChunkReader reader = maybeReader.value().get();
         Result<StdSharedPtr<ArrowArray>> result = reader.getChunk();
         Assert.assertTrue(result.status().ok());
         StdSharedPtr<ArrowArray> array = result.value();

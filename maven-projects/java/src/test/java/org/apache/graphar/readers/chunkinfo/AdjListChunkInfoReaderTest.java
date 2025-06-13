@@ -45,11 +45,11 @@ public class AdjListChunkInfoReaderTest {
         StdString srcLabel = StdString.create("person");
         StdString edgeLabel = StdString.create("knows");
         StdString dstLabel = StdString.create("person");
-        Result<AdjListChunkInfoReader> maybeReader =
+        Result<StdSharedPtr<AdjListChunkInfoReader>> maybeReader =
                 GrapharStaticFunctions.INSTANCE.constructAdjListChunkInfoReader(
                         graphInfo, srcLabel, edgeLabel, dstLabel, AdjListType.ordered_by_source);
         Assert.assertTrue(maybeGraphInfo.status().ok());
-        AdjListChunkInfoReader reader = maybeReader.value();
+        AdjListChunkInfoReader reader = maybeReader.value().get();
 
         // get chunk file path & validate
         Result<StdString> maybeChunkPath = reader.getChunk();
@@ -105,11 +105,11 @@ public class AdjListChunkInfoReaderTest {
         Assert.assertTrue(reader.seekDst(100).isInvalid());
 
         // test reader to read ordered by dest
-        Result<AdjListChunkInfoReader> maybeDstReader =
+        Result<StdSharedPtr<AdjListChunkInfoReader>> maybeDstReader =
                 GrapharStaticFunctions.INSTANCE.constructAdjListChunkInfoReader(
                         graphInfo, srcLabel, edgeLabel, dstLabel, AdjListType.ordered_by_dest);
         Assert.assertTrue(maybeDstReader.status().ok());
-        AdjListChunkInfoReader dstReader = maybeDstReader.value();
+        AdjListChunkInfoReader dstReader = maybeDstReader.value().get();
         Assert.assertTrue(dstReader.seekDst(100).ok());
         maybeChunkPath = dstReader.getChunk();
         Assert.assertTrue(maybeChunkPath.status().ok());

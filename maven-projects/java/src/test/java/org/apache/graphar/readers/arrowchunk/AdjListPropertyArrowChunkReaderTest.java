@@ -54,7 +54,7 @@ public class AdjListPropertyArrowChunkReaderTest {
         StdSharedPtr<PropertyGroup> groupPtr =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
                         group.getProperties(), group.getFileType(), group.getPrefix());
-        Result<AdjListPropertyArrowChunkReader> maybeReader =
+        Result<StdSharedPtr<AdjListPropertyArrowChunkReader>> maybeReader =
                 GrapharStaticFunctions.INSTANCE.constructAdjListPropertyArrowChunkReader(
                         graphInfo,
                         srcLabel,
@@ -63,7 +63,7 @@ public class AdjListPropertyArrowChunkReaderTest {
                         groupPtr,
                         AdjListType.ordered_by_source);
         Assert.assertTrue(maybeReader.status().ok());
-        AdjListPropertyArrowChunkReader reader = maybeReader.value();
+        AdjListPropertyArrowChunkReader reader = maybeReader.value().get();
         Result<StdSharedPtr<ArrowTable>> result = reader.getChunk();
         Assert.assertTrue(result.status().ok());
         StdSharedPtr<ArrowTable> table = result.value();

@@ -54,7 +54,7 @@ public class AdjListPropertyChunkInfoReaderTest {
         StdSharedPtr<PropertyGroup> groupPtr =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
                         group.getProperties(), group.getFileType(), group.getPrefix());
-        Result<AdjListPropertyChunkInfoReader> maybePropertyReader =
+        Result<StdSharedPtr<AdjListPropertyChunkInfoReader>> maybePropertyReader =
                 GrapharStaticFunctions.INSTANCE.constructAdjListPropertyChunkInfoReader(
                         graphInfo,
                         srcLabel,
@@ -63,7 +63,7 @@ public class AdjListPropertyChunkInfoReaderTest {
                         groupPtr,
                         AdjListType.ordered_by_source);
         Assert.assertTrue(maybePropertyReader.status().ok());
-        AdjListPropertyChunkInfoReader reader = maybePropertyReader.value();
+        AdjListPropertyChunkInfoReader reader = maybePropertyReader.value().get();
 
         // get chunk file path & validate
         Result<StdString> maybeChunkPath = reader.getChunk();
@@ -123,7 +123,7 @@ public class AdjListPropertyChunkInfoReaderTest {
         propertyGroup = edgeInfo.get().getPropertyGroup(propertyName);
         Assert.assertNotNull(propertyGroup);
         graphInfo = maybeGraphInfo.value();
-        Result<AdjListPropertyChunkInfoReader> maybeDstReader =
+        Result<StdSharedPtr<AdjListPropertyChunkInfoReader>> maybeDstReader =
                 GrapharStaticFunctions.INSTANCE.constructAdjListPropertyChunkInfoReader(
                         graphInfo,
                         srcLabel,
@@ -132,7 +132,7 @@ public class AdjListPropertyChunkInfoReaderTest {
                         groupPtr,
                         AdjListType.ordered_by_dest);
         Assert.assertTrue(maybeDstReader.status().ok());
-        AdjListPropertyChunkInfoReader dstReader = maybeDstReader.value();
+        AdjListPropertyChunkInfoReader dstReader = maybeDstReader.value().get();
         Assert.assertTrue(dstReader.seekDst(100).ok());
         maybeChunkPath = dstReader.getChunk();
         Assert.assertTrue(maybeChunkPath.status().ok());

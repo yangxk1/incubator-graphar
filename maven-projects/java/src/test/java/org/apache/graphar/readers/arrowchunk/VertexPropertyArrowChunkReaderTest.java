@@ -50,11 +50,11 @@ public class VertexPropertyArrowChunkReaderTest {
         StdSharedPtr<PropertyGroup> groupPtr =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
                         group.getProperties(), group.getFileType(), group.getPrefix());
-        Result<VertexPropertyArrowChunkReader> maybeReader =
+        Result<StdSharedPtr<VertexPropertyArrowChunkReader>> maybeReader =
                 GrapharStaticFunctions.INSTANCE.constructVertexPropertyArrowChunkReader(
                         graphInfo, label, groupPtr);
         Assert.assertTrue(maybeReader.status().ok());
-        VertexPropertyArrowChunkReader reader = maybeReader.value();
+        VertexPropertyArrowChunkReader reader = maybeReader.value().get();
         Result<StdSharedPtr<ArrowTable>> result = reader.getChunk();
         Assert.assertTrue(result.status().ok());
         StdSharedPtr<ArrowTable> table = result.value();

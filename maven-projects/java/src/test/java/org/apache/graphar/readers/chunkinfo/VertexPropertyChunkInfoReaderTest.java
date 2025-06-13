@@ -56,11 +56,11 @@ public class VertexPropertyChunkInfoReaderTest {
         StdSharedPtr<PropertyGroup> groupPtr =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
                         group.getProperties(), group.getFileType(), group.getPrefix());
-        Result<VertexPropertyChunkInfoReader> maybeReader =
+        Result<StdSharedPtr<VertexPropertyChunkInfoReader>> maybeReader =
                 GrapharStaticFunctions.INSTANCE.constructVertexPropertyChunkInfoReader(
                         graphInfo, label, groupPtr);
         Assert.assertFalse(maybeReader.hasError());
-        VertexPropertyChunkInfoReader reader = maybeReader.value();
+        VertexPropertyChunkInfoReader reader = maybeReader.value().get();
 
         // get chunk file path & validate
         Result<StdString> maybeChunkPath = reader.getChunk();

@@ -61,7 +61,7 @@ public interface GrapharStaticFunctions {
      */
     @FFINameAlias("VertexPropertyChunkInfoReader::Make")
     @CXXValue
-    Result<VertexPropertyChunkInfoReader> constructVertexPropertyChunkInfoReader(
+    Result<StdSharedPtr<VertexPropertyChunkInfoReader>> constructVertexPropertyChunkInfoReader(
             @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString label,
             @CXXReference StdSharedPtr<PropertyGroup> propertyGroup);
@@ -78,7 +78,7 @@ public interface GrapharStaticFunctions {
      */
     @FFINameAlias("AdjListPropertyChunkInfoReader::Make")
     @CXXValue
-    Result<AdjListPropertyChunkInfoReader> constructAdjListPropertyChunkInfoReader(
+    Result<StdSharedPtr<AdjListPropertyChunkInfoReader>> constructAdjListPropertyChunkInfoReader(
             @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
@@ -97,7 +97,7 @@ public interface GrapharStaticFunctions {
      */
     @FFINameAlias("AdjListChunkInfoReader::Make")
     @CXXValue
-    Result<AdjListChunkInfoReader> constructAdjListChunkInfoReader(
+    Result<StdSharedPtr<AdjListChunkInfoReader>> constructAdjListChunkInfoReader(
             @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
@@ -115,7 +115,7 @@ public interface GrapharStaticFunctions {
      */
     @FFINameAlias("VertexPropertyArrowChunkReader::Make")
     @CXXValue
-    Result<VertexPropertyArrowChunkReader> constructVertexPropertyArrowChunkReader(
+    Result<StdSharedPtr<VertexPropertyArrowChunkReader>> constructVertexPropertyArrowChunkReader(
             @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString label,
             @CXXReference StdSharedPtr<PropertyGroup> propertyGroup);
@@ -131,7 +131,7 @@ public interface GrapharStaticFunctions {
      */
     @FFINameAlias("AdjListArrowChunkReader::Make")
     @CXXValue
-    Result<AdjListArrowChunkReader> constructAdjListArrowChunkReader(
+    Result<StdSharedPtr<AdjListArrowChunkReader>> constructAdjListArrowChunkReader(
             @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
@@ -149,7 +149,7 @@ public interface GrapharStaticFunctions {
      */
     @FFINameAlias("AdjListOffsetArrowChunkReader::Make")
     @CXXValue
-    Result<AdjListOffsetArrowChunkReader> constructAdjListOffsetArrowChunkReader(
+    Result<StdSharedPtr<AdjListOffsetArrowChunkReader>> constructAdjListOffsetArrowChunkReader(
             @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
@@ -168,7 +168,7 @@ public interface GrapharStaticFunctions {
      */
     @FFINameAlias("AdjListPropertyArrowChunkReader::Make")
     @CXXValue
-    Result<AdjListPropertyArrowChunkReader> constructAdjListPropertyArrowChunkReader(
+    Result<StdSharedPtr<AdjListPropertyArrowChunkReader>> constructAdjListPropertyArrowChunkReader(
             @CXXReference StdSharedPtr<GraphInfo> graphInfo,
             @CXXReference StdString srcLabel,
             @CXXReference StdString edgeLabel,
@@ -260,36 +260,51 @@ public interface GrapharStaticFunctions {
     @CXXValue
     StdSharedPtr<VertexInfo> createVertexInfo(
             @CXXReference StdString label,
-            @FFITypeAlias(GAR_ID_TYPE) long chunk_size,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunk_size,
             @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
             @CXXReference StdString prefix,
             StdSharedPtr<InfoVersion> version);
 
+    @FFINameAlias("CreateVertexInfo")
+    @CXXValue
+    StdSharedPtr<VertexInfo> createVertexInfo(
+            @CXXReference StdString label,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunk_size,
+            @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
+            @CXXReference StdString prefix);
+
+    @FFINameAlias("CreateVertexInfo")
+    @CXXValue
+    StdSharedPtr<VertexInfo> createVertexInfo(
+            @CXXReference StdString label,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunk_size,
+            @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups);
+
     @FFINameAlias("CreateEdgeInfo")
     @CXXValue
     StdSharedPtr<EdgeInfo> createEdgeInfo(
-            StdString srcLabel,
-            StdString edgeLabel,
-            StdString dstLabel,
-            @FFITypeAlias(GAR_ID_TYPE) long chunkSize,
-            @FFITypeAlias(GAR_ID_TYPE) long srcChunkSize,
-            @FFITypeAlias(GAR_ID_TYPE) long dstChunkSize,
-            boolean directed,
+            @CXXReference StdString srcLabel,
+            @CXXReference StdString edgeLabel,
+            @CXXReference StdString dstLabel,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunkSize,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long srcChunkSize,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long dstChunkSize,
+            @CXXValue boolean directed,
             @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
             @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
             @CXXReference StdString prefix,
-            StdSharedPtr<InfoVersion> version);
+            @CXXValue StdSharedPtr<InfoVersion> version);
 
     @FFINameAlias("CreateEdgeInfo")
     @CXXValue
     StdSharedPtr<EdgeInfo> createEdgeInfo(
-            StdString srcLabel,
-            StdString edgeLabel,
-            StdString dstLabel,
-            @FFITypeAlias(GAR_ID_TYPE) long chunkSize,
-            @FFITypeAlias(GAR_ID_TYPE) long srcChunkSize,
-            @FFITypeAlias(GAR_ID_TYPE) long dstChunkSize,
-            boolean directed,
+            @CXXReference StdString srcLabel,
+            @CXXReference StdString edgeLabel,
+            @CXXReference StdString dstLabel,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunkSize,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long srcChunkSize,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long dstChunkSize,
+            @CXXValue boolean directed,
             @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
             @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups,
             @CXXReference StdString prefix);
@@ -297,13 +312,13 @@ public interface GrapharStaticFunctions {
     @FFINameAlias("CreateEdgeInfo")
     @CXXValue
     StdSharedPtr<EdgeInfo> createEdgeInfo(
-            StdString srcLabel,
-            StdString edgeLabel,
-            StdString dstLabel,
-            @FFITypeAlias(GAR_ID_TYPE) long chunkSize,
-            @FFITypeAlias(GAR_ID_TYPE) long srcChunkSize,
-            @FFITypeAlias(GAR_ID_TYPE) long dstChunkSize,
-            boolean directed,
+            @CXXReference StdString srcLabel,
+            @CXXReference StdString edgeLabel,
+            @CXXReference StdString dstLabel,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long chunkSize,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long srcChunkSize,
+            @CXXValue @FFITypeAlias(GAR_ID_TYPE) long dstChunkSize,
+            @CXXValue boolean directed,
             @CXXReference StdVector<StdSharedPtr<AdjacentList>> adjacentLists,
             @CXXReference StdVector<StdSharedPtr<PropertyGroup>> propertyGroups);
 
@@ -317,32 +332,42 @@ public interface GrapharStaticFunctions {
             StdSharedPtr<InfoVersion> version);
 
     @FFINameAlias("boolean")
-    @CXXValue
+    @CXXReference
     @FFIConst
     StdSharedPtr<DataType> booleanType();
 
     @FFINameAlias("int32")
-    @CXXValue
+    @CXXReference
     @FFIConst
     StdSharedPtr<DataType> int32Type();
 
     @FFINameAlias("int64")
-    @CXXValue
+    @CXXReference
     @FFIConst
     StdSharedPtr<DataType> int64Type();
 
     @FFINameAlias("float32")
-    @CXXValue
+    @CXXReference
     @FFIConst
     StdSharedPtr<DataType> float32Type();
 
     @FFINameAlias("float64")
-    @CXXValue
+    @CXXReference
     @FFIConst
     StdSharedPtr<DataType> float64Type();
 
     @FFINameAlias("string")
-    @CXXValue
+    @CXXReference
     @FFIConst
     StdSharedPtr<DataType> stringType();
+
+    @FFINameAlias("date")
+    @CXXReference
+    @FFIConst
+    StdSharedPtr<DataType> dateType();
+
+    @FFINameAlias("timestamp")
+    @CXXReference
+    @FFIConst
+    StdSharedPtr<DataType> timestampType();
 }
