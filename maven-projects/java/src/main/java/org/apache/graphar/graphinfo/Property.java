@@ -35,38 +35,30 @@ public interface Property extends CXXPointer {
     Factory factory = FFITypeFactory.getFactory(Property.class);
 
     @FFIGetter
-    @FFINameAlias("name")
-    @CXXValue
-    StdString getName();
+    @CXXReference
+    StdString name();
 
     @FFISetter
-    @FFINameAlias("name")
-    void setName(@CXXValue StdString name);
+    void name(@CXXReference StdString name);
 
     @FFIGetter
-    @FFINameAlias("type")
-    @CXXValue
-    StdSharedPtr<DataType> getType();
+    @CXXReference
+    StdSharedPtr<DataType> type();
 
     @FFISetter
-    @FFINameAlias("type")
-    void setType(@CXXValue StdSharedPtr<DataType> type);
+    void type(@CXXReference StdSharedPtr<DataType> type);
 
     @FFIGetter
-    @FFINameAlias("is_primary")
-    boolean isPrimary();
+    boolean is_primary();
 
     @FFISetter
-    @FFINameAlias("is_primary")
-    void setPrimary(boolean nullable);
+    void is_primary(boolean nullable);
 
     @FFIGetter
-    @FFINameAlias("is_nullable")
-    boolean isNullable();
+    boolean is_nullable();
 
     @FFISetter
-    @FFINameAlias("is_nullable")
-    void setNullable(boolean nullable);
+    void is_nullable(boolean nullable);
 
     @FFIFactory
     interface Factory {

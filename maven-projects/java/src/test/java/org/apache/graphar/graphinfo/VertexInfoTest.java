@@ -90,15 +90,15 @@ public class VertexInfoTest {
         // test get property meta
         StdString notExistKey = StdString.create("not_exist_key");
         Assert.assertEquals(
-                property.isPrimary(), vertexInfo.isPrimaryKey(property.getName()).value());
+                property.is_primary(), vertexInfo.isPrimaryKey(property.name()).value());
         Assert.assertTrue(vertexInfo.isPrimaryKey(notExistKey).status().isKeyError());
         Assert.assertTrue(vertexInfo.hasPropertyGroup(propertyGroup));
         Assert.assertFalse(vertexInfo.hasPropertyGroup(propertyGroup2));
         StdSharedPtr<PropertyGroup> propertyGroupResult =
-                vertexInfo.getPropertyGroup(property.getName());
+                vertexInfo.getPropertyGroup(property.name());
         Assert.assertNull(propertyGroupResult);
         Assert.assertTrue(
-                property.getName().eq(propertyGroupResult.get().getProperties().get(0).getName()));
+                property.name().eq(propertyGroupResult.get().getProperties().get(0).name()));
         Assert.assertNull(vertexInfo.getPropertyGroup(notExistKey));
 
         // test get dir path

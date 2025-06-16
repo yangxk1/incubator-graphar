@@ -152,11 +152,11 @@ public class EdgeInfoTest {
         propertyGroups = edgeInfo.getPropertyGroups();
         Assert.assertEquals(1, propertyGroups.size());
         StdSharedPtr<PropertyGroup> propertyGroupResult =
-                edgeInfo.getPropertyGroup(property.getName());
+                edgeInfo.getPropertyGroup(property.name());
         Assert.assertNotNull(propertyGroupResult);
         Assert.assertTrue(propertyGroup.get().eq(propertyGroupResult.get()));
-        boolean isPrimaryResult = edgeInfo.isPrimaryKey(property.getName());
-        Assert.assertEquals(property.isPrimary(), isPrimaryResult);
+        boolean isPrimaryResult = edgeInfo.isPrimaryKey(property.name());
+        Assert.assertEquals(property.is_primary(), isPrimaryResult);
         Result<StdString> propertyPathPrefix =
                 edgeInfo.getPropertyGroupPathPrefix(propertyGroup, adjListType);
         Assert.assertFalse(propertyPathPrefix.hasError());

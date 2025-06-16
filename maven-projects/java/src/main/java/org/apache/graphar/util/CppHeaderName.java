@@ -39,4 +39,5 @@ public class CppHeaderName {
     public static final String GAR_UTIL_UTIL_H = "graphar/util/util.h";
     public static final String GAR_UTIL_YAML_H = "graphar/util/yaml.h";
     public static final String GAR_UTIL_READER_UTIL_H = "graphar/util/reader_util.h";
+    public static final String GAR_UTIL_STATUS_H = "graphar/util/status.h";
 }
