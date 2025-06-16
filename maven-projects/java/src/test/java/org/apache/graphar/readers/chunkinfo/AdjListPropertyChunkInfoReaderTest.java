@@ -50,7 +50,11 @@ public class AdjListPropertyChunkInfoReaderTest {
                 graphInfo.get().getEdgeInfo(srcLabel, edgeLabel, dstLabel);
         System.out.println(edgeInfo.get().toString());
         System.out.println(edgeInfo.get().getPrefix().toJavaString());
-        System.out.println(edgeInfo.get().getAdjListPathPrefix(AdjListType.ordered_by_source).value().toJavaString());
+        System.out.println(
+                edgeInfo.get()
+                        .getAdjListPathPrefix(AdjListType.ordered_by_source)
+                        .value()
+                        .toJavaString());
         System.out.println(edgeInfo.get().getPropertyGroups().size());
         StdSharedPtr<PropertyGroup> propertyGroup = edgeInfo.get().getPropertyGroup(propertyName);
         PropertyGroup group = propertyGroup.get();
