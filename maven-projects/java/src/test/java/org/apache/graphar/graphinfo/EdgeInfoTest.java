@@ -55,7 +55,14 @@ public class EdgeInfoTest {
                         "std::vector<std::shared_ptr<graphar::PropertyGroup>>");
         StdVector<StdSharedPtr<PropertyGroup>> propertyGroupStdVector =
                 propertyGroupVecFactory.create();
-        StdString prefix = StdString.create("test_edge/");
+        StdString prefix =
+                StdString.create(
+                        srcLabel.toJavaString()
+                                + "_"
+                                + edgeLabel.toJavaString()
+                                + "_"
+                                + dstLabel.toJavaString()
+                                + "/");
         StdSharedPtr<EdgeInfo> edgeInfoStdSharedPtr =
                 GrapharStaticFunctions.INSTANCE.createEdgeInfo(
                         srcLabel,

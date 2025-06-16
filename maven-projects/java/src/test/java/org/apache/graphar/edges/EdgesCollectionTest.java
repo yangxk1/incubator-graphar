@@ -49,6 +49,8 @@ public class EdgesCollectionTest {
                         AdjListType.ordered_by_source,
                         0,
                         1);
+        System.out.println(maybeEdges.status().message());
+        System.out.println(maybeEdges.status().code());
         Assert.assertTrue(maybeEdges.status().ok());
         StdSharedPtr<EdgesCollection> edges = maybeEdges.value();
         EdgeIter it = edges.get().begin();
