@@ -120,9 +120,13 @@ public class VertexInfoTest {
         for (int i = 0; i < propertyGroups.size(); i++) {
             System.out.println(propertyGroups.get(i).get().IsValidated());
             StdVector<Property> properties = propertyGroups.get(i).get().getProperties();
-            System.out.println("property graph " + i + " size: " + propertyGroups.size());
+            System.out.println("property graph " + i + " size: " + properties.size());
+            System.out.println(propertyGroups.get(i).get().getPrefix());
+            System.out.println(propertyGroups.get(i).get().getFileType());
+            System.out.println(propertyGroups.get(i).get().getPrefix());
             for (int j = 0; j < properties.size(); j++) {
                 System.out.println(properties.get(j).name());
+                System.out.println(properties.get(j).type().get());
             }
         }
         // test save
