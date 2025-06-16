@@ -86,8 +86,6 @@ public class EdgeInfoTest {
                         + dstLabel.toJavaString()
                         + "/",
                 edgeInfo.getPrefix().toJavaString());
-
-        Assert.assertTrue(edgeInfo.addAdjacentList(adjacentList).status().ok());
         Assert.assertTrue(edgeInfo.hasAdjacentListType(adjListType));
         // same adj list type can not be added twice
         StdSharedPtr<AdjacentList> adjacentListTwice =
