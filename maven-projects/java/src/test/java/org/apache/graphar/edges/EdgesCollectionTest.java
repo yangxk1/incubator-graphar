@@ -21,9 +21,12 @@ package org.apache.graphar.edges;
 
 import static org.apache.graphar.graphinfo.GraphInfoTest.root;
 
+import com.alibaba.fastffi.CXXReference;
+import org.apache.graphar.graphinfo.EdgeInfo;
 import org.apache.graphar.graphinfo.GraphInfo;
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
+import org.apache.graphar.stdcxx.StdVector;
 import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.util.GrapharStaticFunctions;
 import org.apache.graphar.util.Result;
@@ -38,7 +41,11 @@ public class EdgesCollectionTest {
         StdString edgeLabel = StdString.create("knows");
         StdString dstLabel = StdString.create("person");
         StdSharedPtr<GraphInfo> graphInfo = GraphInfo.load(path).value();
-
+        StdVector<StdSharedPtr<@CXXReference EdgeInfo>> edgeInfos = graphInfo.get().getEdgeInfos();
+        System.out.println(edgeInfos.size());
+        for (int i = 0; i < edgeInfos.size(); i++) {
+            System.out.println(edgeInfos.get(i).get().getEdgeLabel());
+        }
         // iterate edges of vertex chunk 0
         Result<StdSharedPtr<EdgesCollection>> maybeEdges =
                 GrapharStaticFunctions.INSTANCE.constructEdgesCollection(

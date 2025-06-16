@@ -27,6 +27,7 @@ import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.types.FileType;
 import org.apache.graphar.util.GrapharStaticFunctions;
 import org.apache.graphar.util.Result;
+import org.apache.graphar.util.Status;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -179,7 +180,10 @@ public class EdgeInfoTest {
         // test property not exist
         StdString propertyNotExist = StdString.create("p_not_exist");
         Assert.assertNull(edgeInfo.getPropertyGroup(propertyNotExist).get());
-        Assert.assertTrue(edgeInfo.getPropertyType(propertyNotExist).status().isInvalid());
+        Status status = edgeInfo.getPropertyType(propertyNotExist).status();
+        System.out.println(status.message());
+        System.out.println(status.code());
+        Assert.assertTrue(status.isInvalid());
 
         // test property group not exist
         StdSharedPtr<PropertyGroup> propertyGroupNotExist =
