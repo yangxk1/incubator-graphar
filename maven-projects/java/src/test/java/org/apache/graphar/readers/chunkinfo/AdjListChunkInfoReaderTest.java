@@ -34,12 +34,15 @@ public class AdjListChunkInfoReaderTest {
     @Test
     public void test1() {
         // read file and construct graph info
+        int logIndex = 0;
+        System.out.println("log1" + (logIndex++));
         String path = root + "/ldbc_sample/parquet/ldbc_sample.graph.yml";
         Result<StdSharedPtr<GraphInfo>> maybeGraphInfo = GraphInfo.load(path);
         Assert.assertTrue(maybeGraphInfo.status().ok());
         StdSharedPtr<GraphInfo> graphInfo = maybeGraphInfo.value();
         Assert.assertEquals(1, graphInfo.get().getVertexInfos().size());
         Assert.assertEquals(1, graphInfo.get().getEdgeInfos().size());
+        System.out.println("log1" + (logIndex++));
 
         // construct adj list info reader
         StdString srcLabel = StdString.create("person");
@@ -50,6 +53,7 @@ public class AdjListChunkInfoReaderTest {
                         graphInfo, srcLabel, edgeLabel, dstLabel, AdjListType.ordered_by_source);
         Assert.assertTrue(maybeGraphInfo.status().ok());
         AdjListChunkInfoReader reader = maybeReader.value().get();
+        System.out.println("log1" + (logIndex++));
 
         // get chunk file path & validate
         Result<StdString> maybeChunkPath = reader.getChunk();
@@ -60,10 +64,12 @@ public class AdjListChunkInfoReaderTest {
                         + "/ldbc_sample/parquet/edge/person_knows_person/"
                         + "ordered_by_source/adj_list/part0/chunk0",
                 chunkPath.toJavaString());
+        System.out.println("log1" + (logIndex++));
         Assert.assertTrue(reader.seek(100).ok());
         maybeChunkPath = reader.getChunk();
         Assert.assertTrue(maybeChunkPath.status().ok());
         chunkPath = maybeChunkPath.value();
+        System.out.println("log1" + (logIndex++));
         Assert.assertEquals(
                 root
                         + "/ldbc_sample/parquet/edge/person_knows_person/"
@@ -73,27 +79,32 @@ public class AdjListChunkInfoReaderTest {
         maybeChunkPath = reader.getChunk();
         Assert.assertTrue(maybeChunkPath.status().ok());
         chunkPath = maybeChunkPath.value();
+        System.out.println("log1" + (logIndex++));
         Assert.assertEquals(
                 root
                         + "/ldbc_sample/parquet/edge/person_knows_person/"
                         + "ordered_by_source/adj_list/part1/chunk0",
                 chunkPath.toJavaString());
         Assert.assertTrue(reader.nextChunk().ok());
+        System.out.println("log1" + (logIndex++));
 
         // seek_src & seek_dst
         Assert.assertTrue(reader.seekSrc(100).ok());
         maybeChunkPath = reader.getChunk();
         Assert.assertTrue(maybeChunkPath.status().ok());
         chunkPath = maybeChunkPath.value();
+        System.out.println("log1" + (logIndex++));
         Assert.assertEquals(
                 root
                         + "/ldbc_sample/parquet/edge/person_knows_person/"
                         + "ordered_by_source/adj_list/part1/chunk0",
                 chunkPath.toJavaString());
         Assert.assertTrue(reader.seekSrc(900).ok());
+        System.out.println("log1" + (logIndex++));
         maybeChunkPath = reader.getChunk();
         Assert.assertTrue(maybeChunkPath.status().ok());
         chunkPath = maybeChunkPath.value();
+        System.out.println("log1" + (logIndex++));
         Assert.assertEquals(
                 root
                         + "/ldbc_sample/parquet/edge/person_knows_person/"
@@ -103,6 +114,7 @@ public class AdjListChunkInfoReaderTest {
         // seek an invalid src id
         Assert.assertTrue(reader.seekSrc(1000).isIndexError());
         Assert.assertTrue(reader.seekDst(100).isInvalid());
+        System.out.println("log1" + (logIndex++));
 
         // test reader to read ordered by dest
         Result<StdSharedPtr<AdjListChunkInfoReader>> maybeDstReader =
@@ -111,6 +123,7 @@ public class AdjListChunkInfoReaderTest {
         Assert.assertTrue(maybeDstReader.status().ok());
         AdjListChunkInfoReader dstReader = maybeDstReader.value().get();
         Assert.assertTrue(dstReader.seekDst(100).ok());
+        System.out.println("log1" + (logIndex++));
         maybeChunkPath = dstReader.getChunk();
         Assert.assertTrue(maybeChunkPath.status().ok());
         chunkPath = maybeChunkPath.value();
@@ -119,9 +132,11 @@ public class AdjListChunkInfoReaderTest {
                         + "/ldbc_sample/parquet/edge/person_knows_person/"
                         + "ordered_by_dest/adj_list/part1/chunk0",
                 chunkPath.toJavaString());
+        System.out.println("log1" + (logIndex++));
 
         // seek an invalid dst id
         Assert.assertTrue(dstReader.seekDst(1000).isIndexError());
         Assert.assertTrue(dstReader.seekSrc(100).isInvalid());
+        System.out.println("log1" + (logIndex++));
     }
 }
