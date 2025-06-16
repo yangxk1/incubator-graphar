@@ -120,7 +120,7 @@ public class VertexInfoTest {
         StdVector<StdSharedPtr<PropertyGroup>> propertyGroups = vertexInfo.getPropertyGroups();
         System.out.println("pg size: " + propertyGroups.size());
         for (int i = 0; i < propertyGroups.size(); i++) {
-            System.out.println(propertyGroups.get(i).get().IsValidated());
+            System.out.println(propertyGroups.get(i).get().isValidated());
             StdVector<Property> properties = propertyGroups.get(i).get().getProperties();
             System.out.println("property graph " + i + " size: " + properties.size());
             System.out.println(propertyGroups.get(i).get().getPrefix());

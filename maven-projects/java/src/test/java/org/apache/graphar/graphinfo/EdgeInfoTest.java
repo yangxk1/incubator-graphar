@@ -220,6 +220,20 @@ public class EdgeInfoTest {
 
         // test save
         StdString savePath = StdString.create("/tmp/gar-java-edge-tmp-file");
+        System.out.println(edgeInfo.getSrcLabel().toJavaString());
+        System.out.println(edgeInfo.getEdgeLabel().toJavaString());
+        System.out.println(edgeInfo.getDstLabel().toJavaString());
+        System.out.println(edgeInfo.getChunkSize());
+        System.out.println(edgeInfo.getSrcChunkSize());
+        System.out.println(edgeInfo.getDstChunkSize());
+        System.out.println(edgeInfo.getPrefix().toJavaString());
+        System.out.println(edgeInfo.getAdjListPathPrefix(adjListType).value().toJavaString());
+        System.out.println(edgeInfo.getAdjacentList(adjListType).get().isValidated());
+        StdVector<StdSharedPtr<PropertyGroup>> propertyGroups1 = edgeInfo.getPropertyGroups();
+        System.out.println(propertyGroups1.size());
+        for (int i = 0; i < propertyGroups1.size(); i++) {
+            System.out.println(propertyGroups1.get(i).get().isValidated());
+        }
         Assert.assertTrue(edgeInfo.save(savePath).ok());
         File tempFile = new File(savePath.toJavaString());
         Assert.assertTrue(tempFile.exists());

@@ -66,7 +66,7 @@ public interface PropertyGroup extends CXXPointer {
     @FFINameAlias("IsValidated")
     @FFIConst
     @CXXReference
-    boolean IsValidated();
+    boolean isValidated();
 
     /**
      * Get the file type of property group chunk file.
