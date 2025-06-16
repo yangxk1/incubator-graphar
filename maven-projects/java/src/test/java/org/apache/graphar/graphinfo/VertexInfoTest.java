@@ -105,6 +105,8 @@ public class VertexInfoTest {
         Assert.assertFalse(maybeDirPath.hasError());
         Assert.assertEquals(expectedDirPath, maybeDirPath.value().toJavaString());
         // property group not exist
+        System.out.println(vertexInfo.getPathPrefix(propertyGroup2).status().message());
+        System.out.println(vertexInfo.getPathPrefix(propertyGroup2).status().code());
         Assert.assertTrue(vertexInfo.getPathPrefix(propertyGroup2).status().isKeyError());
         // test get file path
         Result<StdString> maybePath = vertexInfo.getFilePath(propertyGroup, 0);

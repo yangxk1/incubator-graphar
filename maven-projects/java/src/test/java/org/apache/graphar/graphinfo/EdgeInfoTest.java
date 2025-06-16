@@ -142,7 +142,7 @@ public class EdgeInfoTest {
         StdVector<StdSharedPtr<PropertyGroup>> propertyGroups = edgeInfo.getPropertyGroups();
         Assert.assertEquals(0, propertyGroups.size());
         Assert.assertTrue(edgeInfo.addPropertyGroup(propertyGroup).status().ok());
-        Assert.assertTrue(edgeInfo.hasPropertyGroup(propertyGroup));
+        Assert.assertTrue(edgeInfo.hasPropertyGroup(propertyGroup)); // TODO prt change
         propertyGroups = edgeInfo.getPropertyGroups();
         Assert.assertEquals(1, propertyGroups.size());
         StdSharedPtr<PropertyGroup> propertyGroupResult =
