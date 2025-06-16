@@ -30,6 +30,7 @@ import org.apache.graphar.util.Result;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+
 @Ignore
 public class AdjListChunkInfoReaderTest {
     @Test
