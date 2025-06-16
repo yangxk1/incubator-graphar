@@ -51,6 +51,9 @@ public class AdjListPropertyChunkInfoReaderTest {
         StdSharedPtr<PropertyGroup> propertyGroup = edgeInfo.get().getPropertyGroup(propertyName);
         Assert.assertNotNull(propertyGroup);
         PropertyGroup group = propertyGroup.get();
+        System.out.println(propertyGroup);
+        System.out.println(group);
+        System.out.println(GrapharStaticFunctions.INSTANCE);
         StdSharedPtr<PropertyGroup> groupPtr =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
                         group.getProperties(), group.getFileType(), group.getPrefix());

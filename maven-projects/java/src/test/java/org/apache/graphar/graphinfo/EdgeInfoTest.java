@@ -63,6 +63,8 @@ public class EdgeInfoTest {
                         adjacentListStdVector,
                         propertyGroupStdVector,
                         prefix);
+        System.out.println(edgeInfoStdSharedPtr);
+        System.out.println(edgeInfoStdSharedPtr.get());
         EdgeInfo edgeInfo = edgeInfoStdSharedPtr.get();
         Assert.assertEquals(srcLabel.toJavaString(), edgeInfo.getSrcLabel().toJavaString());
         Assert.assertEquals(edgeLabel.toJavaString(), edgeInfo.getEdgeLabel().toJavaString());

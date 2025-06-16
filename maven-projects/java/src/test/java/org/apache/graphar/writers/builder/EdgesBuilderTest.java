@@ -31,6 +31,7 @@ import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.types.ValidateLevel;
+import org.apache.graphar.util.Status;
 import org.apache.graphar.util.Yaml;
 import org.junit.Assert;
 import org.junit.Test;
@@ -60,7 +61,10 @@ public class EdgesBuilderTest {
         e.addProperty(StdString.create("creationDate"), 2020);
         Assert.assertTrue(builder.addEdge(e, ValidateLevel.no_validate).ok());
         Assert.assertTrue(builder.addEdge(e, ValidateLevel.weak_validate).ok());
-        Assert.assertTrue(builder.addEdge(e, ValidateLevel.strong_validate).isTypeError());
+        Status status = builder.addEdge(e, ValidateLevel.strong_validate);
+        System.out.println(status.message());
+        System.out.println(status.code());
+        Assert.assertTrue(status.isTypeError());
         e.addProperty(StdString.create("invalid_name"), StdString.create("invalid_value"));
         Assert.assertTrue(builder.addEdge(e).isKeyError());
 

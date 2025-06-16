@@ -72,7 +72,7 @@ public class GraphInfoTest {
         Result<StdSharedPtr<GraphInfo>> addVertex = graphInfo.addVertex(vertexInfo);
         Assert.assertTrue(addVertex.status().ok());
         graphInfo = addVertex.value().get();
-        Assert.assertTrue(graphInfo.addVertex(vertexInfo).status().ok());
+        Assert.assertTrue(graphInfo.addVertex(vertexInfo).hasError());
         Assert.assertEquals(1, graphInfo.getVertexInfos().size());
         StdSharedPtr<VertexInfo> maybeVertexInfo = graphInfo.getVertexInfo(vertexLabel);
         Assert.assertNotNull(maybeVertexInfo);
