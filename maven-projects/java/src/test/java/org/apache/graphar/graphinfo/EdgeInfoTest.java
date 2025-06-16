@@ -141,6 +141,7 @@ public class EdgeInfoTest {
 
         // test add property group
         Property property = Property.factory.create(StdString.create("creationDate"));
+        property.type(GrapharStaticFunctions.INSTANCE.stringType());
         StdVector.Factory<Property> propertyVecFactory =
                 StdVector.getStdVectorFactory("std::vector<graphar::Property>");
         StdVector<Property> propertyStdVector = propertyVecFactory.create();
