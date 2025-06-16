@@ -71,7 +71,6 @@ public interface Property extends CXXPointer {
     @FFIFactory
     interface Factory {
 
-        @CXXValue
         Property create(@CXXReference StdString name);
     }
 }
