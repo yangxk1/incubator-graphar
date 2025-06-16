@@ -107,6 +107,7 @@ public interface InfoVersion extends CXXPointer {
     }
 
     @FFITypeAlias("graphar::Result<std::shared_ptr<const graphar::InfoVersion>>")
+    @CXXHead(GAR_VERSION_PARSER_H)
     interface ConstResult extends FFIPointer {
         boolean hasError();
 
