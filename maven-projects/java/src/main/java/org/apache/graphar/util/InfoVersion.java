@@ -113,6 +113,7 @@ public interface InfoVersion extends CXXPointer {
 
         /** Parse version string to InfoVersion. */
         @CXXValue
+        @FFIConst
         Result<StdSharedPtr<InfoVersion>> Parse(@CXXReference StdString str);
     }
 }
