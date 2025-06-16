@@ -69,7 +69,7 @@ public class VertexPropertyWriterTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Assert.assertNotNull(table);
+        Assert.assertNotNull(table.get());
 
         String vertexMetaFile = root + "/ldbc_sample/parquet/" + "person.vertex.yml";
         StdSharedPtr<Yaml> vertexMeta = Yaml.loadFile(StdString.create(vertexMetaFile)).value();

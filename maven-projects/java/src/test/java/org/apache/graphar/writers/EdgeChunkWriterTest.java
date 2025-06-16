@@ -70,7 +70,7 @@ public class EdgeChunkWriterTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Assert.assertNotNull(table);
+        Assert.assertNotNull(table.get());
 
         StdString edgeMetaFile =
                 StdString.create(root + "/ldbc_sample/csv/person_knows_person.edge.yml");

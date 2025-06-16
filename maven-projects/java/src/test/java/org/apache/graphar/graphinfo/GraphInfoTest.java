@@ -75,7 +75,7 @@ public class GraphInfoTest {
         Assert.assertTrue(graphInfo.addVertex(vertexInfo).hasError());
         Assert.assertEquals(1, graphInfo.getVertexInfos().size());
         StdSharedPtr<VertexInfo> maybeVertexInfo = graphInfo.getVertexInfo(vertexLabel);
-        Assert.assertNotNull(maybeVertexInfo);
+        Assert.assertNotNull(maybeVertexInfo.get());
         Assert.assertTrue(vertexLabel.eq(maybeVertexInfo.get().getLabel()));
         Assert.assertTrue(vertexPrefix.eq(maybeVertexInfo.get().getPrefix()));
         Assert.assertNull(graphInfo.getVertexInfo(unknownLabel).get());
@@ -106,16 +106,17 @@ public class GraphInfoTest {
                         propertyGroupStdVector,
                         StdString.create(prefix));
         Assert.assertEquals(0, graphInfo.getEdgeInfos().size());
+        System.out.println(edgeInfo.get());
         Result<StdSharedPtr<GraphInfo>> addEdgeGraph = graphInfo.addEdge(edgeInfo);
         Assert.assertTrue(addEdgeGraph.status().ok());
         graphInfo = addEdgeGraph.value().get();
         Assert.assertEquals(1, graphInfo.getEdgeInfos().size());
         StdSharedPtr<EdgeInfo> edgeInfoPtr = graphInfo.getEdgeInfo(srcLabel, edgeLabel, dstLabel);
-        Assert.assertNotNull(edgeInfoPtr);
+        Assert.assertNotNull(edgeInfoPtr.get());
         Assert.assertTrue(srcLabel.eq(edgeInfoPtr.get().getSrcLabel()));
         Assert.assertTrue(edgeLabel.eq(edgeInfoPtr.get().getEdgeLabel()));
         Assert.assertTrue(dstLabel.eq(edgeInfoPtr.get().getDstLabel()));
-        Assert.assertNull(graphInfo.getEdgeInfo(unknownLabel, unknownLabel, unknownLabel));
+        Assert.assertNull(graphInfo.getEdgeInfo(unknownLabel, unknownLabel, unknownLabel).get());
         // existed edge info can't be added again
         Assert.assertTrue(graphInfo.addEdge(edgeInfo).status().isInvalid());
     }

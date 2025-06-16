@@ -24,6 +24,7 @@ import static org.apache.graphar.graphinfo.GraphInfoTest.root;
 import org.apache.graphar.arrow.ArrowTable;
 import org.apache.graphar.graphinfo.GraphInfo;
 import org.apache.graphar.graphinfo.PropertyGroup;
+import org.apache.graphar.graphinfo.VertexInfo;
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.util.GrapharStaticFunctions;
@@ -42,11 +43,11 @@ public class VertexPropertyArrowChunkReaderTest {
         // construct vertex chunk reader
         StdString label = StdString.create("person");
         StdString propertyName = StdString.create("id");
-        Assert.assertNotNull(graphInfo.get().getVertexInfo(label));
-        StdSharedPtr<PropertyGroup> groupStdSharedPtr =
-                graphInfo.get().getVertexInfo(label).get().getPropertyGroup(propertyName);
-        Assert.assertNotNull(groupStdSharedPtr);
+        VertexInfo vertexInfo = graphInfo.get().getVertexInfo(label).get();
+        Assert.assertNotNull(vertexInfo);
+        StdSharedPtr<PropertyGroup> groupStdSharedPtr = vertexInfo.getPropertyGroup(propertyName);
         PropertyGroup group = groupStdSharedPtr.get();
+        Assert.assertNotNull(group);
         StdSharedPtr<PropertyGroup> groupPtr =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
                         group.getProperties(), group.getFileType(), group.getPrefix());

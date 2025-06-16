@@ -49,11 +49,8 @@ public class AdjListPropertyChunkInfoReaderTest {
         StdSharedPtr<@CXXReference EdgeInfo> edgeInfo =
                 graphInfo.get().getEdgeInfo(srcLabel, edgeLabel, dstLabel);
         StdSharedPtr<PropertyGroup> propertyGroup = edgeInfo.get().getPropertyGroup(propertyName);
-        Assert.assertNotNull(propertyGroup);
         PropertyGroup group = propertyGroup.get();
-        System.out.println(propertyGroup);
-        System.out.println(group);
-        System.out.println(GrapharStaticFunctions.INSTANCE);
+        Assert.assertNotNull(group);
         StdSharedPtr<PropertyGroup> groupPtr =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
                         group.getProperties(), group.getFileType(), group.getPrefix());
@@ -124,7 +121,7 @@ public class AdjListPropertyChunkInfoReaderTest {
         // test reader to read ordered by dest
         edgeInfo = graphInfo.get().getEdgeInfo(srcLabel, edgeLabel, dstLabel);
         propertyGroup = edgeInfo.get().getPropertyGroup(propertyName);
-        Assert.assertNotNull(propertyGroup);
+        Assert.assertNotNull(propertyGroup.get());
         graphInfo = maybeGraphInfo.value();
         Result<StdSharedPtr<AdjListPropertyChunkInfoReader>> maybeDstReader =
                 GrapharStaticFunctions.INSTANCE.constructAdjListPropertyChunkInfoReader(

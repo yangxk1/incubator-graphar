@@ -149,7 +149,7 @@ public class EdgeInfoTest {
         Assert.assertEquals(1, propertyGroups.size());
         StdSharedPtr<PropertyGroup> propertyGroupResult =
                 edgeInfo.getPropertyGroup(property.name());
-        Assert.assertNotNull(propertyGroupResult);
+        Assert.assertNotNull(propertyGroupResult.get());
         Assert.assertTrue(propertyGroup.get().eq(propertyGroupResult.get()));
         boolean isPrimaryResult = edgeInfo.isPrimaryKey(property.name());
         Assert.assertEquals(property.is_primary(), isPrimaryResult);
@@ -170,7 +170,7 @@ public class EdgeInfoTest {
 
         // test property not exist
         StdString propertyNotExist = StdString.create("p_not_exist");
-        Assert.assertNull(edgeInfo.getPropertyGroup(propertyNotExist));
+        Assert.assertNull(edgeInfo.getPropertyGroup(propertyNotExist).get());
         Assert.assertTrue(edgeInfo.getPropertyType(propertyNotExist).status().isKeyError());
 
         // test property group not exist

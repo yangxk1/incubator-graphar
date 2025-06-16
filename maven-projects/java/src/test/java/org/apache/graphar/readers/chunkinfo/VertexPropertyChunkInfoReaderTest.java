@@ -48,10 +48,10 @@ public class VertexPropertyChunkInfoReaderTest {
         StdString propertyName = StdString.create("id");
         StdSharedPtr<@CXXReference VertexInfo> vertexInfoStdSharedPtr =
                 graphInfo.get().getVertexInfo(label);
-        Assert.assertNotNull(vertexInfoStdSharedPtr);
+        Assert.assertNotNull(vertexInfoStdSharedPtr.get());
         StdSharedPtr<PropertyGroup> groupStdSharedPtr =
                 vertexInfoStdSharedPtr.get().getPropertyGroup(propertyName);
-        Assert.assertNotNull(groupStdSharedPtr);
+        Assert.assertNotNull(groupStdSharedPtr.get());
         PropertyGroup group = groupStdSharedPtr.get();
         StdSharedPtr<PropertyGroup> groupPtr =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(

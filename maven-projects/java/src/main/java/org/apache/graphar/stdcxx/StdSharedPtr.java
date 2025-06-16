@@ -42,6 +42,8 @@ import com.alibaba.fastffi.FFITypeAlias;
 @CXXTemplate(cxx = GAR_EDGE_INFO, java = "org.apache.graphar.graphinfo.EdgeInfo")
 @CXXTemplate(cxx = GAR_VERTEX_INFO, java = "org.apache.graphar.graphinfo.VertexInfo")
 @CXXTemplate(cxx = GAR_GRAPH_INFO, java = "org.apache.graphar.graphinfo.GraphInfo")
+@CXXTemplate(cxx = GAR_PROPERTY_GROUP, java = "org.apache.graphar.graphinfo.PropertyGroup")
+@CXXTemplate(cxx = GAR_PROPERTY, java = "org.apache.graphar.graphinfo.Property")
 public interface StdSharedPtr<T extends FFIPointer> extends FFIPointer {
     // & will return the pointer of T.
     // shall be cxxvalue?
