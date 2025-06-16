@@ -58,7 +58,7 @@ public class AdjListPropertyChunkInfoReaderTest {
                         .getAdjListPathPrefix(AdjListType.ordered_by_source)
                         .value()
                         .toJavaString());
-        Scanner sc = new Scanner(new File(path));
+        Scanner sc = new Scanner(new File(root + "/ldbc_sample/parquet/person_knows_person.edge.yml"));
         while (sc.hasNextLine()) {
             System.out.println(sc.nextLine());
         }
