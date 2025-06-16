@@ -106,6 +106,7 @@ public interface InfoVersion extends CXXPointer {
     }
 
     @FFIGen
+    @CXXHead(GAR_VERSION_PARSER_H)
     @FFILibrary(value = GAR_INFO_VERSION, namespace = GAR_INFO_VERSION)
     interface Static {
         InfoVersion.Static INSTANCE = FFITypeFactory.getLibrary(InfoVersion.Static.class);
