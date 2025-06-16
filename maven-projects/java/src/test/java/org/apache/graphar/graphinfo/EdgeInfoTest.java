@@ -148,7 +148,10 @@ public class EdgeInfoTest {
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(propertyStdVector, fileType);
         StdVector<StdSharedPtr<PropertyGroup>> propertyGroups = edgeInfo.getPropertyGroups();
         Assert.assertEquals(0, propertyGroups.size());
-        Assert.assertTrue(edgeInfo.addPropertyGroup(propertyGroup).status().ok());
+        Result<StdSharedPtr<EdgeInfo>> stdSharedPtrResult =
+                edgeInfo.addPropertyGroup(propertyGroup);
+        Assert.assertTrue(stdSharedPtrResult.status().ok());
+        edgeInfo = stdSharedPtrResult.value().get();
         //        Assert.assertTrue(edgeInfo.hasPropertyGroup(propertyGroup)); // TODO prt change
         propertyGroups = edgeInfo.getPropertyGroups();
         Assert.assertEquals(1, propertyGroups.size());
