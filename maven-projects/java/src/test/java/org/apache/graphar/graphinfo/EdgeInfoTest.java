@@ -51,9 +51,8 @@ public class EdgeInfoTest {
                         "std::vector<std::shared_ptr<graphar::PropertyGroup>>");
         StdVector<StdSharedPtr<PropertyGroup>> propertyGroupStdVector =
                 propertyGroupVecFactory.create();
-        Result<StdSharedPtr<InfoVersion>> infoVersionResult = InfoVersion.parse("gar/v1");
-        Assert.assertTrue(infoVersionResult.status().ok());
-        StdSharedPtr<InfoVersion> infoVersion = infoVersionResult.value();
+        StdSharedPtr<InfoVersion> infoVersion = InfoVersion.parse("gar/v1");
+        Assert.assertNotNull(infoVersion);
         StdString prefix = StdString.create("");
         StdSharedPtr<EdgeInfo> edgeInfoStdSharedPtr =
                 GrapharStaticFunctions.INSTANCE.createEdgeInfo(

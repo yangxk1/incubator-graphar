@@ -41,9 +41,8 @@ public class VertexInfoTest {
         StdVector<StdSharedPtr<PropertyGroup>> propertyGroupStdVector =
                 propertyGroupVecFactory.create();
         StdString prefix = StdString.create("");
-        Result<StdSharedPtr<InfoVersion>> versionParseResult = InfoVersion.parse("gar/v1");
-        Assert.assertTrue(versionParseResult.status().ok());
-        StdSharedPtr<InfoVersion> infoVersion = versionParseResult.value();
+        StdSharedPtr<InfoVersion> infoVersion = InfoVersion.parse("gar/v1");
+        Assert.assertNotNull(infoVersion);
         StdSharedPtr<VertexInfo> vertexInfoStdSharedPtr =
                 GrapharStaticFunctions.INSTANCE.createVertexInfo(
                         label, chunkSize, propertyGroupStdVector, prefix, infoVersion);

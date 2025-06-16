@@ -45,9 +45,8 @@ public class GraphInfoTest {
                 StdVector.getStdVectorFactory("std::vector<std::shared_ptr<graphar::EdgeInfo>>");
         StdVector<StdSharedPtr<EdgeInfo>> edgeInfoVector = edgeInfoVecFactory.create();
         String prefix = "test_prefix";
-        Result<StdSharedPtr<InfoVersion>> parsedVersion = InfoVersion.parse("gar/v1");
-        Assert.assertTrue(parsedVersion.status().ok());
-        StdSharedPtr<InfoVersion> version = parsedVersion.value();
+        StdSharedPtr<InfoVersion> version = InfoVersion.parse("gar/v1");
+        Assert.assertNotNull(version);
         StdSharedPtr<GraphInfo> graphInfoStdSharedPtr =
                 GrapharStaticFunctions.INSTANCE.createGraphInfo(
                         StdString.create(graphName),
