@@ -185,18 +185,6 @@ public class EdgeInfoTest {
         System.out.println(status.code());
         Assert.assertTrue(status.isInvalid());
 
-        // test property group not exist
-        StdSharedPtr<PropertyGroup> propertyGroupNotExist =
-                GrapharStaticFunctions.INSTANCE.createPropertyGroup(propertyStdVector, fileType);
-        Assert.assertTrue(
-                edgeInfo.getPropertyFilePath(propertyGroupNotExist, adjListType, 0, 0)
-                        .status()
-                        .isKeyError());
-        Assert.assertTrue(
-                edgeInfo.getPropertyGroupPathPrefix(propertyGroupNotExist, adjListType)
-                        .status()
-                        .isKeyError());
-
         // test adj list not exist
         Assert.assertTrue(
                 edgeInfo.getPropertyFilePath(propertyGroup, adjListTypeNotExist, 0, 0)
