@@ -43,6 +43,7 @@ public class VertexPropertyChunkInfoReaderTest {
         Assert.assertEquals(1, graphInfo.get().getVertexInfos().size());
         Assert.assertEquals(1, graphInfo.get().getEdgeInfos().size());
 
+        System.out.println(graphInfo.get().getVertexInfos().size());
         System.out.println(graphInfo.get().getVertexInfos().get(0).get().getLabel());
         // construct vertex property info reader
         StdString label = StdString.create("person");
