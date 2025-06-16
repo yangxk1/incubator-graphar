@@ -51,6 +51,7 @@ public class VertexInfoTest {
 
         // test add property group
         Property property = Property.factory.create(StdString.create("id"));
+        property.type(GrapharStaticFunctions.INSTANCE.stringType());
         StdVector.Factory<Property> propertyFactory =
                 StdVector.getStdVectorFactory("std::vector<graphar::Property>");
         StdVector<Property> propertyStdVector = propertyFactory.create();
@@ -74,6 +75,7 @@ public class VertexInfoTest {
         Assert.assertEquals(1, vertexInfo.getPropertyGroups().size());
 
         Property property2 = Property.factory.create(StdString.create("name"));
+        property2.type(GrapharStaticFunctions.INSTANCE.stringType());
         StdVector<Property> propertyStdVector2 = propertyFactory.create();
         propertyStdVector2.push_back(property2);
         StdSharedPtr<PropertyGroup> propertyGroup3 =
@@ -123,7 +125,6 @@ public class VertexInfoTest {
             System.out.println("property graph " + i + " size: " + properties.size());
             System.out.println(propertyGroups.get(i).get().getPrefix());
             System.out.println(propertyGroups.get(i).get().getFileType());
-            System.out.println(propertyGroups.get(i).get().getPrefix());
             for (int j = 0; j < properties.size(); j++) {
                 System.out.println(properties.get(j).name());
                 System.out.println(properties.get(j).type().get());
