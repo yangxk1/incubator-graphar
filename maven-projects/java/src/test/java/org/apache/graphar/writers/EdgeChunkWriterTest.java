@@ -70,13 +70,12 @@ public class EdgeChunkWriterTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Assert.assertNotNull(table.get());
+        Assert.assertNotNull(table);
 
         StdString edgeMetaFile =
                 StdString.create(root + "/ldbc_sample/csv/person_knows_person.edge.yml");
         Result<StdSharedPtr<Yaml>> maybeEdgeMeta = Yaml.loadFile(edgeMetaFile);
         Assert.assertFalse(maybeEdgeMeta.hasError());
-        System.out.println(maybeEdgeMeta.value().get().toString());
         Result<StdSharedPtr<EdgeInfo>> maybeEdgeInfo = EdgeInfo.load(maybeEdgeMeta.value());
         Assert.assertFalse(maybeEdgeInfo.hasError());
         StdSharedPtr<EdgeInfo> edgeInfo = maybeEdgeInfo.value();

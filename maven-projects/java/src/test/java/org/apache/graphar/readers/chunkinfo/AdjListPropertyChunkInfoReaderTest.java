@@ -22,6 +22,9 @@ package org.apache.graphar.readers.chunkinfo;
 import static org.apache.graphar.graphinfo.GraphInfoTest.root;
 
 import com.alibaba.fastffi.CXXReference;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 import org.apache.graphar.graphinfo.EdgeInfo;
 import org.apache.graphar.graphinfo.GraphInfo;
 import org.apache.graphar.graphinfo.PropertyGroup;
@@ -35,7 +38,7 @@ import org.junit.Test;
 
 public class AdjListPropertyChunkInfoReaderTest {
     @Test
-    public void test1() {
+    public void test1() throws FileNotFoundException {
         String path = root + "/ldbc_sample/parquet/ldbc_sample.graph.yml";
         Result<StdSharedPtr<GraphInfo>> maybeGraphInfo = GraphInfo.load(path);
         Assert.assertTrue(maybeGraphInfo.status().ok());
@@ -55,6 +58,10 @@ public class AdjListPropertyChunkInfoReaderTest {
                         .getAdjListPathPrefix(AdjListType.ordered_by_source)
                         .value()
                         .toJavaString());
+        Scanner sc = new Scanner(new File(path));
+        while (sc.hasNextLine()) {
+            System.out.println(sc.nextLine());
+        }
         System.out.println(edgeInfo.get().getPropertyGroups().size());
         StdSharedPtr<PropertyGroup> propertyGroup = edgeInfo.get().getPropertyGroup(propertyName);
         PropertyGroup group = propertyGroup.get();
