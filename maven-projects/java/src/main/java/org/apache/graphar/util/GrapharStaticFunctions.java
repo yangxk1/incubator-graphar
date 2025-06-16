@@ -37,6 +37,7 @@ import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
 import org.apache.graphar.types.AdjListType;
+import org.apache.graphar.types.DataType;
 import org.apache.graphar.types.FileType;
 import org.apache.graphar.vertices.VerticesCollection;
 
@@ -329,4 +330,44 @@ public interface GrapharStaticFunctions {
             @CXXReference StdVector<StdSharedPtr<EdgeInfo>> edgeInfos,
             @CXXReference StdString prefix,
             @CXXValue StdSharedPtr<InfoVersion> version);
+
+    @FFINameAlias("boolean")
+    @CXXReference
+    @FFIConst
+    StdSharedPtr<DataType> booleanType();
+
+    @FFINameAlias("int32")
+    @CXXReference
+    @FFIConst
+    StdSharedPtr<DataType> int32Type();
+
+    @FFINameAlias("int64")
+    @CXXReference
+    @FFIConst
+    StdSharedPtr<DataType> int64Type();
+
+    @FFINameAlias("float32")
+    @CXXReference
+    @FFIConst
+    StdSharedPtr<DataType> float32Type();
+
+    @FFINameAlias("float64")
+    @CXXReference
+    @FFIConst
+    StdSharedPtr<DataType> float64Type();
+
+    @FFINameAlias("string")
+    @CXXReference
+    @FFIConst
+    StdSharedPtr<DataType> stringType();
+
+    @FFINameAlias("date")
+    @CXXReference
+    @FFIConst
+    StdSharedPtr<DataType> dateType();
+
+    @FFINameAlias("timestamp")
+    @CXXReference
+    @FFIConst
+    StdSharedPtr<DataType> timestampType();
 }
