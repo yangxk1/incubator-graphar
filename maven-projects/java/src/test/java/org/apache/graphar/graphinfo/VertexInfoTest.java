@@ -26,6 +26,7 @@ import org.apache.graphar.stdcxx.StdVector;
 import org.apache.graphar.types.FileType;
 import org.apache.graphar.util.GrapharStaticFunctions;
 import org.apache.graphar.util.Result;
+import org.apache.graphar.util.Status;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -114,7 +115,10 @@ public class VertexInfoTest {
 
         // test save
         StdString savePath = StdString.create("/tmp/gar-java-tmp-file");
-        Assert.assertTrue(vertexInfo.save(savePath).ok());
+        Status save = vertexInfo.save(savePath);
+        System.out.println(save.message());
+        System.out.println(save.code());
+        Assert.assertTrue(save.ok());
         File tempFile = new File(savePath.toJavaString());
         Assert.assertTrue(tempFile.exists());
     }
