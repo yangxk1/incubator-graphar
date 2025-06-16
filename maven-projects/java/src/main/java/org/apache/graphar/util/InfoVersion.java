@@ -23,7 +23,6 @@ import static org.apache.graphar.util.CppClassName.GAR_INFO_VERSION;
 import static org.apache.graphar.util.CppHeaderName.GAR_VERSION_PARSER_H;
 
 import com.alibaba.fastffi.*;
-import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
 
@@ -32,14 +31,6 @@ import org.apache.graphar.stdcxx.StdVector;
 @CXXHead(GAR_VERSION_PARSER_H)
 @FFITypeAlias(GAR_INFO_VERSION)
 public interface InfoVersion extends CXXPointer {
-    /** Parse version string to InfoVersion. */
-    static StdSharedPtr<InfoVersion> parse(String str) {
-        StdString stdString = StdString.create(str);
-        ConstResult constRes = Static.INSTANCE.Parse(stdString);
-        StdSharedPtr<InfoVersion> nonConstPtr = constRes.value();
-        stdString.delete();
-        return nonConstPtr;
-    }
 
     static InfoVersion create(int version) {
         return factory.create(version);
@@ -104,30 +95,5 @@ public interface InfoVersion extends CXXPointer {
 
         /** Constructor with version and user defined types. */
         InfoVersion create(@CXXReference InfoVersion other);
-    }
-
-    @FFITypeAlias("graphar::Result<std::shared_ptr<const graphar::InfoVersion>>")
-    @CXXHead(GAR_VERSION_PARSER_H)
-    interface ConstResult extends FFIPointer {
-        boolean hasError();
-
-        @CXXValue
-        StdString error();
-
-        @FFINameAlias("value")
-        @CXXValue
-        StdSharedPtr<InfoVersion> value();
-    }
-
-    @FFIGen
-    @CXXHead(GAR_VERSION_PARSER_H)
-    @FFILibrary(value = GAR_INFO_VERSION, namespace = GAR_INFO_VERSION)
-    interface Static {
-        InfoVersion.Static INSTANCE = FFITypeFactory.getLibrary(InfoVersion.Static.class);
-
-        /** Parse version string to InfoVersion. */
-        @CXXValue
-        @FFIConst
-        ConstResult Parse(@CXXReference StdString str);
     }
 }

@@ -331,6 +331,14 @@ public interface GrapharStaticFunctions {
             @CXXReference StdString prefix,
             @CXXValue StdSharedPtr<InfoVersion> version);
 
+    @FFINameAlias("CreateGraphInfo")
+    @CXXValue
+    StdSharedPtr<GraphInfo> createGraphInfo(
+            @CXXReference StdString name,
+            @CXXReference StdVector<StdSharedPtr<VertexInfo>> vertexInfos,
+            @CXXReference StdVector<StdSharedPtr<EdgeInfo>> edgeInfos,
+            @CXXReference StdString prefix);
+
     @FFINameAlias("boolean")
     @CXXReference
     @FFIConst

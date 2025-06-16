@@ -26,7 +26,6 @@ import org.apache.graphar.stdcxx.StdVector;
 import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.types.FileType;
 import org.apache.graphar.util.GrapharStaticFunctions;
-import org.apache.graphar.util.InfoVersion;
 import org.apache.graphar.util.Result;
 import org.junit.Assert;
 import org.junit.Test;
@@ -51,8 +50,6 @@ public class EdgeInfoTest {
                         "std::vector<std::shared_ptr<graphar::PropertyGroup>>");
         StdVector<StdSharedPtr<PropertyGroup>> propertyGroupStdVector =
                 propertyGroupVecFactory.create();
-        StdSharedPtr<InfoVersion> infoVersion = InfoVersion.parse("gar/v1");
-        Assert.assertNotNull(infoVersion);
         StdString prefix = StdString.create("");
         StdSharedPtr<EdgeInfo> edgeInfoStdSharedPtr =
                 GrapharStaticFunctions.INSTANCE.createEdgeInfo(
@@ -65,8 +62,7 @@ public class EdgeInfoTest {
                         directed,
                         adjacentListStdVector,
                         propertyGroupStdVector,
-                        prefix,
-                        infoVersion);
+                        prefix);
         EdgeInfo edgeInfo = edgeInfoStdSharedPtr.get();
         Assert.assertEquals(srcLabel.toJavaString(), edgeInfo.getSrcLabel().toJavaString());
         Assert.assertEquals(edgeLabel.toJavaString(), edgeInfo.getEdgeLabel().toJavaString());
@@ -83,7 +79,6 @@ public class EdgeInfoTest {
                         + dstLabel.toJavaString()
                         + "/",
                 edgeInfo.getPrefix().toJavaString());
-        Assert.assertTrue(infoVersion.get().eq(edgeInfo.getVersion().get()));
 
         // test add adjList
         AdjListType adjListType = AdjListType.ordered_by_source;

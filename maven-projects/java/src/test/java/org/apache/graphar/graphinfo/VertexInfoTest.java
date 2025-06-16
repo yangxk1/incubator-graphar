@@ -25,7 +25,6 @@ import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
 import org.apache.graphar.types.FileType;
 import org.apache.graphar.util.GrapharStaticFunctions;
-import org.apache.graphar.util.InfoVersion;
 import org.apache.graphar.util.Result;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,16 +40,13 @@ public class VertexInfoTest {
         StdVector<StdSharedPtr<PropertyGroup>> propertyGroupStdVector =
                 propertyGroupVecFactory.create();
         StdString prefix = StdString.create("");
-        StdSharedPtr<InfoVersion> infoVersion = InfoVersion.parse("gar/v1");
-        Assert.assertNotNull(infoVersion);
         StdSharedPtr<VertexInfo> vertexInfoStdSharedPtr =
                 GrapharStaticFunctions.INSTANCE.createVertexInfo(
-                        label, chunkSize, propertyGroupStdVector, prefix, infoVersion);
+                        label, chunkSize, propertyGroupStdVector, prefix);
         VertexInfo vertexInfo = vertexInfoStdSharedPtr.get();
         Assert.assertTrue(label.eq(vertexInfo.getLabel()));
         Assert.assertEquals(chunkSize, vertexInfo.getChunkSize());
         Assert.assertEquals(label.toJavaString() + "/", vertexInfo.getPrefix().toJavaString());
-        Assert.assertTrue(infoVersion.get().eq(vertexInfo.getVersion().get()));
 
         // test add property group
         Property property = Property.factory.create(StdString.create("id"));

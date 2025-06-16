@@ -24,7 +24,6 @@ import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
 import org.apache.graphar.util.GrapharStaticFunctions;
-import org.apache.graphar.util.InfoVersion;
 import org.apache.graphar.util.Result;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -45,19 +44,15 @@ public class GraphInfoTest {
                 StdVector.getStdVectorFactory("std::vector<std::shared_ptr<graphar::EdgeInfo>>");
         StdVector<StdSharedPtr<EdgeInfo>> edgeInfoVector = edgeInfoVecFactory.create();
         String prefix = "test_prefix";
-        StdSharedPtr<InfoVersion> version = InfoVersion.parse("gar/v1");
-        Assert.assertNotNull(version);
         StdSharedPtr<GraphInfo> graphInfoStdSharedPtr =
                 GrapharStaticFunctions.INSTANCE.createGraphInfo(
                         StdString.create(graphName),
                         vertexInfoVector,
                         edgeInfoVector,
-                        StdString.create(prefix),
-                        version);
+                        StdString.create(prefix));
         GraphInfo graphInfo = graphInfoStdSharedPtr.get();
         Assert.assertEquals(graphName, graphInfo.getName().toJavaString());
         Assert.assertEquals(prefix, graphInfo.getPrefix().toJavaString());
-        Assert.assertTrue(version.get().eq(graphInfo.getInfoVersion().get()));
 
         // test add vertex and get vertex info
         StdString vertexLabel = StdString.create("test_vertex");
@@ -72,11 +67,7 @@ public class GraphInfoTest {
                 propertyGroupVecFactory.create();
         StdSharedPtr<VertexInfo> vertexInfo =
                 GrapharStaticFunctions.INSTANCE.createVertexInfo(
-                        vertexLabel,
-                        vertexChunkSize,
-                        propertyGroupStdVector,
-                        vertexPrefix,
-                        version);
+                        vertexLabel, vertexChunkSize, propertyGroupStdVector, vertexPrefix);
         Assert.assertEquals(0, graphInfo.getVertexInfos().size());
         Result<StdSharedPtr<GraphInfo>> addVertex = graphInfo.addVertex(vertexInfo);
         Assert.assertTrue(addVertex.status().ok());
@@ -127,9 +118,6 @@ public class GraphInfoTest {
         Assert.assertNull(graphInfo.getEdgeInfo(unknownLabel, unknownLabel, unknownLabel));
         // existed edge info can't be added again
         Assert.assertTrue(graphInfo.addEdge(edgeInfo).status().isInvalid());
-
-        // test version
-        Assert.assertTrue(version.get().eq(graphInfo.getInfoVersion().get()));
     }
 
     @Test
