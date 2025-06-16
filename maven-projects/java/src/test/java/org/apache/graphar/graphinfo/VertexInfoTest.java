@@ -40,7 +40,7 @@ public class VertexInfoTest {
                         "std::vector<std::shared_ptr<graphar::PropertyGroup>>");
         StdVector<StdSharedPtr<PropertyGroup>> propertyGroupStdVector =
                 propertyGroupVecFactory.create();
-        StdString prefix = StdString.create("");
+        StdString prefix = StdString.create("test_vertex/");
         StdSharedPtr<VertexInfo> vertexInfoStdSharedPtr =
                 GrapharStaticFunctions.INSTANCE.createVertexInfo(
                         label, chunkSize, propertyGroupStdVector, prefix);
