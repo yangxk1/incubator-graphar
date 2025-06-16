@@ -78,7 +78,7 @@ public class VertexInfoTest {
         propertyStdVector2.push_back(property2);
         StdSharedPtr<PropertyGroup> propertyGroup3 =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
-                        propertyStdVector2, FileType.CSV, StdString.create("test_vertex_pg1/"));
+                        propertyStdVector2, FileType.CSV, StdString.create("test_vertex_pg2/"));
         stdSharedPtrResult = vertexInfo.addPropertyGroup(propertyGroup3);
         Assert.assertTrue(stdSharedPtrResult.status().ok());
         vertexInfo = stdSharedPtrResult.value().get();
