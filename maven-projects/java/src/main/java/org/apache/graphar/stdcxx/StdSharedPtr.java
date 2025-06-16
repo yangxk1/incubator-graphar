@@ -19,9 +19,7 @@
 
 package org.apache.graphar.stdcxx;
 
-import static org.apache.graphar.util.CppClassName.ARROW_ARRAY;
-import static org.apache.graphar.util.CppClassName.ARROW_TABLE;
-import static org.apache.graphar.util.CppClassName.GAR_UTIL_INDEX_CONVERTER;
+import static org.apache.graphar.util.CppClassName.*;
 import static org.apache.graphar.util.CppHeaderName.ARROW_API_H;
 import static org.apache.graphar.util.CppHeaderName.GAR_UTIL_UTIL_H;
 
@@ -39,6 +37,7 @@ import com.alibaba.fastffi.FFITypeAlias;
 @CXXTemplate(cxx = GAR_UTIL_INDEX_CONVERTER, java = "org.apache.graphar.util.IndexConverter")
 @CXXTemplate(cxx = ARROW_TABLE, java = "org.apache.graphar.arrow.ArrowTable")
 @CXXTemplate(cxx = ARROW_ARRAY, java = "org.apache.graphar.arrow.ArrowArray")
+@CXXTemplate(cxx = GAR_DATA_TYPE, java = "org.apache.graphar.types.DataType")
 public interface StdSharedPtr<T extends FFIPointer> extends FFIPointer {
     // & will return the pointer of T.
     // shall be cxxvalue?
