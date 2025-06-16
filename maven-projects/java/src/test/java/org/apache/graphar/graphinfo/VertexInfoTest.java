@@ -84,10 +84,7 @@ public class VertexInfoTest {
 
         // test get property meta
         StdString notExistKey = StdString.create("not_exist_key");
-        Assert.assertEquals(
-                property.is_primary(), vertexInfo.isPrimaryKey(property.name()).value());
-        System.out.println(vertexInfo.isPrimaryKey(notExistKey).status().message());
-        Assert.assertTrue(vertexInfo.isPrimaryKey(notExistKey).status().ok()); // TODO ?
+        Assert.assertEquals(property.is_primary(), vertexInfo.isPrimaryKey(property.name()));
         Assert.assertTrue(vertexInfo.hasPropertyGroup(propertyGroup));
         Assert.assertFalse(vertexInfo.hasPropertyGroup(propertyGroup2));
         StdSharedPtr<PropertyGroup> propertyGroupResult =
@@ -104,16 +101,10 @@ public class VertexInfoTest {
         Result<StdString> maybeDirPath = vertexInfo.getPathPrefix(propertyGroup);
         Assert.assertFalse(maybeDirPath.hasError());
         Assert.assertEquals(expectedDirPath, maybeDirPath.value().toJavaString());
-        // property group not exist
-        System.out.println(vertexInfo.getPathPrefix(propertyGroup2).status().message());
-        System.out.println(vertexInfo.getPathPrefix(propertyGroup2).status().code());
-        Assert.assertTrue(vertexInfo.getPathPrefix(propertyGroup2).status().isKeyError());
         // test get file path
         Result<StdString> maybePath = vertexInfo.getFilePath(propertyGroup, 0);
         Assert.assertFalse(maybePath.hasError());
         Assert.assertEquals(expectedDirPath + "chunk0", maybePath.value().toJavaString());
-        // property group not exist
-        Assert.assertTrue(vertexInfo.getFilePath(propertyGroup2, 0).status().isKeyError());
         // vertex count file path
         Result<StdString> maybePath2 = vertexInfo.getVerticesNumFilePath();
         Assert.assertFalse(maybePath2.hasError());

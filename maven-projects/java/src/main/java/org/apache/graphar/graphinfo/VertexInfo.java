@@ -152,8 +152,7 @@ public interface VertexInfo extends CXXPointer {
      */
     @FFINameAlias("IsPrimaryKey")
     @CXXValue
-    @FFITypeAlias("graphar::Result<bool>")
-    Result<Boolean> isPrimaryKey(@CXXReference StdString propertyName);
+    boolean isPrimaryKey(@CXXReference StdString propertyName);
 
     /**
      * Returns whether the vertex info contains the specified property group.
