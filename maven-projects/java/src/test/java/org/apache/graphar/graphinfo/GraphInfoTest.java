@@ -23,6 +23,8 @@ import com.alibaba.fastffi.CXXReference;
 import org.apache.graphar.stdcxx.StdSharedPtr;
 import org.apache.graphar.stdcxx.StdString;
 import org.apache.graphar.stdcxx.StdVector;
+import org.apache.graphar.types.AdjListType;
+import org.apache.graphar.types.FileType;
 import org.apache.graphar.util.GrapharStaticFunctions;
 import org.apache.graphar.util.Result;
 import org.junit.Assert;
@@ -88,11 +90,16 @@ public class GraphInfoTest {
         StdString dstLabel = StdString.create("test_vertex");
         long edgeChunkSize = 1024;
         StdString edgeInfoPath = StdString.create("/tmp/test_edge.edge.yml");
+        AdjListType adjListType = AdjListType.ordered_by_source;
+        FileType fileType = FileType.PARQUET;
+        StdSharedPtr<AdjacentList> adjacentList =
+                GrapharStaticFunctions.INSTANCE.createAdjacentList(adjListType, fileType);
         StdVector.Factory<StdSharedPtr<AdjacentList>> adjancyListVecFactory =
                 StdVector.getStdVectorFactory(
                         "std::vector<std::shared_ptr<graphar::AdjacentList>>");
         StdVector<StdSharedPtr<AdjacentList>> adjacentListStdVector =
                 adjancyListVecFactory.create();
+        adjacentListStdVector.push_back(adjacentList);
         StdSharedPtr<EdgeInfo> edgeInfo =
                 GrapharStaticFunctions.INSTANCE.createEdgeInfo(
                         srcLabel,

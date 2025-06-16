@@ -92,7 +92,7 @@ public class VertexInfoTest {
         Assert.assertFalse(vertexInfo.hasPropertyGroup(propertyGroup2));
         StdSharedPtr<PropertyGroup> propertyGroupResult =
                 vertexInfo.getPropertyGroup(property.name());
-        Assert.assertNull(propertyGroupResult.get());
+        Assert.assertNotNull(propertyGroupResult.get());
         Assert.assertTrue(
                 property.name().eq(propertyGroupResult.get().getProperties().get(0).name()));
         Assert.assertNull(vertexInfo.getPropertyGroup(notExistKey).get());

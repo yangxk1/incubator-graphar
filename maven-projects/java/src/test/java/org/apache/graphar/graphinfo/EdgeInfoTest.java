@@ -39,12 +39,17 @@ public class EdgeInfoTest {
         long chunkSize = 100;
         long srcChunkSize = 100;
         long dstChunkSize = 100;
-        boolean directed = true;
+        boolean directed = true; // test add adjList
+        AdjListType adjListType = AdjListType.ordered_by_source;
+        FileType fileType = FileType.PARQUET;
+        StdSharedPtr<AdjacentList> adjacentList =
+                GrapharStaticFunctions.INSTANCE.createAdjacentList(adjListType, fileType);
         StdVector.Factory<StdSharedPtr<AdjacentList>> adjancyListVecFactory =
                 StdVector.getStdVectorFactory(
                         "std::vector<std::shared_ptr<graphar::AdjacentList>>");
         StdVector<StdSharedPtr<AdjacentList>> adjacentListStdVector =
                 adjancyListVecFactory.create();
+        adjacentListStdVector.push_back(adjacentList);
         StdVector.Factory<StdSharedPtr<PropertyGroup>> propertyGroupVecFactory =
                 StdVector.getStdVectorFactory(
                         "std::vector<std::shared_ptr<graphar::PropertyGroup>>");
@@ -82,11 +87,6 @@ public class EdgeInfoTest {
                         + "/",
                 edgeInfo.getPrefix().toJavaString());
 
-        // test add adjList
-        AdjListType adjListType = AdjListType.ordered_by_source;
-        FileType fileType = FileType.PARQUET;
-        StdSharedPtr<AdjacentList> adjacentList =
-                GrapharStaticFunctions.INSTANCE.createAdjacentList(adjListType, fileType);
         Assert.assertTrue(edgeInfo.addAdjacentList(adjacentList).status().ok());
         Assert.assertTrue(edgeInfo.hasAdjacentListType(adjListType));
         // same adj list type can not be added twice
