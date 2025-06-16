@@ -146,7 +146,8 @@ public class EdgeInfoTest {
         StdVector<Property> propertyStdVector = propertyVecFactory.create();
         propertyStdVector.push_back(property);
         StdSharedPtr<PropertyGroup> propertyGroup =
-                GrapharStaticFunctions.INSTANCE.createPropertyGroup(propertyStdVector, fileType);
+                GrapharStaticFunctions.INSTANCE.createPropertyGroup(
+                        propertyStdVector, fileType, StdString.create("creationDate/"));
         StdVector<StdSharedPtr<PropertyGroup>> propertyGroups = edgeInfo.getPropertyGroups();
         Assert.assertEquals(0, propertyGroups.size());
         Result<StdSharedPtr<EdgeInfo>> stdSharedPtrResult =
