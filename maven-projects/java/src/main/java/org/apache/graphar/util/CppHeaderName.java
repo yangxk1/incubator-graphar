@@ -24,7 +24,7 @@ public class CppHeaderName {
     public static final String ARROW_C_BRIDGE_H = "arrow/c/bridge.h";
     public static final String ARROW_RECORD_BATCH_H = "arrow/record_batch.h";
     public static final String GAR_GRAPH_INFO_H = "graphar/graph_info.h";
-    public static final String GAR_VERSION_PARSER = "graphar/util/version_parser.h";
+    public static final String GAR_VERSION_PARSER_H = "graphar/util/version_parser.h";
     public static final String GAR_GRAPH_H = "graphar/graph.h";
     public static final String GAR_FWD_H = "graphar/fwd.h";
     public static final String GAR_DATA_TYPE_H = "graphar/util/data_type.h";
