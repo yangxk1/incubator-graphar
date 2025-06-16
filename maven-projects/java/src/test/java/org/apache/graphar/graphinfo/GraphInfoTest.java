@@ -78,7 +78,7 @@ public class GraphInfoTest {
         Assert.assertNotNull(maybeVertexInfo);
         Assert.assertTrue(vertexLabel.eq(maybeVertexInfo.get().getLabel()));
         Assert.assertTrue(vertexPrefix.eq(maybeVertexInfo.get().getPrefix()));
-        Assert.assertNull(graphInfo.getVertexInfo(unknownLabel));
+        Assert.assertNull(graphInfo.getVertexInfo(unknownLabel).get());
         // existed vertex info can't be added again
         Assert.assertTrue(graphInfo.addVertex(vertexInfo).status().isInvalid());
 

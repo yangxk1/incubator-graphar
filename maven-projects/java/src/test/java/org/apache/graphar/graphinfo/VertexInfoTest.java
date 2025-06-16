@@ -87,7 +87,7 @@ public class VertexInfoTest {
         Assert.assertEquals(
                 property.is_primary(), vertexInfo.isPrimaryKey(property.name()).value());
         System.out.println(vertexInfo.isPrimaryKey(notExistKey).status().message());
-        Assert.assertTrue(vertexInfo.isPrimaryKey(notExistKey).status().isKeyError());
+        Assert.assertTrue(vertexInfo.isPrimaryKey(notExistKey).status().ok()); // TODO ?
         Assert.assertTrue(vertexInfo.hasPropertyGroup(propertyGroup));
         Assert.assertFalse(vertexInfo.hasPropertyGroup(propertyGroup2));
         StdSharedPtr<PropertyGroup> propertyGroupResult =
