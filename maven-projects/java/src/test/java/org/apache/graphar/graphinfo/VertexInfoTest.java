@@ -57,10 +57,10 @@ public class VertexInfoTest {
         propertyStdVector.push_back(property);
         StdSharedPtr<PropertyGroup> propertyGroup =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
-                        propertyStdVector, FileType.CSV);
+                        propertyStdVector, FileType.CSV, StdString.create("test_vertex_pg1/"));
         StdSharedPtr<PropertyGroup> propertyGroup2 =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
-                        propertyStdVector, FileType.PARQUET);
+                        propertyStdVector, FileType.PARQUET, StdString.create("test_vertex_pg1/"));
         Assert.assertEquals(0, vertexInfo.getPropertyGroups().size());
         Result<StdSharedPtr<VertexInfo>> stdSharedPtrResult =
                 vertexInfo.addPropertyGroup(propertyGroup);
@@ -78,7 +78,7 @@ public class VertexInfoTest {
         propertyStdVector2.push_back(property2);
         StdSharedPtr<PropertyGroup> propertyGroup3 =
                 GrapharStaticFunctions.INSTANCE.createPropertyGroup(
-                        propertyStdVector2, FileType.CSV);
+                        propertyStdVector2, FileType.CSV, StdString.create("test_vertex_pg1/"));
         stdSharedPtrResult = vertexInfo.addPropertyGroup(propertyGroup3);
         Assert.assertTrue(stdSharedPtrResult.status().ok());
         vertexInfo = stdSharedPtrResult.value().get();
