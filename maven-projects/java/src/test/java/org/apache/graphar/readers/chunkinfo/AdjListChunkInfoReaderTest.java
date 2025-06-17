@@ -28,10 +28,8 @@ import org.apache.graphar.types.AdjListType;
 import org.apache.graphar.util.GrapharStaticFunctions;
 import org.apache.graphar.util.Result;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("FIXME: JVM Process Exit Code: 134")
 public class AdjListChunkInfoReaderTest {
     @Test
     public void test1() {
