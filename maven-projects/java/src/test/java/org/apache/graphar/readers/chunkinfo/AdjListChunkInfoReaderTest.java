@@ -31,7 +31,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
+@Ignore("FIXME: JVM Process Exit Code: 134")
 public class AdjListChunkInfoReaderTest {
     @Test
     public void test1() {
