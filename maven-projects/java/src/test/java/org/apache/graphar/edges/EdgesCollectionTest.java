@@ -40,7 +40,9 @@ public class EdgesCollectionTest {
     public void test1() {
         String path = root + "/ldbc_sample/parquet/ldbc_sample.graph.yml";
         try {
-            Scanner scanner = new Scanner(new File(path));
+            Scanner scanner =
+                    new Scanner(
+                            new File(root + "/ldbc_sample/parquet/person_knows_person.edge.yml"));
             while (scanner.hasNextLine()) {
                 System.out.println(scanner.nextLine());
             }
