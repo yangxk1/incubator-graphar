@@ -41,6 +41,8 @@ jobs:
   test:
     runs-on: ubuntu-22.04
     if: ${{ !contains(github.event.pull_request.title, 'WIP') && github.event.pull_request.draft == false }}
+    env:
+      GAR_TEST_DATA: ${{ github.workspace }}/graphar-testing/
     steps:
       - uses: actions/checkout@v4
         with:
@@ -60,6 +62,8 @@ jobs:
                               libparquet-dev=17.0.0-1
           sudo apt-get install libcurl4-openssl-dev -y
           sudo apt-get install llvm-11 clang-11 lld-11 libclang-11-dev libz-dev -y
+
+          git clone https://github.com/apache/incubator-graphar-testing.git $GAR_TEST_DATA --depth 1
 
       - name: Code Format Check
         working-directory: maven-projects/java

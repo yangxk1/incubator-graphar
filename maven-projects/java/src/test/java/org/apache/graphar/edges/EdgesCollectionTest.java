@@ -22,8 +22,6 @@ package org.apache.graphar.edges;
 import static org.apache.graphar.graphinfo.GraphInfoTest.root;
 
 import com.alibaba.fastffi.CXXReference;
-import java.io.File;
-import java.util.Scanner;
 import org.apache.graphar.graphinfo.EdgeInfo;
 import org.apache.graphar.graphinfo.GraphInfo;
 import org.apache.graphar.stdcxx.StdSharedPtr;
@@ -39,16 +37,6 @@ public class EdgesCollectionTest {
     @Test
     public void test1() {
         String path = root + "/ldbc_sample/parquet/ldbc_sample.graph.yml";
-        try {
-            Scanner scanner =
-                    new Scanner(
-                            new File(root + "/ldbc_sample/parquet/person_knows_person.edge.yml"));
-            while (scanner.hasNextLine()) {
-                System.out.println(scanner.nextLine());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         StdString srcLabel = StdString.create("person");
         StdString edgeLabel = StdString.create("knows");
         StdString dstLabel = StdString.create("person");
