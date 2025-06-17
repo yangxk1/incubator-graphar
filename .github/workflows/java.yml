@@ -77,11 +77,6 @@ jobs:
           export JAVA_HOME=${JAVA_HOME_11_X64}
           mvn --no-transfer-progress javadoc:javadoc
 
-      - name: Setup TMate Session
-        uses: mxschmitt/action-tmate@v3
-        with:
-          detached: true
-
       - name: Run test
         working-directory: maven-projects/java
         run: |

@@ -22,8 +22,6 @@ package org.apache.graphar.edges;
 import static org.apache.graphar.graphinfo.GraphInfoTest.root;
 
 import com.alibaba.fastffi.CXXReference;
-import java.io.File;
-import java.util.Scanner;
 import org.apache.graphar.graphinfo.EdgeInfo;
 import org.apache.graphar.graphinfo.GraphInfo;
 import org.apache.graphar.stdcxx.StdSharedPtr;
@@ -38,27 +36,12 @@ import org.junit.Test;
 public class EdgesCollectionTest {
     @Test
     public void test1() {
-        System.out.println(root);
-        try {
-            Scanner scanner =
-                    new Scanner(
-                            new File(root + "/ldbc_sample/parquet/person_knows_person.edge.yml"));
-            while (scanner.hasNextLine()) {
-                System.out.println(scanner.nextLine());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         String path = root + "/ldbc_sample/parquet/ldbc_sample.graph.yml";
         StdString srcLabel = StdString.create("person");
         StdString edgeLabel = StdString.create("knows");
         StdString dstLabel = StdString.create("person");
         StdSharedPtr<GraphInfo> graphInfo = GraphInfo.load(path).value();
         StdVector<StdSharedPtr<@CXXReference EdgeInfo>> edgeInfos = graphInfo.get().getEdgeInfos();
-        System.out.println(edgeInfos.size());
-        for (int i = 0; i < edgeInfos.size(); i++) {
-            System.out.println(edgeInfos.get(i).get().getEdgeLabel());
-        }
         // iterate edges of vertex chunk 0
         Result<StdSharedPtr<EdgesCollection>> maybeEdges =
                 GrapharStaticFunctions.INSTANCE.constructEdgesCollection(
@@ -69,8 +52,6 @@ public class EdgesCollectionTest {
                         AdjListType.ordered_by_source,
                         0,
                         1);
-        System.out.println(maybeEdges.status().message());
-        System.out.println(maybeEdges.status().code());
         Assert.assertTrue(maybeEdges.status().ok());
         StdSharedPtr<EdgesCollection> edges = maybeEdges.value();
         EdgeIter it = edges.get().begin();

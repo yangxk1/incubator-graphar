@@ -62,8 +62,6 @@ public class EdgesBuilderTest {
         Assert.assertTrue(builder.addEdge(e, ValidateLevel.no_validate).ok());
         Assert.assertTrue(builder.addEdge(e, ValidateLevel.weak_validate).ok());
         Status status = builder.addEdge(e, ValidateLevel.strong_validate);
-        System.out.println(status.message());
-        System.out.println(status.code());
         Assert.assertTrue(status.isTypeError());
         e.addProperty(StdString.create("invalid_name"), StdString.create("invalid_value"));
         Assert.assertTrue(builder.addEdge(e).isKeyError());

@@ -114,27 +114,9 @@ public class VertexInfoTest {
         Assert.assertEquals(
                 vertexInfo.getPrefix().toJavaString() + "vertex_count",
                 maybePath2.value().toJavaString());
-        System.out.println(vertexInfo.getLabel());
-        System.out.println(vertexInfo.getChunkSize());
-        System.out.println(vertexInfo.getPrefix());
-        StdVector<StdSharedPtr<PropertyGroup>> propertyGroups = vertexInfo.getPropertyGroups();
-        System.out.println("pg size: " + propertyGroups.size());
-        for (int i = 0; i < propertyGroups.size(); i++) {
-            System.out.println(propertyGroups.get(i).get().isValidated());
-            StdVector<Property> properties = propertyGroups.get(i).get().getProperties();
-            System.out.println("property graph " + i + " size: " + properties.size());
-            System.out.println(propertyGroups.get(i).get().getPrefix());
-            System.out.println(propertyGroups.get(i).get().getFileType());
-            for (int j = 0; j < properties.size(); j++) {
-                System.out.println(properties.get(j).name());
-                System.out.println(properties.get(j).type().get());
-            }
-        }
         // test save
         StdString savePath = StdString.create("/tmp/gar-java-tmp-file");
         Status save = vertexInfo.save(savePath);
-        System.out.println(save.message());
-        System.out.println(save.code());
         Assert.assertTrue(save.ok());
         File tempFile = new File(savePath.toJavaString());
         Assert.assertTrue(tempFile.exists());

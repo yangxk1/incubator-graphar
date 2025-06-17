@@ -113,7 +113,6 @@ public class GraphInfoTest {
                         propertyGroupStdVector,
                         StdString.create(prefix));
         Assert.assertEquals(0, graphInfo.getEdgeInfos().size());
-        System.out.println(edgeInfo.get());
         Result<StdSharedPtr<GraphInfo>> addEdgeGraph = graphInfo.addEdge(edgeInfo);
         Assert.assertTrue(addEdgeGraph.status().ok());
         graphInfo = addEdgeGraph.value().get();

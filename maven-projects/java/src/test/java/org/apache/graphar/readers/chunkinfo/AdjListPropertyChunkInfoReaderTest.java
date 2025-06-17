@@ -22,9 +22,7 @@ package org.apache.graphar.readers.chunkinfo;
 import static org.apache.graphar.graphinfo.GraphInfoTest.root;
 
 import com.alibaba.fastffi.CXXReference;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
 import org.apache.graphar.graphinfo.EdgeInfo;
 import org.apache.graphar.graphinfo.GraphInfo;
 import org.apache.graphar.graphinfo.PropertyGroup;
@@ -51,19 +49,6 @@ public class AdjListPropertyChunkInfoReaderTest {
 
         StdSharedPtr<@CXXReference EdgeInfo> edgeInfo =
                 graphInfo.get().getEdgeInfo(srcLabel, edgeLabel, dstLabel);
-        System.out.println(edgeInfo.get().toString());
-        System.out.println(edgeInfo.get().getPrefix().toJavaString());
-        System.out.println(
-                edgeInfo.get()
-                        .getAdjListPathPrefix(AdjListType.ordered_by_source)
-                        .value()
-                        .toJavaString());
-        Scanner sc =
-                new Scanner(new File(root + "/ldbc_sample/parquet/person_knows_person.edge.yml"));
-        while (sc.hasNextLine()) {
-            System.out.println(sc.nextLine());
-        }
-        System.out.println(edgeInfo.get().getPropertyGroups().size());
         StdSharedPtr<PropertyGroup> propertyGroup = edgeInfo.get().getPropertyGroup(propertyName);
         PropertyGroup group = propertyGroup.get();
         Assert.assertNotNull(group);
