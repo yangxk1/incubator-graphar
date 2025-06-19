@@ -91,7 +91,6 @@ jobs:
         export JAVA_HOME=${JAVA_HOME_11_X64}
         export SPARK_TESTING=1
         export JDK_JAVA_OPTIONS="--add-opens=java.base/sun.nio.ch=ALL-UNNAMED"
-        export JDK_JAVA_OPTIONS="--add-opens=java.base/sun.nio.ch=ALL-UNNAMED"
         export JDK_JAVA_OPTIONS="--add-opens=java.base/java.lang=ALL-UNNAMED"
         export JDK_JAVA_OPTIONS="--add-opens=java.base/java.nio=ALL-UNNAMED"
         export JDK_JAVA_OPTIONS="--add-opens=java.base/java.lang.invoke=ALL-UNNAMED"
