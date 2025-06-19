@@ -22,13 +22,13 @@ on:
   # but only for the main branch
   push:
     branches:
-      - main
+      - '**'
     paths:
       - 'maven-projects/spark/**'
       - '.github/workflows/spark.yaml'
   pull_request:
     branches:
-      - main
+      - '**'
     paths:
       - 'maven-projects/spark/**'
       - '.github/workflows/spark.yaml'
