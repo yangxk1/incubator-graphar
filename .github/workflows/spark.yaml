@@ -65,6 +65,11 @@ jobs:
         export JAVA_HOME=${JAVA_HOME_11_X64}
         mvn --no-transfer-progress spotless:check
 
+    - name: Setup TMate SessionAdd commentMore actions
+      uses: mxschmitt/action-tmate@v3
+      with:
+        detached: true
+        
     - name: Download test data
       run: |
         git clone https://github.com/apache/incubator-graphar-testing.git $GAR_TEST_DATA --depth 1
