@@ -38,7 +38,7 @@ void vertices_builder() {
   graphar::WriterOptions::ParquetOptionBuilder parquetOptionBuilder;
   parquetOptionBuilder.compression(arrow::Compression::ZSTD);
   builder.SetWriterOptions(parquetOptionBuilder.build());
-  
+
   // set validate level
   builder.SetValidateLevel(graphar::ValidateLevel::strong_validate);
 

@@ -171,7 +171,7 @@ class VerticesBuilder {
     num_vertices_ = 0;
     is_saved_ = false;
   }
-  
+
   /**
    * @brief Set the writerOptions.
    *
@@ -181,6 +181,7 @@ class VerticesBuilder {
   inline void SetWriterOptions(std::shared_ptr<WriterOptions> writer_options) {
     this->writer_options_ = writer_options;
   }
+
   /**
    * @brief Set the writerOptions.
    *
@@ -190,6 +191,7 @@ class VerticesBuilder {
   inline std::shared_ptr<WriterOptions> GetWriterOptions() {
     return this->writer_options_;
   }
+
   /**
    * @brief Set the validate level.
    *
