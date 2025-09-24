@@ -19,37 +19,41 @@
 
 package org.apache.graphar.info.type;
 
-public enum FileType {
-    CSV,
-    PARQUET,
-    ORC;
+/** Defines how multiple values are handled for a given property key. */
+public enum Cardinality {
+    /** Single value property */
+    SINGLE,
+    /** List of values property */
+    LIST,
+    /** Set of values property (no duplicates) */
+    SET;
 
     public String toString() {
         switch (this) {
-            case CSV:
-                return "csv";
-            case PARQUET:
-                return "parquet";
-            case ORC:
-                return "orc";
+            case SINGLE:
+                return "single";
+            case LIST:
+                return "list";
+            case SET:
+                return "set";
             default:
-                throw new IllegalArgumentException("Unknown file type: " + this);
+                throw new IllegalArgumentException("Unknown cardinality: " + this);
         }
     }
 
-    public static FileType fromString(String fileType) {
-        if (fileType == null) {
+    public static Cardinality fromString(String cardinality) {
+        if (cardinality == null) {
             return null;
         }
-        switch (fileType) {
-            case "csv":
-                return CSV;
-            case "parquet":
-                return PARQUET;
-            case "orc":
-                return ORC;
+        switch (cardinality) {
+            case "single":
+                return SINGLE;
+            case "list":
+                return LIST;
+            case "set":
+                return SET;
             default:
-                throw new IllegalArgumentException("Unknown file type: " + fileType);
+                throw new IllegalArgumentException("Unknown cardinality: " + cardinality);
         }
     }
 }

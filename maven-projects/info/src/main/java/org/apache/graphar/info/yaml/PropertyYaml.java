@@ -21,19 +21,20 @@ package org.apache.graphar.info.yaml;
 
 import java.util.Optional;
 import org.apache.graphar.info.Property;
-import org.apache.graphar.info.type.DataType;
 
 public class PropertyYaml {
     private String name;
     private String data_type;
     private boolean is_primary;
     private Optional<Boolean> is_nullable;
+    private String cardinality;
 
     public PropertyYaml() {
         this.name = "";
         this.data_type = "";
         this.is_primary = false;
         this.is_nullable = Optional.empty();
+        this.cardinality = "single"; // Default to single
     }
 
     public PropertyYaml(Property property) {
@@ -41,14 +42,11 @@ public class PropertyYaml {
         this.data_type = property.getDataType().toString();
         this.is_primary = property.isPrimary();
         this.is_nullable = Optional.of(property.isNullable());
+        this.cardinality = property.getCardinality().toString();
     }
 
     Property toProperty() {
-        return new Property(
-                name,
-                DataType.fromString(data_type),
-                is_primary,
-                is_nullable.orElseGet(() -> !is_primary));
+        return new Property(this);
     }
 
     public String getName() {
@@ -81,5 +79,13 @@ public class PropertyYaml {
 
     public void setIs_nullable(boolean is_nullable) {
         this.is_nullable = Optional.of(is_nullable);
+    }
+
+    public String getCardinality() {
+        return cardinality;
+    }
+
+    public void setCardinality(String cardinality) {
+        this.cardinality = cardinality;
     }
 }
