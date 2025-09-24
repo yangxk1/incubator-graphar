@@ -20,6 +20,7 @@
 package org.apache.graphar.info;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,6 +34,7 @@ public class GraphInfo {
     private final String name;
     private final List<VertexInfo> vertexInfos;
     private final List<EdgeInfo> edgeInfos;
+    private final List<String> labels;
     private final URI baseUri;
     private final Map<String, VertexInfo> vertexType2VertexInfo;
     private final Map<String, EdgeInfo> edgeConcat2EdgeInfo;
@@ -44,7 +46,23 @@ public class GraphInfo {
             List<EdgeInfo> edgeInfos,
             String prefix,
             String version) {
-        this(name, vertexInfos, edgeInfos, prefix == null ? null : URI.create(prefix), version);
+        this(name, vertexInfos, edgeInfos, Collections.emptyList(), prefix, version);
+    }
+
+    public GraphInfo(
+            String name,
+            List<VertexInfo> vertexInfos,
+            List<EdgeInfo> edgeInfos,
+            List<String> labels,
+            String prefix,
+            String version) {
+        this(
+                name,
+                vertexInfos,
+                edgeInfos,
+                labels,
+                prefix == null ? null : URI.create(prefix),
+                version);
     }
 
     public GraphInfo(
@@ -53,9 +71,20 @@ public class GraphInfo {
             List<EdgeInfo> edgeInfos,
             URI baseUri,
             String version) {
+        this(name, vertexInfos, edgeInfos, Collections.emptyList(), baseUri, version);
+    }
+
+    public GraphInfo(
+            String name,
+            List<VertexInfo> vertexInfos,
+            List<EdgeInfo> edgeInfos,
+            List<String> labels,
+            URI baseUri,
+            String version) {
         this.name = name;
         this.vertexInfos = List.copyOf(vertexInfos);
         this.edgeInfos = List.copyOf(edgeInfos);
+        this.labels = labels == null ? Collections.emptyList() : List.copyOf(labels);
         this.baseUri = baseUri;
         this.version = VersionParser.getVersion(version);
         this.vertexType2VertexInfo =
@@ -74,6 +103,7 @@ public class GraphInfo {
             String name,
             List<VertexInfo> vertexInfos,
             List<EdgeInfo> edgeInfos,
+            List<String> labels,
             URI baseUri,
             String version,
             Map<String, VertexInfo> vertexType2VertexInfo,
@@ -82,6 +112,7 @@ public class GraphInfo {
                 name,
                 vertexInfos,
                 edgeInfos,
+                labels,
                 baseUri,
                 VersionParser.getVersion(version),
                 vertexType2VertexInfo,
@@ -92,6 +123,7 @@ public class GraphInfo {
             String name,
             List<VertexInfo> vertexInfos,
             List<EdgeInfo> edgeInfos,
+            List<String> labels,
             URI baseUri,
             VersionInfo version,
             Map<String, VertexInfo> vertexType2VertexInfo,
@@ -99,6 +131,7 @@ public class GraphInfo {
         this.name = name;
         this.vertexInfos = vertexInfos;
         this.edgeInfos = edgeInfos;
+        this.labels = labels == null ? Collections.emptyList() : List.copyOf(labels);
         this.baseUri = baseUri;
         this.version = version;
         this.vertexType2VertexInfo = vertexType2VertexInfo;
@@ -130,6 +163,7 @@ public class GraphInfo {
                         name,
                         newVertexInfos,
                         edgeInfos,
+                        labels,
                         baseUri,
                         version,
                         newVertexType2VertexInfo,
@@ -156,6 +190,7 @@ public class GraphInfo {
                         name,
                         vertexInfos,
                         newEdgeInfos,
+                        labels,
                         baseUri,
                         version,
                         vertexType2VertexInfo,
@@ -190,6 +225,10 @@ public class GraphInfo {
 
     public String getName() {
         return name;
+    }
+
+    public List<String> getLabels() {
+        return labels;
     }
 
     public List<VertexInfo> getVertexInfos() {
