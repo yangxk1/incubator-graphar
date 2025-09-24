@@ -36,7 +36,6 @@ public class GraphYaml {
     private String prefix;
     private List<String> vertices;
     private List<String> edges;
-    private List<String> labels;
     private String version;
     private static final DumperOptions dumperOption;
     private static Representer representer;
@@ -74,14 +73,12 @@ public class GraphYaml {
         this.prefix = "";
         this.vertices = new ArrayList<>();
         this.edges = new ArrayList<>();
-        this.labels = new ArrayList<>();
         this.version = "";
     }
 
     public GraphYaml(GraphInfo graphInfo) {
         this.name = graphInfo.getName();
         this.prefix = graphInfo.getPrefix();
-        this.labels = graphInfo.getLabels();
         this.version =
                 Optional.of(graphInfo)
                         .map(GraphInfo::getVersion)
@@ -140,14 +137,6 @@ public class GraphYaml {
 
     public void setEdges(List<String> edges) {
         this.edges = edges;
-    }
-
-    public List<String> getLabels() {
-        return labels;
-    }
-
-    public void setLabels(List<String> labels) {
-        this.labels = labels;
     }
 
     public String getVersion() {
