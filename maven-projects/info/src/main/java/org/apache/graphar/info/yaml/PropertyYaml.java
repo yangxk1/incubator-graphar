@@ -21,6 +21,7 @@ package org.apache.graphar.info.yaml;
 
 import java.util.Optional;
 import org.apache.graphar.info.Property;
+import org.apache.graphar.info.type.Cardinality;
 
 public class PropertyYaml {
     private String name;
@@ -82,7 +83,10 @@ public class PropertyYaml {
     }
 
     public String getCardinality() {
-        return cardinality;
+        if (cardinality == null) {
+            return null;
+        }
+        return Cardinality.SINGLE.toString().equals(cardinality) ? null : cardinality;
     }
 
     public void setCardinality(String cardinality) {

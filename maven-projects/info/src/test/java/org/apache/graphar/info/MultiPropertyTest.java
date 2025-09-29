@@ -19,15 +19,10 @@
 
 package org.apache.graphar.info;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.stream.Stream;
+import java.util.List;
 import org.apache.graphar.info.loader.GraphInfoLoader;
 import org.apache.graphar.info.loader.impl.LocalFileSystemStringGraphInfoLoader;
 import org.apache.graphar.info.saver.GraphInfoSaver;
@@ -45,6 +40,7 @@ import org.junit.Test;
 public class MultiPropertyTest extends BaseFileSystemTest {
 
     private String testSaveDirectory;
+    private GraphInfoLoader graphInfoLoader;
     private GraphInfoSaver graphInfoSaver;
     private Property singleProperty;
     private Property listProperty;
@@ -53,6 +49,7 @@ public class MultiPropertyTest extends BaseFileSystemTest {
     @Before
     public void setUp() {
         testSaveDirectory = createCleanTestDirectory("ldbc_multi_property_sample/");
+        graphInfoLoader = new LocalFileSystemStringGraphInfoLoader();
         graphInfoSaver = new LocalFileSystemYamlGraphSaver();
         singleProperty =
                 TestDataFactory.createProperty("single_email", DataType.STRING, false, true);
@@ -131,7 +128,7 @@ public class MultiPropertyTest extends BaseFileSystemTest {
 
         // Check YAML representations
         Assert.assertEquals("single_email", singleYaml.getName());
-        Assert.assertEquals("single", singleYaml.getCardinality());
+        Assert.assertNull(singleYaml.getCardinality());
 
         Assert.assertEquals("list_email", listYaml.getName());
         Assert.assertEquals("list", listYaml.getCardinality());
@@ -167,7 +164,7 @@ public class MultiPropertyTest extends BaseFileSystemTest {
 
         // Test YAML conversion with default cardinality
         PropertyYaml defaultYaml = new PropertyYaml(defaultProperty);
-        Assert.assertEquals("single", defaultYaml.getCardinality());
+        Assert.assertNull(defaultYaml.getCardinality());
 
         Property defaultPropFromYaml = new Property(defaultYaml);
         Assert.assertEquals(Cardinality.SINGLE, defaultPropFromYaml.getCardinality());
@@ -187,6 +184,58 @@ public class MultiPropertyTest extends BaseFileSystemTest {
     }
 
     @Test
+    public void testEdgeInfoWithMultiProperty() throws IOException {
+        Property weights =
+                TestDataFactory.createProperty(
+                        "weights", DataType.DOUBLE, Cardinality.LIST, false, true);
+        PropertyGroup weights_pg =
+                TestDataFactory.createPropertyGroup(
+                        Arrays.asList(weights), FileType.CSV, "weights/");
+        AdjacentList orderedBySource =
+                TestDataFactory.createAdjacentList(
+                        AdjListType.ordered_by_source, FileType.PARQUET, "ordered_by_source/");
+        EdgeInfo knowsEdgeInfo =
+                EdgeInfo.builder()
+                        .srcType("person")
+                        .edgeType("knows")
+                        .dstType("person")
+                        .chunkSize(1024)
+                        .srcChunkSize(100)
+                        .dstChunkSize(100)
+                        .directed(false)
+                        .prefix("edge/person_knows_person/")
+                        .version("gar/v1")
+                        .addAdjacentList(orderedBySource)
+                        .addPropertyGroups(List.of(weights_pg))
+                        .build();
+        Assert.assertFalse(knowsEdgeInfo.isValidated());
+    }
+
+    @Test
+    public void testListPropertyInCsv() {
+        Property emails =
+                TestDataFactory.createProperty(
+                        "emails", DataType.STRING, Cardinality.LIST, false, true);
+        PropertyGroup emailInCsv =
+                TestDataFactory.createPropertyGroup(List.of(emails), FileType.CSV, "emails_csv/");
+        VertexInfo personVertexInfo =
+                new VertexInfo("person", 1000, List.of(emailInCsv), "vertex/person/", "gar/v1");
+        Assert.assertFalse(personVertexInfo.isValidated());
+    }
+
+    @Test
+    public void testSetPropertyInCsv() {
+        Property emails =
+                TestDataFactory.createProperty(
+                        "emails", DataType.STRING, Cardinality.SET, false, true);
+        PropertyGroup emailInCsv =
+                TestDataFactory.createPropertyGroup(List.of(emails), FileType.CSV, "emails_csv/");
+        VertexInfo personVertexInfo =
+                new VertexInfo("person", 1000, List.of(emailInCsv), "vertex/person/", "gar/v1");
+        Assert.assertFalse(personVertexInfo.isValidated());
+    }
+
+    @Test
     public void testGraphInfoWithMultiPropertyYamlLoadAndSave() throws IOException {
         // Create a GraphInfo with multi-property support
         Property id = TestDataFactory.createProperty("id", DataType.INT64, true, false);
@@ -199,19 +248,15 @@ public class MultiPropertyTest extends BaseFileSystemTest {
                         "tags", DataType.STRING, Cardinality.SET, false, true);
         Property creationDate =
                 TestDataFactory.createProperty("creationDate", DataType.STRING, false, false);
-        Property weights =
-                TestDataFactory.createProperty(
-                        "weights", DataType.DOUBLE, Cardinality.LIST, false, true);
-
         PropertyGroup personIdGroup =
-                TestDataFactory.createPropertyGroup(Arrays.asList(id), FileType.PARQUET, "id/");
+                TestDataFactory.createPropertyGroup(List.of(id), FileType.PARQUET, "id/");
         PropertyGroup personInfoGroup =
                 TestDataFactory.createPropertyGroup(
                         Arrays.asList(name, emails, tags), FileType.PARQUET, "info/");
 
         PropertyGroup edgePropertyGroup =
                 TestDataFactory.createPropertyGroup(
-                        Arrays.asList(creationDate, weights), FileType.PARQUET, "properties/");
+                        List.of(creationDate), FileType.PARQUET, "properties/");
 
         // Create adjacent lists
         AdjacentList orderedBySource =
@@ -250,43 +295,31 @@ public class MultiPropertyTest extends BaseFileSystemTest {
                         "test_graph",
                         Arrays.asList(personVertexInfo),
                         Arrays.asList(knowsEdgeInfo),
-                        "",
+                        "/tmp/",
                         "gar/v1");
 
         // Check that the generated YAML files contain cardinality information
-        String vertexYamlPath = testSaveDirectory + "/person.vertex.yaml";
-        String edgeYamlPath = testSaveDirectory + "/person_knows_person.edge.yaml";
         String graphYamlFilePath = testSaveDirectory + "/test_graph.graph.yaml";
 
         // Save GraphInfo to YAML files
         graphInfoSaver.save(URI.create(testSaveDirectory), graphInfo);
-        String vertexYamlContent = new String(Files.readAllBytes(Paths.get(vertexYamlPath)));
-        String edgeYamlContent = new String(Files.readAllBytes(Paths.get(edgeYamlPath)));
-
-        // Check vertex YAML
-        Assert.assertTrue(
-                "Vertex YAML should contain LIST cardinality", vertexYamlContent.contains("list"));
-        Assert.assertTrue(
-                "Vertex YAML should contain SET cardinality", vertexYamlContent.contains("set"));
-
-        // Check edge YAML
-        Assert.assertTrue(
-                "Edge YAML should contain LIST cardinality", edgeYamlContent.contains("list"));
 
         // Load GraphInfo from YAML files
-        GraphInfoLoader loader = new LocalFileSystemStringGraphInfoLoader();
-        GraphInfo loadedGraphInfo = loader.loadGraphInfo(URI.create(graphYamlFilePath));
-
-        Assert.assertNotNull(loadedGraphInfo);
-        Assert.assertEquals("test_graph", loadedGraphInfo.getName());
+        GraphInfo loadedGraphInfo = graphInfoLoader.loadGraphInfo(URI.create(graphYamlFilePath));
+        Assert.assertTrue(TestVerificationUtils.equalsGraphInfo(graphInfo, loadedGraphInfo));
     }
 
-    // Helper method to delete directory and all its contents
-    private void deleteDirectory(Path directory) throws IOException {
-        if (Files.exists(directory)) {
-            try (Stream<Path> walk = Files.walk(directory)) {
-                walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-            }
-        }
+    @Test
+    public void testLoadFromTestData() throws IOException {
+        URI GRAPH_PATH_URI = TestUtil.getLdbcGraphURI();
+        GraphInfo graphInfo = graphInfoLoader.loadGraphInfo(GRAPH_PATH_URI);
+        VertexInfo personInfo = graphInfo.getVertexInfo("person");
+        Assert.assertEquals(Cardinality.SINGLE, personInfo.getCardinality("firstName"));
+        Assert.assertEquals(Cardinality.SINGLE, personInfo.getCardinality("lastName"));
+        Assert.assertEquals(Cardinality.SINGLE, personInfo.getCardinality("gender"));
+        Assert.assertEquals(Cardinality.SINGLE, personInfo.getCardinality("locationIP"));
+        Assert.assertEquals(Cardinality.SINGLE, personInfo.getCardinality("browserUsed"));
+        Assert.assertEquals(Cardinality.SINGLE, personInfo.getCardinality("id"));
+        Assert.assertEquals(Cardinality.LIST, personInfo.getCardinality("emails"));
     }
 }
