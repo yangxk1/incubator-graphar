@@ -32,6 +32,11 @@ public abstract class BaseGraphInfoSaver implements GraphInfoSaver {
 
     @Override
     public void save(URI graphInfoUri, GraphInfo graphInfo) throws IOException {
+        // if graphInfoUri is a directory then save to ${graphInfo.name}.graph.yml
+        if (graphInfoUri.getPath().endsWith("/")) {
+            graphInfoUri =
+                    URI.create(graphInfoUri.toString() + graphInfo.getName() + ".graph.yaml");
+        }
         Writer writer = writeYaml(graphInfoUri);
         graphInfo.dump(graphInfoUri, writer);
         writer.close();

@@ -30,25 +30,30 @@ import java.util.Comparator;
 import java.util.stream.Stream;
 import org.apache.graphar.info.loader.GraphInfoLoader;
 import org.apache.graphar.info.loader.impl.LocalFileSystemStringGraphInfoLoader;
-import org.apache.graphar.info.saver.GraphSaver;
-import org.apache.graphar.info.saver.LocalYamlGraphSaver;
+import org.apache.graphar.info.saver.GraphInfoSaver;
+import org.apache.graphar.info.saver.impl.LocalFileSystemYamlGraphSaver;
 import org.apache.graphar.info.type.AdjListType;
 import org.apache.graphar.info.type.Cardinality;
 import org.apache.graphar.info.type.DataType;
 import org.apache.graphar.info.type.FileType;
 import org.apache.graphar.info.yaml.PropertyYaml;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MultiPropertyTest {
+public class MultiPropertyTest extends BaseFileSystemTest {
 
+    private String testSaveDirectory;
+    private GraphInfoSaver graphInfoSaver;
     private Property singleProperty;
     private Property listProperty;
     private Property setProperty;
 
     @Before
     public void setUp() {
+        testSaveDirectory = createCleanTestDirectory("ldbc_multi_property_sample/");
+        graphInfoSaver = new LocalFileSystemYamlGraphSaver();
         singleProperty =
                 TestDataFactory.createProperty("single_email", DataType.STRING, false, true);
         listProperty =
@@ -57,6 +62,12 @@ public class MultiPropertyTest {
         setProperty =
                 TestDataFactory.createProperty(
                         "set_email", DataType.STRING, Cardinality.SET, false, true);
+    }
+
+    @After
+    public void tearDown() {
+        // Test data will be preserved for debugging - cleanup happens before next test run
+        System.out.println("Test data saved in: " + testSaveDirectory);
     }
 
     @Test
@@ -242,45 +253,32 @@ public class MultiPropertyTest {
                         "",
                         "gar/v1");
 
-        // Create temporary directory for testing
-        Path tempDir = Files.createTempDirectory("graphar_multi_property_test_graph");
-        String graphYamlPath = tempDir.toString();
+        // Check that the generated YAML files contain cardinality information
+        String vertexYamlPath = testSaveDirectory + "/person.vertex.yaml";
+        String edgeYamlPath = testSaveDirectory + "/person_knows_person.edge.yaml";
+        String graphYamlFilePath = testSaveDirectory + "/test_graph.graph.yaml";
 
-        try {
-            // Save GraphInfo to YAML files
-            GraphSaver graphSaver = new LocalYamlGraphSaver();
-            graphSaver.save(graphYamlPath, graphInfo);
+        // Save GraphInfo to YAML files
+        graphInfoSaver.save(URI.create(testSaveDirectory), graphInfo);
+        String vertexYamlContent = new String(Files.readAllBytes(Paths.get(vertexYamlPath)));
+        String edgeYamlContent = new String(Files.readAllBytes(Paths.get(edgeYamlPath)));
 
-            // Check that the generated YAML files contain cardinality information
-            String vertexYamlPath = graphYamlPath + "/person.vertex.yaml";
-            String edgeYamlPath = graphYamlPath + "/person_knows_person.edge.yaml";
-            String graphYamlFilePath = graphYamlPath + "/test_graph.graph.yaml";
+        // Check vertex YAML
+        Assert.assertTrue(
+                "Vertex YAML should contain LIST cardinality", vertexYamlContent.contains("list"));
+        Assert.assertTrue(
+                "Vertex YAML should contain SET cardinality", vertexYamlContent.contains("set"));
 
-            String vertexYamlContent = new String(Files.readAllBytes(Paths.get(vertexYamlPath)));
-            String edgeYamlContent = new String(Files.readAllBytes(Paths.get(edgeYamlPath)));
+        // Check edge YAML
+        Assert.assertTrue(
+                "Edge YAML should contain LIST cardinality", edgeYamlContent.contains("list"));
 
-            // Check vertex YAML
-            Assert.assertTrue(
-                    "Vertex YAML should contain LIST cardinality",
-                    vertexYamlContent.contains("list"));
-            Assert.assertTrue(
-                    "Vertex YAML should contain SET cardinality",
-                    vertexYamlContent.contains("set"));
+        // Load GraphInfo from YAML files
+        GraphInfoLoader loader = new LocalFileSystemStringGraphInfoLoader();
+        GraphInfo loadedGraphInfo = loader.loadGraphInfo(URI.create(graphYamlFilePath));
 
-            // Check edge YAML
-            Assert.assertTrue(
-                    "Edge YAML should contain LIST cardinality", edgeYamlContent.contains("list"));
-
-            // Load GraphInfo from YAML files
-            GraphInfoLoader loader = new LocalFileSystemStringGraphInfoLoader();
-            GraphInfo loadedGraphInfo = loader.loadGraphInfo(URI.create(graphYamlFilePath));
-
-            Assert.assertNotNull(loadedGraphInfo);
-            Assert.assertEquals("test_graph", loadedGraphInfo.getName());
-        } finally {
-            // Clean up temporary files and directories
-            deleteDirectory(tempDir);
-        }
+        Assert.assertNotNull(loadedGraphInfo);
+        Assert.assertEquals("test_graph", loadedGraphInfo.getName());
     }
 
     // Helper method to delete directory and all its contents
