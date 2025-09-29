@@ -38,7 +38,7 @@ public class VertexYaml {
         this.type = "";
         this.chunk_size = 0;
         this.property_groups = new ArrayList<>();
-        this.labels = new ArrayList<>();
+        this.labels = null;
         this.prefix = "";
         this.version = "";
     }
@@ -84,7 +84,10 @@ public class VertexYaml {
     }
 
     public List<String> getLabels() {
-        return labels;
+        if (labels == null) {
+            return null;
+        }
+        return labels.isEmpty() ? null : labels;
     }
 
     public void setLabels(List<String> labels) {

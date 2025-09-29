@@ -19,18 +19,43 @@
 
 package org.apache.graphar.info;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.apache.graphar.info.loader.GraphInfoLoader;
+import org.apache.graphar.info.loader.impl.LocalFileSystemStringGraphInfoLoader;
+import org.apache.graphar.info.saver.GraphInfoSaver;
+import org.apache.graphar.info.saver.impl.LocalFileSystemYamlGraphSaver;
 import org.apache.graphar.info.type.DataType;
 import org.apache.graphar.info.type.FileType;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-public class VertexInfoLabelsTest {
+public class VertexInfoLabelsTest extends BaseFileSystemTest {
+
+    private String testSaveDirectory;
+    private GraphInfoSaver graphInfoSaver;
+    private GraphInfoLoader graphInfoLoader;
+
+    @Before
+    public void setUp() {
+        testSaveDirectory = createCleanTestDirectory("ldbc_multi_labels_sample/");
+        graphInfoSaver = new LocalFileSystemYamlGraphSaver();
+        graphInfoLoader = new LocalFileSystemStringGraphInfoLoader();
+    }
+
+    @After
+    public void tearDown() {
+        // Test data will be preserved for debugging - cleanup happens before next test run
+        System.out.println("Test data saved in: " + testSaveDirectory);
+    }
 
     @Test
-    public void testVertexInfoWithLabels() {
+    public void testVertexInfoWithLabels() throws IOException {
         // Create property group
         Property property = new Property("id", DataType.INT32, true, false);
         PropertyGroup propertyGroup =
@@ -66,16 +91,16 @@ public class VertexInfoLabelsTest {
         Assert.assertTrue(vertexInfo.isValidated());
 
         // Test dump
-        String yaml = vertexInfo.dump();
-        Assert.assertNotNull(yaml);
-        Assert.assertTrue(yaml.contains("labels:"));
-        Assert.assertTrue(yaml.contains("Person"));
-        Assert.assertTrue(yaml.contains("Employee"));
-        Assert.assertTrue(yaml.contains("User"));
+        graphInfoSaver.save(URI.create(testSaveDirectory), vertexInfo);
+        // test load
+        VertexInfo loadedVertexInfo =
+                graphInfoLoader.loadVertexInfo(
+                        URI.create(testSaveDirectory + "person.vertex.yaml"));
+        Assert.assertTrue(TestVerificationUtils.equalsVertexInfo(vertexInfo, loadedVertexInfo));
     }
 
     @Test
-    public void testVertexInfoWithoutLabels() {
+    public void testVertexInfoWithoutLabels() throws IOException {
         // Create property group
         Property property = new Property("id", DataType.INT32, true, false);
         PropertyGroup propertyGroup =
@@ -99,14 +124,17 @@ public class VertexInfoLabelsTest {
 
         // Test validation
         Assert.assertTrue(vertexInfo.isValidated());
-
         // Test dump
-        String yaml = vertexInfo.dump();
-        Assert.assertNotNull(yaml);
+        graphInfoSaver.save(URI.create(testSaveDirectory), vertexInfo);
+        // test load
+        VertexInfo loadedVertexInfo =
+                graphInfoLoader.loadVertexInfo(
+                        URI.create(testSaveDirectory + "person.vertex.yaml"));
+        Assert.assertTrue(TestVerificationUtils.equalsVertexInfo(vertexInfo, loadedVertexInfo));
     }
 
     @Test
-    public void testVertexInfoWithEmptyLabels() {
+    public void testVertexInfoWithEmptyLabels() throws IOException {
         // Create property group
         Property property = new Property("id", DataType.INT32, true, false);
         PropertyGroup propertyGroup =
@@ -130,6 +158,23 @@ public class VertexInfoLabelsTest {
         Assert.assertEquals("vertex/person/", vertexInfo.getPrefix());
 
         // Test validation
-        Assert.assertTrue(vertexInfo.isValidated());
+        Assert.assertTrue(vertexInfo.isValidated()); // Test dump
+        graphInfoSaver.save(URI.create(testSaveDirectory), vertexInfo);
+        // test load
+        VertexInfo loadedVertexInfo =
+                graphInfoLoader.loadVertexInfo(
+                        URI.create(testSaveDirectory + "person.vertex.yaml"));
+        Assert.assertTrue(TestVerificationUtils.equalsVertexInfo(vertexInfo, loadedVertexInfo));
+    }
+
+    @Test
+    public void testLoadFromTestData() throws IOException {
+        URI GRAPH_PATH_URI = TestUtil.getLdbcGraphURI();
+        GraphInfo graphInfo = graphInfoLoader.loadGraphInfo(GRAPH_PATH_URI);
+        VertexInfo placeInfo = graphInfo.getVertexInfo("place");
+        VertexInfo organisationInfo = graphInfo.getVertexInfo("organisation");
+        Assert.assertEquals(List.of("city", "country", "continent"), placeInfo.getLabels());
+        Assert.assertEquals(
+                List.of("university", "company", "public"), organisationInfo.getLabels());
     }
 }
