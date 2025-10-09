@@ -22,13 +22,13 @@ on:
   # but only for the main branch
   push:
     branches:
-      - main
+      - "**"
     paths:
       - 'cpp/**'
       - '.github/workflows/ci.yml'
   pull_request:
     branches:
-      - main
+      - "**"
     paths:
       - 'cpp/**'
       - '.github/workflows/ci.yml'
@@ -198,10 +198,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - architecture: AMD64
-            macos-version: "13"
           - architecture: ARM64
             macos-version: "14"
+          - architecture: AMD64
+            macos-version: "15"
     steps:
     - uses: actions/checkout@v3
       with:
