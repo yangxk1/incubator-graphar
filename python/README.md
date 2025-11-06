@@ -72,6 +72,12 @@ For detailed information about the CLI functionality, please see [CLI Documentat
 
 ## API Documentation
 
+### build docs
+```bash
+make install_docs
+make docs
+```
+
 The Python SDK exposes the core GraphAr functionality through several modules:
 
 - `graphar.graph_info`: Main API for working with graph, vertex, and edge information
