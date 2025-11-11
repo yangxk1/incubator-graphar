@@ -22,7 +22,7 @@ on:
   # but only for the main branch
   push:
     branches:
-      - "main"
+      - "**"
     paths:
       - 'cpp/**'
       - 'python/**'
@@ -76,6 +76,9 @@ jobs:
       working-directory: "python"
       run: |
         pip install ./ -v
+
+    - name: setup tmate session
+      uses: mxschmitt/action-tmate@v3
 
     - name: Install Poetry
       working-directory: python
