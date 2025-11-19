@@ -23,21 +23,25 @@
 #include "graphar/lex_schema_reader.h"
 #include "graphar/graph_info.h"
 #include "graphar/status.h"
-#include "graphar/fwd.h"
-#include "graphar/types.h"
 
 #define CATCH_CONFIG_MAIN
-
-#include <catch2/catch_test_macros.hpp>
+#include <catch2/catch.hpp>
 
 namespace graphar {
 
 TEST_CASE("LexSchemaReaderTest") {
   SECTION("LoadFromFile") {
+    // File path is relative to the build directory (cpp/build)
     std::string file_path = "/Users/yangxk/code/yangxk/incubator-graphar/testing/ldbc/ldbc_schema.yaml";
     
+    std::cout << "Attempting to load file: " << file_path << std::endl;
+    
     auto result = LexSchemaReader::LoadFromFile(file_path);
-    REQUIRE(result.status().ok());
+    if (!result.status().ok()) {
+      std::cout << "Load failed with error: " << result.status().message() << std::endl;
+      std::cerr << "Load failed with error: " << result.status().message() << std::endl;
+      FAIL("Load failed: " + result.status().message());
+    }
     
     auto graph_info = result.value();
     REQUIRE(graph_info != nullptr);
