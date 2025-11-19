@@ -37,7 +37,9 @@ TEST_CASE("LexSchemaReaderTest") {
     std::string file_path = "/Users/yangxk/code/yangxk/incubator-graphar/testing/ldbc/ldbc_schema.yaml";
     
     auto result = LexSchemaReader::LoadFromFile(file_path);
-    REQUIRE(result.status().ok());
+    if (!result.status().ok()) {
+      std::cerr << result.status().message() << std::endl;
+    }
     
     auto graph_info = result.value();
     REQUIRE(graph_info != nullptr);

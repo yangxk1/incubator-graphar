@@ -25,6 +25,8 @@
 #include "mini-yaml/yaml/Yaml.hpp"
 
 #include <iostream>
+#include <list>
+#include <string>
 #include <vector>
 #include <unordered_map>
 
@@ -89,17 +91,24 @@ Result<std::shared_ptr<PropertyGroup>> ParsePropertyGroup(
   // Get properties
   std::vector<Property> properties;
   ::Yaml::Node properties_node = pg_node["properties"];
-  if (!properties_node.IsSequence()) {
-    return Status::YamlError("Property groups 'properties' should be a sequence.");
+  auto prop_string = properties_node.As<std::string>();
+  //TODO: use yaml library to parse properties
+  if (!prop_string.empty() && prop_string.front() == '[' && prop_string.back() == ']') {
+    prop_string = prop_string.substr(1, prop_string.length() - 2);
   }
+  std::stringstream ss(prop_string);
+  std::string prop_item;
   
   std::cout << "Properties count: " << properties_node.Size() << std::endl;
   
-  for (::Yaml::Iterator it = properties_node.Begin(); it != properties_node.End(); it++) {
-    std::string property_name = (*it).second.As<std::string>();
+  while (std::getline(ss, prop_item, ',')) {
+    prop_item.erase(0, prop_item.find_first_not_of(' '));
+    prop_item.erase(prop_item.find_last_not_of(' ') + 1);
+    std::string property_name = prop_item;
     std::cout << "Processing property: " << property_name << std::endl;
     auto prop_it = property_map.find(property_name);
-    if (prop_it == property_map.end()) {
+    //TODO: handle multiple labels
+    if (prop_it == property_map.end() && property_name != "_LABELS") {
       return Status::YamlError("Property '", property_name, "' not found in properties definition.");
     }
     properties.push_back(prop_it->second);
@@ -311,10 +320,10 @@ Result<std::shared_ptr<GraphInfo>> LexSchemaReader::Load(
     return Status::YamlError("'nodeTypes' should be a sequence.");
   }
   
-  std::cout << "Node types count: " << node_types.Size() << std::endl;
+  std::cout <<" ================= " << "Node types count: " << node_types.Size() <<" ================= "<< std::endl;
   
   for (::Yaml::Iterator it = node_types.Begin(); it != node_types.End(); it++) {
-    std::cout << "Parsing node type..." << std::endl;
+    std::cout << "----------- Parsing node type... ----------- " << std::endl;
     GAR_ASSIGN_OR_RAISE(auto vertex_info, ParseVertexInfo((*it).second));
     vertex_infos.push_back(vertex_info);
   }
@@ -326,16 +335,16 @@ Result<std::shared_ptr<GraphInfo>> LexSchemaReader::Load(
     return Status::YamlError("'edgeTypes' should be a sequence.");
   }
   
-  std::cout << "Edge types count: " << edge_types.Size() << std::endl;
+  std::cout <<" ================= " << "Edge types count: " << edge_types.Size() <<" ================= " << std::endl;
   
   for (::Yaml::Iterator it = edge_types.Begin(); it != edge_types.End(); it++) {
-    std::cout << "Parsing edge type..." << std::endl;
+    std::cout << "----------- Parsing edge type... -------------" << std::endl;
     GAR_ASSIGN_OR_RAISE(auto edge_info, ParseEdgeInfo((*it).second));
     edge_infos.push_back(edge_info);
   }
   
   // Create GraphInfo
-  std::cout << "Creating graph info..." << std::endl;
+  std::cout << " ================= " "Creating graph info..." << " ================= " << std::endl;
   return CreateGraphInfo(graph_name, vertex_infos, edge_infos, {}, prefix);
 }
 
