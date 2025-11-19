@@ -564,6 +564,7 @@ if (BUILD_TESTS)
     add_test(test_graph SRCS test/test_graph.cc)
     add_test(test_multi_label SRCS test/test_multi_label.cc)
     add_test(test_multi_property SRCS test/test_multi_property.cc)
+    add_test(test_lex_schema SRCS test/test_lex_schema.cc)
 
     # enable_testing()
 endif()

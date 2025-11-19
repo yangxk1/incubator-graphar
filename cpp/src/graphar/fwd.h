@@ -94,6 +94,7 @@ class Expression;
 class VertexInfo;
 class EdgeInfo;
 class GraphInfo;
+class LexSchemaReader;
 
 using PropertyGroupVector = std::vector<std::shared_ptr<PropertyGroup>>;
 using AdjacentListVector = std::vector<std::shared_ptr<AdjacentList>>;
