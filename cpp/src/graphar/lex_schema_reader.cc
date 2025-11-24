@@ -106,10 +106,10 @@ Result<std::shared_ptr<PropertyGroup>> ParsePropertyGroup(
     prop_item.erase(prop_item.find_last_not_of(' ') + 1);
     std::string property_name = prop_item;
     std::cout << "Processing property: " << property_name << std::endl;
-    if(property_name == "_LABELS"){
-      //TODO: handle multiple labels
-      continue;
-    }
+    // if(property_name == "_LABELS"){
+    //   //TODO: handle multiple labels
+    //   continue;
+    // }
     auto prop_it = property_map.find(property_name);
     if (prop_it == property_map.end()) {
       return Status::YamlError("Property '", property_name, "' not found in properties definition.");

@@ -133,7 +133,8 @@ bool PropertyGroup::HasProperty(const std::string& property_name) const {
 bool PropertyGroup::IsValidated() const {
   if (prefix_.empty() ||
       (file_type_ != FileType::CSV && file_type_ != FileType::PARQUET &&
-       file_type_ != FileType::ORC)) {
+       file_type_ != FileType::ORC && file_type_ != FileType::JSON)) {
+    // TODO validated json file type
     return false;
   }
   if (properties_.empty()) {
@@ -247,6 +248,8 @@ class VertexInfo::Impl {
     for (const auto& pg : property_groups_) {
       // check if property group is validated
       if (!pg || !pg->IsValidated()) {
+        std::cerr << "property group is not validated" << pg->GetPrefix()
+                  << std::endl;
         return false;
       }
       // check if property name is unique in all property groups

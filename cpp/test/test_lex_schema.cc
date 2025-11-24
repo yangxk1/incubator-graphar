@@ -20,10 +20,10 @@
 #include <iostream>
 #include <memory>
 
-#include "graphar/lex_schema_reader.h"
-#include "graphar/graph_info.h"
-#include "graphar/status.h"
 #include "graphar/fwd.h"
+#include "graphar/graph_info.h"
+#include "graphar/lex_schema_reader.h"
+#include "graphar/status.h"
 #include "graphar/types.h"
 
 #define CATCH_CONFIG_MAIN
@@ -34,22 +34,24 @@ namespace graphar {
 
 TEST_CASE("LexSchemaReaderTest") {
   SECTION("LoadFromFile") {
-    std::string file_path = "/Users/yangxk/code/yangxk/incubator-graphar/testing/ldbc/ldbc_schema.yaml";
-    
+    std::string file_path =
+        "/Users/yangxk/code/yangxk/incubator-graphar/testing/ldbc/"
+        "ldbc_schema.yaml";
+
     auto result = LexSchemaReader::LoadFromFile(file_path);
     if (!result.status().ok()) {
       std::cerr << result.status().message() << std::endl;
     }
-    
+
     auto graph_info = result.value();
     REQUIRE(graph_info != nullptr);
-    
+
     // Check graph name
     REQUIRE(graph_info->GetName() == "SNB_demo_graph");
-    
+
     // Check vertex infos
     REQUIRE(graph_info->VertexInfoNum() == 2);
-    
+
     // Check organisation vertex
     auto org_vertex = graph_info->GetVertexInfo("organisation");
     REQUIRE(org_vertex != nullptr);
@@ -57,7 +59,7 @@ TEST_CASE("LexSchemaReaderTest") {
     REQUIRE(org_vertex->GetChunkSize() == 128);
     REQUIRE(org_vertex->GetPrefix() == "vertex/organisation/");
     REQUIRE(org_vertex->PropertyGroupNum() == 2);
-    
+
     // Check person vertex
     auto person_vertex = graph_info->GetVertexInfo("person");
     REQUIRE(person_vertex != nullptr);
@@ -65,10 +67,10 @@ TEST_CASE("LexSchemaReaderTest") {
     REQUIRE(person_vertex->GetChunkSize() == 128);
     REQUIRE(person_vertex->GetPrefix() == "vertex/person/");
     REQUIRE(person_vertex->PropertyGroupNum() == 6);
-    
+
     // Check edge infos
     REQUIRE(graph_info->EdgeInfoNum() == 2);
-    
+
     // Check knows edge
     auto knows_edge = graph_info->GetEdgeInfo("person", "knows", "person");
     REQUIRE(knows_edge != nullptr);
@@ -80,9 +82,10 @@ TEST_CASE("LexSchemaReaderTest") {
     REQUIRE(knows_edge->GetDstChunkSize() == 128);
     REQUIRE(knows_edge->HasAdjacentListType(AdjListType::ordered_by_dest));
     REQUIRE(knows_edge->HasAdjacentListType(AdjListType::ordered_by_source));
-    
+
     // Check workAt edge
-    auto workat_edge = graph_info->GetEdgeInfo("person", "workAt", "organisation");
+    auto workat_edge =
+        graph_info->GetEdgeInfo("person", "workAt", "organisation");
     REQUIRE(workat_edge != nullptr);
     REQUIRE(workat_edge->GetEdgeType() == "workAt");
     REQUIRE(workat_edge->GetSrcType() == "person");
@@ -92,6 +95,27 @@ TEST_CASE("LexSchemaReaderTest") {
     REQUIRE(workat_edge->GetDstChunkSize() == 128);
     REQUIRE(workat_edge->HasAdjacentListType(AdjListType::ordered_by_dest));
     REQUIRE(workat_edge->HasAdjacentListType(AdjListType::ordered_by_source));
+    // Test dumping to YAML string
+    SECTION("DumpToOriginGARYamlString") {
+      std::cout << "====================== " << graph_info->GetName()
+                << "====================== " << std::endl;
+      auto dump_result = graph_info->Dump();
+      if (dump_result.has_error()) {
+        std::cerr << dump_result.error().message() << std::endl;
+      }
+      std::cout << dump_result.value() << std::endl << std::endl;
+      for (auto vertexInfo : graph_info->GetVertexInfos()) {
+        std::cout << "====================== " << vertexInfo->GetType()
+                  << " ======================" << std::endl;
+        std::cout << vertexInfo->Dump().value() << std::endl;
+      }
+      for (auto edgeInfo : graph_info->GetEdgeInfos()) {
+        std::cout << "====================== " << edgeInfo->GetSrcType() << "-"
+                  << edgeInfo->GetEdgeType() << "-" << edgeInfo->GetDstType()
+                  << "====================== " << std::endl;
+        std::cout << edgeInfo->Dump().value() << std::endl;
+      }
+    }
   }
 }
 
