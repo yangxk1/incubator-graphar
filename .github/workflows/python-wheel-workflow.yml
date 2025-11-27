@@ -1,23 +1,41 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
 name: Build Python Wheels
 
 on:
+  push:
+    branches:
+      - "*"
+    tags:
+      - '*'
+  pull_request:
   workflow_dispatch:
-  workflow_call:
-    inputs:
-      isNightly:
-        type: boolean
-        required: true
-        default: false
-env:
-  PIP_BREAK_SYSTEM_PACKAGES: 1
 
 jobs:
-  build-wheels-arm64:
-    runs-on: self-hosted-mac-x64
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, windows-2019, macos-11]
+
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
+      - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -26,38 +44,26 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install cibuildwheel build
+          python -m pip install --upgrade pip
+          pip install build twine
 
-      - name: Create source distribution
-        working-directory: python
+      - name: Build wheels
         run: |
-          python -m build --sdist
-          mkdir -p ../dist
-          cp dist/*.tar.gz ../dist/graphar.tar.gz
+          cd python
+          pip install -v .
+          python -m build
 
-      - name: Build wheels for Apple Silicon
-        uses: pypa/cibuildwheel@v2.22
-        env:
-          CIBW_SKIP: pp*
-          CIBW_ARCHS_MACOS: arm64
-          CIBW_BUILD_VERBOSITY: 3
-          MACOSX_DEPLOYMENT_TARGET: 11.0
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
         with:
-          package-dir: ./dist/graphar.tar.gz
-          output-dir: ./dist/wheelhouse
+          name: wheels-${{ matrix.os }}
+          path: python/dist/*
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: macos-wheels-arm64
-          path: ./dist/wheelhouse/*.whl
-
-  build-wheels-x86_64:
-    runs-on: self-hosted-mac-x64
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
+      - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -66,28 +72,39 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install cibuildwheel build
+          python -m pip install --upgrade pip
+          pip install build twine
 
-      - name: Create source distribution
-        working-directory: python
+      - name: Build sdist
         run: |
+          cd python
           python -m build --sdist
-          mkdir -p ../dist
-          cp dist/*.tar.gz ../dist/graphar.tar.gz
 
-      - name: Build wheels for Intel
-        uses: pypa/cibuildwheel@v2.22
-        env:
-          CIBW_SKIP: pp* cp36*
-          CIBW_ARCHS_MACOS: x86_64
-          CIBW_BUILD_VERBOSITY: 3
-          MACOSX_DEPLOYMENT_TARGET: 11.0
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
         with:
-          package-dir: ./dist/graphar.tar.gz
-          output-dir: ./dist/wheelhouse
+          name: sdist
+          path: python/dist/*
 
-      - uses: actions/upload-artifact@v4
+  upload_pypi:
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
         with:
-          name: macos-wheels-x86_64
-          path: ./dist/wheelhouse/*.whl
+          path: dist
+
+      - name: Move artifacts to correct location
+        run: |
+          mkdir -p python/dist
+          find dist -name "*" -type f -exec mv {} python/dist/ \;
+
+
+      - name: Publish to Test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: test_graphar_release
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
+          packages_dir: python/dist/
