@@ -33,7 +33,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-15]
+        os: [macos-15]
 
     steps:
       - uses: actions/checkout@v3
@@ -45,8 +45,10 @@ jobs:
 
       - name: Install dependencies
         run: |
+          brew bundle --file=cpp/Brewfile
           python -m pip install --upgrade pip
           pip install build twine
+
       - name: Build wheels
         run: |
           cd python
