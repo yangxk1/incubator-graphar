@@ -40,13 +40,15 @@ classifiers = [
 ]
 
 [tool.scikit-build]
+build-dir = "build"
+
+[tool.scikit-build.sdist]
 include = [
   "../cpp/**",
   "../CMakeLists.txt",
   "../LICENSE",
   "../NOTICE",
 ]
-build-dir = "build"
 
 [project.optional-dependencies]
 test = ["pandas ~= 2.0", "typing_extensions ~= 4.0"]
