@@ -39,6 +39,14 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 
+[tool.scikit-build]
+include = [
+  "../cpp/**",
+  "../CMakeLists.txt",
+  "../LICENSE",
+  "../NOTICE",
+]
+
 [project.optional-dependencies]
 test = ["pandas ~= 2.0", "typing_extensions ~= 4.0"]
 docs = ["pdoc"]
