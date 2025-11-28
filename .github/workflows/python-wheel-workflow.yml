@@ -57,11 +57,11 @@ jobs:
       CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
       CIBW_BEFORE_BUILD_LINUX: |
-        dnf install -y dnf-plugins-core &&
-        dnf config-manager --set-enabled crb &&
-        dnf install -y https://apache.jfrog.io/artifactory/arrow/almalinux/apache-arrow-release-l/latest-9.noarch.rpm &&
-        dnf update -y &&
-        dnf install -y arrow-devel parquet-devel libcurl-devel ccache
+        curl -L -o /tmp/arrow.deb https://apache.jfrog.io/artifactory/arrow/ubuntu/apache-arrow-apt-source-latest-jammy.deb &&
+        apt-get update &&
+        apt-get install -y /tmp/arrow.deb &&
+        apt-get update &&
+        apt-get install -y libarrow-dev=17.0.0-1 libparquet-dev=17.0.0-1
 
     steps:
       - uses: actions/checkout@v3
