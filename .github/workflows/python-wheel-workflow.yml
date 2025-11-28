@@ -88,8 +88,9 @@ jobs:
           source .venv/bin/activate
           uv pip install packaging cibuildwheel
           mkdir -p python/dist
+          pushd python
           # Run cibuildwheel from repo root, targeting subdir "python"
-          python -m cibuildwheel --package-dir python --output-dir python/dist
+          python -m cibuildwheel --output-dir python/dist
 
       - name: Store artifacts
         uses: actions/upload-artifact@v4
