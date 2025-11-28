@@ -65,6 +65,8 @@ jobs:
       - name: Build wheels
         run: |
           cd python
+          echo CMAKE_OSX_DEPLOYMENT_TARGET
+          export CMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}
           python -m pip install uv
           uv venv
           source .venv/bin/activate
