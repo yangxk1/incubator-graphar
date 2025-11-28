@@ -46,7 +46,7 @@ jobs:
       CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
-      CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
+      CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0}', matrix.deployment-target) || '' }}
 
     steps:
       - uses: actions/checkout@v3
@@ -57,27 +57,16 @@ jobs:
           python-version: "3.9"
 
       - name: Install dependencies
-        env:
-          HOMEBREW_BUILD_FROM_SOURCE: '1'
-          MACOSX_DEPLOYMENT_TARGET: ${{ matrix.deployment-target }}
-          CMAKE_OSX_DEPLOYMENT_TARGET: ${{ matrix.deployment-target }}
-          CFLAGS: ${{ format('-mmacosx-version-min={0}', matrix.deployment-target) }}
-          CXXFLAGS: ${{ format('-mmacosx-version-min={0}', matrix.deployment-target) }}
-          LDFLAGS: ${{ format('-mmacosx-version-min={0}', matrix.deployment-target) }}
         run: |
           brew bundle --file=cpp/Brewfile
           python -m pip install --upgrade pip
           pip install build twine
 
       - name: Build wheels
-        env:
-          MACOSX_DEPLOYMENT_TARGET: ${{ matrix.deployment-target }}
-          CMAKE_OSX_DEPLOYMENT_TARGET: ${{ matrix.deployment-target }}
-          CFLAGS: ${{ format('-mmacosx-version-min={0}', matrix.deployment-target) }}
-          CXXFLAGS: ${{ format('-mmacosx-version-min={0}', matrix.deployment-target) }}
-          LDFLAGS: ${{ format('-mmacosx-version-min={0}', matrix.deployment-target) }}
         run: |
           cd python
+          echo ${CMAKE_OSX_DEPLOYMENT_TARGET}
+          export CMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}
           python -m pip install uv
           uv venv
           source .venv/bin/activate
@@ -137,4 +126,4 @@ jobs:
           user: test_graphar_release
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository-url: https://test.pypi.org/legacy/
-          packages-dir: python/dist/
+          packages_dir: python/dist/
