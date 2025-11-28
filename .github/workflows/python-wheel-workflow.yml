@@ -68,6 +68,10 @@ jobs:
       - name: Install linux dependencies
         if: matrix.os == 'linux'
         run: |
+
+      - name: Build wheels
+        run: |
+          # Create and activate a virtualenv at repo root
           wget -c https://apache.jfrog.io/artifactory/arrow/"$(lsb_release --id --short | tr 'A-Z' 'a-z')"/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb \
               -P /tmp/
           sudo apt-get install -y /tmp/apache-arrow-apt-source-latest-"$(lsb_release --codename --short)".deb
@@ -77,10 +81,6 @@ jobs:
                               libarrow-acero-dev=17.0.0-1 \
                               libparquet-dev=17.0.0-1
           sudo apt-get install -y ccache libcurl4-openssl-dev
-
-      - name: Build wheels
-        run: |
-          # Create and activate a virtualenv at repo root
           python -m pip install --upgrade pip
           pip install build twine
           python -m pip install uv
@@ -90,7 +90,8 @@ jobs:
           mkdir -p python/dist
           pushd python
           # Run cibuildwheel from repo root, targeting subdir "python"
-          python -m cibuildwheel --output-dir python/dist
+          python -m cibuildwheel --output-dir dist
+          popd
 
       - name: Store artifacts
         uses: actions/upload-artifact@v4
