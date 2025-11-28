@@ -39,6 +39,9 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 
+[tool.scikit-build.cmake.define]
+CMAKE_OSX_DEPLOYMENT_TARGET = "11.0"
+
 [tool.scikit-build]
 build-dir = "build"
 
