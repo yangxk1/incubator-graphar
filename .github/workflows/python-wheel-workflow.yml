@@ -55,6 +55,8 @@ jobs:
           python -m pip install uv
           uv venv
           source .venv/bin/activate
+          uv pip install packaging
+          uv pip install cibuildwheel
           python -m cibuildwheel --output-dir dist
 
       - name: Store artifacts
