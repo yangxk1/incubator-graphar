@@ -57,11 +57,11 @@ jobs:
       CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
       CIBW_BEFORE_BUILD_LINUX: |
-        wget -O /tmp/arrow.deb https://apache.jfrog.io/artifactory/arrow/ubuntu/apache-arrow-apt-source-latest-jammy.deb &&
-        apt-get update &&
-        apt-get install -y /tmp/arrow.deb &&
-        apt-get update &&
-        apt-get install -y libarrow-dev=17.0.0-1 libparquet-dev=17.0.0-1
+        dnf install -y dnf-plugins-core &&
+        dnf config-manager --set-enabled crb &&
+        dnf install -y https://apache.jfrog.io/artifactory/arrow/almalinux/apache-arrow-release-l/latest-9.noarch.rpm &&
+        dnf update -y &&
+        dnf install -y arrow-devel parquet-devel libcurl-devel ccache
 
     steps:
       - uses: actions/checkout@v3
@@ -77,16 +77,6 @@ jobs:
 
       - name: Build wheels
         run: |
-          # Create and activate a virtualenv at repo root
-          wget -c https://apache.jfrog.io/artifactory/arrow/"$(lsb_release --id --short | tr 'A-Z' 'a-z')"/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb \
-              -P /tmp/
-          sudo apt-get install -y /tmp/apache-arrow-apt-source-latest-"$(lsb_release --codename --short)".deb
-          sudo apt-get update -y
-          sudo apt install -y libarrow-dev=17.0.0-1 \
-                              libarrow-dataset-dev=17.0.0-1 \
-                              libarrow-acero-dev=17.0.0-1 \
-                              libparquet-dev=17.0.0-1
-          sudo apt-get install -y ccache libcurl4-openssl-dev
           python -m pip install --upgrade pip
           pip install build twine
           python -m pip install uv
