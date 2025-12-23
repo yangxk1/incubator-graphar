@@ -29,20 +29,7 @@ project(
 set(CMAKE_CXX_STANDARD 17)
 
 # -----------------------------------------------------------------------------
-# 1. Build Arrow from Source (Static)
-# -----------------------------------------------------------------------------
-# Add the cmake directory to the module path to find apache-arrow.cmake
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cpp/cmake")
-
-# Include the helper script provided
-include(apache-arrow)
-
-# Trigger the download and build of Arrow (Static Libraries)
-# Ensure your apache-arrow.cmake sets -DARROW_POSITION_INDEPENDENT_CODE=ON
-build_arrow()
-
-# -----------------------------------------------------------------------------
-# 2. Locate GraphAr C++ Sources
+# 1. Locate GraphAr C++ Sources
 # -----------------------------------------------------------------------------
 # When building from a source checkout, the C++ sources live in ../cpp.
 # When building from an sdist, CI vendors the C++ sources into ./cpp.
@@ -58,10 +45,29 @@ else()
 endif()
 
 # -----------------------------------------------------------------------------
+# 2. Build Arrow from Source (Static)
+# -----------------------------------------------------------------------------
+# Add the GraphAr CMake module directory to the module path to find apache-arrow.cmake
+list(APPEND CMAKE_MODULE_PATH "${GRAPHAR_CPP_SOURCE_DIR}/cmake")
+
+# Include the helper script provided
+include(apache-arrow)
+
+# Trigger the download and build of Arrow (Static Libraries)
+# Ensure apache-arrow.cmake sets -DARROW_POSITION_INDEPENDENT_CODE=ON
+build_arrow()
+
+# -----------------------------------------------------------------------------
 # 3. Add GraphAr Subdirectory
 # -----------------------------------------------------------------------------
 # Note: You might need to ensure GraphAr's CMakeLists.txt knows how to use
 # the static Arrow targets we just built, or at least doesn't fail on find_package(Arrow).
+
+# GraphAr C++ requires Arrow; during wheel builds we build Arrow from source.
+# Tell the subproject to use the BUILD_ARROW_FROM_SOURCE path (it will reuse the
+# targets created above and skip rebuilding Arrow).
+set(BUILD_ARROW_FROM_SOURCE ON CACHE BOOL "Build Arrow from source" FORCE)
+
 add_subdirectory(${GRAPHAR_CPP_SOURCE_DIR} ${CMAKE_BINARY_DIR}/graphar)
 
 # -----------------------------------------------------------------------------

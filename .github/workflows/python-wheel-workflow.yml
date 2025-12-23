@@ -153,9 +153,9 @@ jobs:
         # 2. Install System Dependencies (OpenSSL is required for Arrow)
         # manylinux2014 uses yum, manylinux_2_28+ uses dnf
         if command -v dnf; then
-          dnf install -y openssl-devel git
+          dnf install -y openssl-devel libcurl-devel git
         elif command -v yum; then
-          yum install -y openssl-devel git
+          yum install -y openssl-devel libcurl-devel git
         fi
 
       # Add /opt/tools/bin to PATH so cmake/ninja are found
