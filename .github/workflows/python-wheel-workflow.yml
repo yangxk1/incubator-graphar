@@ -96,15 +96,15 @@ jobs:
           - platform: x86_64
             runner: ubuntu-latest
             os: linux
-            manylinux: "2_28"
+            manylinux: "2_34"
 
           - platform: aarch64
             runner: ubuntu-22.04-arm
             os: linux
-            manylinux: "2_28"
+            manylinux: "2_34"
 
           - platform: x86_64
-            runner: macos-13
+            runner: macos-15-intel
             os: macos
             deployment_target: "11.0"
 
@@ -179,7 +179,9 @@ jobs:
           miniforge-version: latest
           use-mamba: true
           channels: conda-forge
-          activate-environment: base
+          python-version: "3.11"
+          auto-activate-base: false
+          activate-environment: cibw
 
       - name: Install Arrow C++ (Windows)
         if: matrix.os == 'windows'
