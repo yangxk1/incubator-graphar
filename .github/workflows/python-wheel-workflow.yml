@@ -112,16 +112,15 @@ jobs:
             os: macos
             deployment_target: "11.0"
 
-          - platform: amd64
-            runner: windows-2022
-            os: windows
+          # Windows build might be slow, uncomment if needed
+          # - platform: amd64
+          #   runner: windows-2022
+          #   os: windows
 
     env:
-      # Define the Arrow version here (Single Source of Truth)
-      ARROW_VERSION: "17.0.0"
-      
       CIBW_PLATFORM: ${{ matrix.os }}
       CIBW_ARCHS_LINUX: ${{ matrix.os == 'linux' && matrix.platform || '' }}
+      # Limit build to fewer python versions if build time is too long
       CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-*"
       CIBW_SKIP: "pp* *-musllinux_*"
       CIBW_BUILD_VERBOSITY: "1"
@@ -129,10 +128,46 @@ jobs:
       CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux_{0}', matrix.manylinux) || '' }}
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux_{0}', matrix.manylinux) || '' }}
       
-      # Point to the local install location for CMake
-      CIBW_ENVIRONMENT_LINUX: "CMAKE_PREFIX_PATH=/usr/local/arrow LD_LIBRARY_PATH=/usr/local/arrow/lib:$LD_LIBRARY_PATH"
-      CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_PREFIX_PATH=/tmp/arrow-dist', matrix.deployment_target) || '' }}
-      CIBW_ENVIRONMENT_WINDOWS: "CMAKE_PREFIX_PATH=C:\\arrow-dist"
+      # REMOVED: CMAKE_PREFIX_PATH pointing to conda
+      # We want to use the internal build or system libs
+      CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0}', matrix.deployment_target) || '' }}
+
+      # ---------------------------------------------------------------------
+      # Linux Setup: Install Build Tools ONLY (No Arrow)
+      # ---------------------------------------------------------------------
+      CIBW_BEFORE_ALL_LINUX: |
+        set -eux
+        # 1. Install CMake/Ninja via Micromamba (to get recent versions)
+        arch="$(uname -m)"
+        case "${arch}" in
+          x86_64) mm_plat="linux-64" ;;
+          aarch64|arm64) mm_plat="linux-aarch64" ;;
+          *) echo "Unsupported arch: ${arch}"; exit 1 ;;
+        esac
+        curl -Ls "https://micro.mamba.pm/api/micromamba/${mm_plat}/latest" | tar -xvj bin/micromamba
+        chmod +x bin/micromamba
+        
+        # Install ONLY build tools. DO NOT install arrow-cpp.
+        ./bin/micromamba create -y -p /opt/tools -c conda-forge cmake ninja pkg-config
+        
+        # 2. Install System Dependencies (OpenSSL is required for Arrow)
+        # manylinux2014 uses yum, manylinux_2_28+ uses dnf
+        if command -v dnf; then
+          dnf install -y openssl-devel git
+        elif command -v yum; then
+          yum install -y openssl-devel git
+        fi
+
+      # Add /opt/tools/bin to PATH so cmake/ninja are found
+      CIBW_ENVIRONMENT_LINUX: "PATH=/opt/tools/bin:$PATH"
+
+      # ---------------------------------------------------------------------
+      # macOS Setup: Install Build Tools ONLY
+      # ---------------------------------------------------------------------
+      CIBW_BEFORE_ALL_MACOS: |
+        set -eux
+        brew install cmake ninja openssl
+        # DO NOT brew install apache-arrow
 
     steps:
       - uses: actions/checkout@v4
@@ -163,104 +198,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install cibuildwheel
 
-      # -------------------------------------------------------------------------
-      # Windows Specific Setup (Build Arrow from Source)
-      # -------------------------------------------------------------------------
-      - name: Build Arrow C++ (Windows)
-        if: matrix.os == 'windows'
-        shell: bash
-        run: |
-          curl -L "https://github.com/apache/arrow/archive/refs/tags/apache-arrow-${{ env.ARROW_VERSION }}.tar.gz" -o arrow.tar.gz
-          tar -xf arrow.tar.gz
-          cd arrow-apache-arrow-${{ env.ARROW_VERSION }}/cpp
-          mkdir build
-          cd build
-          
-          cmake .. \
-            -DCMAKE_INSTALL_PREFIX="C:/arrow-dist" \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DARROW_BUILD_STATIC=ON \
-            -DARROW_BUILD_SHARED=OFF \
-            -DARROW_POSITION_INDEPENDENT_CODE=ON \
-            -DARROW_DEPENDENCY_SOURCE=BUNDLED \
-            -DARROW_PARQUET=ON \
-            -DARROW_DATASET=ON \
-            -DARROW_WITH_SNAPPY=ON \
-            -DARROW_WITH_ZLIB=ON
-          
-          cmake --build . --config Release --target install
-
       - name: Build wheels
         shell: bash
-        # MOVED CIBW_BEFORE_ALL_* HERE to allow access to ${{ env.ARROW_VERSION }}
-        env:
-          # -------------------------------------------------------------------------
-          # Build Arrow C++ from Source (Linux)
-          # -------------------------------------------------------------------------
-          CIBW_BEFORE_ALL_LINUX: |
-            set -eux
-            # 1. Install build tools via micromamba
-            arch="$(uname -m)"
-            case "${arch}" in
-              x86_64) mm_plat="linux-64" ;;
-              aarch64|arm64) mm_plat="linux-aarch64" ;;
-              *) echo "Unsupported arch: ${arch}"; exit 1 ;;
-            esac
-            curl -Ls "https://micro.mamba.pm/api/micromamba/${mm_plat}/latest" | tar -xvj bin/micromamba
-            chmod +x bin/micromamba
-            ./bin/micromamba create -y -p /opt/conda -c conda-forge cmake ninja pkg-config
-            export PATH=/opt/conda/bin:$PATH
-
-            # 2. Download and Build Arrow C++ Static
-            curl -L "https://github.com/apache/arrow/archive/refs/tags/apache-arrow-${{ env.ARROW_VERSION }}.tar.gz" -o arrow.tar.gz
-            tar -xf arrow.tar.gz
-            cd arrow-apache-arrow-${{ env.ARROW_VERSION }}/cpp
-            mkdir build && cd build
-            
-            cmake .. -GNinja \
-              -DCMAKE_INSTALL_PREFIX=/usr/local/arrow \
-              -DCMAKE_BUILD_TYPE=Release \
-              -DARROW_BUILD_STATIC=ON \
-              -DARROW_BUILD_SHARED=OFF \
-              -DARROW_POSITION_INDEPENDENT_CODE=ON \
-              -DARROW_DEPENDENCY_SOURCE=BUNDLED \
-              -DARROW_PARQUET=ON \
-              -DARROW_DATASET=ON \
-              -DARROW_FILESYSTEM=ON \
-              -DARROW_WITH_SNAPPY=ON \
-              -DARROW_WITH_ZLIB=ON \
-              -DARROW_WITH_LZ4=ON \
-              -DARROW_WITH_ZSTD=ON
-            
-            ninja install
-
-          # -------------------------------------------------------------------------
-          # Build Arrow C++ from Source (macOS)
-          # -------------------------------------------------------------------------
-          CIBW_BEFORE_ALL_MACOS: |
-            set -eux
-            brew install cmake ninja
-
-            curl -L "https://github.com/apache/arrow/archive/refs/tags/apache-arrow-${{ env.ARROW_VERSION }}.tar.gz" -o arrow.tar.gz
-            tar -xf arrow.tar.gz
-            cd arrow-apache-arrow-${{ env.ARROW_VERSION }}/cpp
-            mkdir build && cd build
-            
-            cmake .. -GNinja \
-              -DCMAKE_INSTALL_PREFIX=/tmp/arrow-dist \
-              -DCMAKE_BUILD_TYPE=Release \
-              -DARROW_BUILD_STATIC=ON \
-              -DARROW_BUILD_SHARED=OFF \
-              -DARROW_POSITION_INDEPENDENT_CODE=ON \
-              -DARROW_DEPENDENCY_SOURCE=BUNDLED \
-              -DARROW_PARQUET=ON \
-              -DARROW_DATASET=ON \
-              -DARROW_FILESYSTEM=ON \
-              -DARROW_WITH_SNAPPY=ON \
-              -DARROW_WITH_ZLIB=ON
-            
-            ninja install
-
         run: |
           python -m cibuildwheel "$SDIST_FILE" --output-dir python/wheelhouse
 
