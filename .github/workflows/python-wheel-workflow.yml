@@ -21,12 +21,12 @@ name: Build Python Wheels
 on:
   pull_request:
     paths:
-      - "python/**"
+      - "**"
       - "cpp/**"
       - ".github/workflows/python-wheel-workflow.yml"
   push:
     tags:
-      - "python-v*"
+      - "**"
       - "v*"
   workflow_dispatch:
     inputs:
