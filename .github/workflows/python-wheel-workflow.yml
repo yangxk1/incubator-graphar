@@ -123,7 +123,7 @@ jobs:
       CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-*"
       CIBW_SKIP: "pp* *-musllinux_*"
       CIBW_BUILD_VERBOSITY: "1"
-      CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel -v show {wheel} && auditwheel -v repair -w {dest_dir} {wheel}"
+      CIBW_REPAIR_WHEEL_COMMAND_LINUX: "python -m pip install -U auditwheel && auditwheel -v show {wheel} && auditwheel -v repair -w {dest_dir} {wheel}"
       CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux_{0}', matrix.manylinux) || '' }}
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux_{0}', matrix.manylinux) || '' }}
       CIBW_ENVIRONMENT_LINUX: "CMAKE_PREFIX_PATH=/opt/conda LD_LIBRARY_PATH=/opt/conda/lib:$LD_LIBRARY_PATH"
@@ -141,7 +141,7 @@ jobs:
         curl -Ls "https://micro.mamba.pm/api/micromamba/${mm_plat}/latest" | tar -xvj bin/micromamba
         chmod +x bin/micromamba
         ./bin/micromamba create -y -p /opt/conda -c conda-forge \
-          arrow-cpp \
+          arrow-cpp=14 \
           cmake \
           ninja \
           pkg-config
