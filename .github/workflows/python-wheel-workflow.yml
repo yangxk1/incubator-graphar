@@ -57,6 +57,12 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Ensure LICENSE/NOTICE for Python package
+        working-directory: python
+        run: |
+          cp -f ../LICENSE ./LICENSE
+          cp -f ../NOTICE ./NOTICE
+
       - name: Build sdist
         working-directory: python
         run: |
