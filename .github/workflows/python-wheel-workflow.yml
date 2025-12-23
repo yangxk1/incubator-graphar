@@ -141,7 +141,7 @@ jobs:
         curl -Ls "https://micro.mamba.pm/api/micromamba/${mm_plat}/latest" | tar -xvj bin/micromamba
         chmod +x bin/micromamba
         ./bin/micromamba create -y -p /opt/conda -c conda-forge \
-          arrow-cpp=17.0.0-1 \
+          arrow-cpp \
           cmake \
           ninja \
           pkg-config
