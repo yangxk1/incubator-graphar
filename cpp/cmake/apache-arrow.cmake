@@ -124,6 +124,14 @@ function(build_arrow)
         set(GAR_ARROW_SOURCE_URL "https://www.apache.org/dyn/closer.lua?action=download&filename=arrow/arrow-${ARROW_VERSION_TO_BUILD}/apache-arrow-${ARROW_VERSION_TO_BUILD}.tar.gz")
     endif ()
 
+    # If Acero is available for the Arrow version to build, include its static lib byproduct too
+    if (ARROW_VERSION_TO_BUILD GREATER_EQUAL "12.0.0")
+        set(GAR_ARROW_ACERO_STATIC_LIB_FILENAME
+	    "${CMAKE_STATIC_LIBRARY_PREFIX}arrow_acero${CMAKE_STATIC_LIBRARY_SUFFIX}")
+        set(GAR_ARROW_ACERO_STATIC_LIB "${GAR_ARROW_STATIC_LIBRARY_DIR}/${GAR_ARROW_ACERO_STATIC_LIB_FILENAME}" CACHE INTERNAL "acero lib")
+        list(APPEND GAR_ARROW_BUILD_BYPRODUCTS "${GAR_ARROW_ACERO_STATIC_LIB}")
+    endif()
+
     include(ExternalProject)
     externalproject_add(arrow_ep
             URL "${GAR_ARROW_SOURCE_URL}"
@@ -154,18 +162,11 @@ function(build_arrow)
     set_target_properties(${GAR_ARROW_BUNDLED_DEPS_TARGET}
             PROPERTIES IMPORTED_LOCATION ${GAR_ARROW_BUNDLED_DEPS_STATIC_LIB})
     if (ARROW_VERSION_TO_BUILD GREATER_EQUAL "12.0.0")
-        set(GAR_ARROW_ACERO_STATIC_LIB_FILENAME
-	    "${CMAKE_STATIC_LIBRARY_PREFIX}arrow_acero${CMAKE_STATIC_LIBRARY_SUFFIX}")
-        set(GAR_ARROW_ACERO_STATIC_LIB "${GAR_ARROW_STATIC_LIBRARY_DIR}/${GAR_ARROW_ACERO_STATIC_LIB_FILENAME}" CACHE INTERNAL "acero lib")
         set(GAR_ARROW_ACERO_LIBRARY_TARGET gar_acero_static)
         add_library(${GAR_ARROW_ACERO_LIBRARY_TARGET} STATIC IMPORTED)
         set_target_properties(${GAR_ARROW_ACERO_LIBRARY_TARGET}
             PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${GAR_ARROW_INCLUDE_DIR}
             IMPORTED_LOCATION ${GAR_ARROW_ACERO_STATIC_LIB})
-        # Add acero to byproducts so the merge target can depend on it
-        list(APPEND GAR_ARROW_BUILD_BYPRODUCTS "${GAR_ARROW_ACERO_STATIC_LIB}")
-        # Update external project with new byproducts
-        set_property(TARGET arrow_ep PROPERTY BUILD_BYPRODUCTS "${GAR_ARROW_BUILD_BYPRODUCTS}")
     endif()
 
     # Ensure all imported libs depend on the external project
