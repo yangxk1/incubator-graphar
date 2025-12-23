@@ -118,7 +118,7 @@ jobs:
 
     env:
       # Define the Arrow version here (Single Source of Truth)
-      ARROW_VERSION: "15.0.2"
+      ARROW_VERSION: "17.0.0-1"
       
       CIBW_PLATFORM: ${{ matrix.os }}
       CIBW_ARCHS_LINUX: ${{ matrix.os == 'linux' && matrix.platform || '' }}
