@@ -63,6 +63,15 @@ jobs:
           cp -f ../LICENSE ./LICENSE
           cp -f ../NOTICE ./NOTICE
 
+      - name: Vendor C++ sources into sdist
+        run: |
+          rm -rf python/cpp
+          mkdir -p python/cpp
+          rsync -a --delete \
+            --exclude 'build*/' \
+            --exclude '.git*/' \
+            cpp/ python/cpp/
+
       - name: Build sdist
         working-directory: python
         run: |
@@ -121,7 +130,14 @@ jobs:
       # Install Arrow C++ once per job, then point CMake to it.
       CIBW_BEFORE_ALL_LINUX: |
         set -eux
-        curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba
+        arch="$(uname -m)"
+        case "${arch}" in
+          x86_64) mm_plat="linux-64" ;;
+          aarch64|arm64) mm_plat="linux-aarch64" ;;
+          *) echo "Unsupported arch: ${arch}"; exit 1 ;;
+        esac
+        curl -Ls "https://micro.mamba.pm/api/micromamba/${mm_plat}/latest" | tar -xvj bin/micromamba
+        chmod +x bin/micromamba
         ./bin/micromamba create -y -p /opt/conda -c conda-forge \
           arrow-cpp \
           cmake \
@@ -159,7 +175,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          miniforge-variant: Mambaforge
+          miniforge-variant: Miniforge3
           miniforge-version: latest
           use-mamba: true
           channels: conda-forge

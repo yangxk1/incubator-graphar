@@ -61,7 +61,7 @@ test = ["pandas ~= 2.0", "typing_extensions ~= 4.0"]
 build-dir = "build"
 
 [tool.scikit-build.sdist]
-include = ["LICENSE", "NOTICE"]
+include = ["LICENSE", "NOTICE", "cpp/**"]
 
 [project.scripts]
 graphar = "cli.graphar_cli:main"

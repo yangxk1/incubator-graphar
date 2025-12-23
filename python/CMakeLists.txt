@@ -27,7 +27,21 @@ project(
   LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../cpp ${CMAKE_BINARY_DIR}/graphar)
+
+# When building from a source checkout, the C++ sources live in ../cpp.
+# When building from an sdist, CI vendors the C++ sources into ./cpp.
+set(GRAPHAR_CPP_SOURCE_DIR "")
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../cpp/CMakeLists.txt")
+  set(GRAPHAR_CPP_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../cpp")
+elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/cpp/CMakeLists.txt")
+  set(GRAPHAR_CPP_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cpp")
+else()
+  message(
+    FATAL_ERROR
+      "GraphAr C++ sources not found. Expected ../cpp (source checkout) or ./cpp (vendored in sdist).")
+endif()
+
+add_subdirectory(${GRAPHAR_CPP_SOURCE_DIR} ${CMAKE_BINARY_DIR}/graphar)
 
 # Find the module development requirements (requires FindPython from 3.17 or
 # scikit-build-core's built-in backport)
@@ -57,8 +71,8 @@ target_link_libraries(_core PRIVATE pybind11::headers graphar Arrow::arrow_share
                                     ArrowAcero::arrow_acero_shared
                                     )
 target_include_directories(_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_include_directories(_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/src)
-target_include_directories(_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/thirdparty)
+target_include_directories(_core PRIVATE ${GRAPHAR_CPP_SOURCE_DIR}/src)
+target_include_directories(_core PRIVATE ${GRAPHAR_CPP_SOURCE_DIR}/thirdparty)
 
 # This is passing in the version as a define just as an example
 target_compile_definitions(_core PRIVATE VERSION_INFO=${PROJECT_VERSION})
@@ -75,5 +89,7 @@ else()
 endif()
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/cli/ DESTINATION cli)
-install(TARGETS graphar DESTINATION graphar)
+if(TARGET graphar)
+  install(TARGETS graphar DESTINATION graphar)
+endif()
 install(TARGETS _core DESTINATION graphar)
