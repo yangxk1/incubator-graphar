@@ -32,7 +32,7 @@ set(CMAKE_CXX_STANDARD 17)
 # 1. Build Arrow from Source (Static)
 # -----------------------------------------------------------------------------
 # Add the cmake directory to the module path to find apache-arrow.cmake
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cpp/cmake")
 
 # Include the helper script provided
 include(apache-arrow)
