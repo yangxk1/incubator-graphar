@@ -1,4 +1,3 @@
-
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -113,8 +112,6 @@ jobs:
             os: macos
             deployment_target: "11.0"
 
-          # Windows build from source is very slow and complex in CI.
-          # Kept here but be aware it might timeout or require more adjustments.
           - platform: amd64
             runner: windows-2022
             os: windows
@@ -139,6 +136,7 @@ jobs:
 
       # -------------------------------------------------------------------------
       # Build Arrow C++ from Source (Linux)
+      # FIXED: Used ${{ env.ARROW_VERSION }} to inject variable before docker run
       # -------------------------------------------------------------------------
       CIBW_BEFORE_ALL_LINUX: |
         set -eux
@@ -155,9 +153,10 @@ jobs:
         export PATH=/opt/conda/bin:$PATH
 
         # 2. Download and Build Arrow C++ Static
-        curl -L "https://github.com/apache/arrow/archive/refs/tags/apache-arrow-${ARROW_VERSION}.tar.gz" -o arrow.tar.gz
+        # Use GitHub Actions variable substitution ${{ ... }} instead of shell variable
+        curl -L "https://github.com/apache/arrow/archive/refs/tags/apache-arrow-${{ env.ARROW_VERSION }}.tar.gz" -o arrow.tar.gz
         tar -xf arrow.tar.gz
-        cd arrow-apache-arrow-${ARROW_VERSION}/cpp
+        cd arrow-apache-arrow-${{ env.ARROW_VERSION }}/cpp
         mkdir build && cd build
         
         # Configure for Static Build with Bundled Dependencies
@@ -187,9 +186,9 @@ jobs:
         brew install cmake ninja
 
         # 2. Download and Build Arrow C++ Static
-        curl -L "https://github.com/apache/arrow/archive/refs/tags/apache-arrow-${ARROW_VERSION}.tar.gz" -o arrow.tar.gz
+        curl -L "https://github.com/apache/arrow/archive/refs/tags/apache-arrow-${{ env.ARROW_VERSION }}.tar.gz" -o arrow.tar.gz
         tar -xf arrow.tar.gz
-        cd arrow-apache-arrow-${ARROW_VERSION}/cpp
+        cd arrow-apache-arrow-${{ env.ARROW_VERSION }}/cpp
         mkdir build && cd build
         
         cmake .. -GNinja \
@@ -238,18 +237,15 @@ jobs:
 
       # -------------------------------------------------------------------------
       # Windows Specific Setup (Build Arrow from Source)
-      # Note: Windows builds are tricky in shell scripts. 
       # -------------------------------------------------------------------------
       - name: Build Arrow C++ (Windows)
         if: matrix.os == 'windows'
         shell: bash
         run: |
-          # Install tools via choco or use pre-installed
-          # GitHub runners have cmake and ninja usually
-          
-          curl -L "https://github.com/apache/arrow/archive/refs/tags/apache-arrow-${ARROW_VERSION}.tar.gz" -o arrow.tar.gz
+          # On Windows runner, env vars ARE available, but using ${{ env.ARROW_VERSION }} is safer for consistency
+          curl -L "https://github.com/apache/arrow/archive/refs/tags/apache-arrow-${{ env.ARROW_VERSION }}.tar.gz" -o arrow.tar.gz
           tar -xf arrow.tar.gz
-          cd arrow-apache-arrow-${ARROW_VERSION}/cpp
+          cd arrow-apache-arrow-${{ env.ARROW_VERSION }}/cpp
           mkdir build
           cd build
           
@@ -313,7 +309,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist
-          repository-url: https://test.pypi.org/legacy/
 
       - name: Publish to PyPI (manual)
         if: github.event_name == 'workflow_dispatch' && inputs.publish == 'pypi'
