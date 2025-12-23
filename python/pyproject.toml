@@ -42,6 +42,9 @@ classifiers = [
 [tool.scikit-build]
 build-dir = "build"
 
+[tool.scikit-build.cmake.define]
+BUILD_ARROW_FROM_SOURCE = "ON"
+
 [tool.scikit-build.sdist]
 include = [
   "../cpp/**",

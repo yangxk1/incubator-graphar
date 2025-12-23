@@ -27,21 +27,36 @@ project(
   LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
+
+# Options synced with cpp/CMakeLists.txt to control Arrow handling
+option(USE_STATIC_ARROW "Link arrow static library" OFF)
+option(BUILD_ARROW_FROM_SOURCE "Build Arrow from source" OFF)
+
+# Build C++ core first; it will honor the above options
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../cpp ${CMAKE_BINARY_DIR}/graphar)
 
 # Find the module development requirements (requires FindPython from 3.17 or
 # scikit-build-core's built-in backport)
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
-find_package(Arrow REQUIRED)
-find_package(ArrowDataset REQUIRED)
-find_package(ArrowAcero REQUIRED)
-find_package(Parquet REQUIRED)
-# Check if ORC is enabled.
-if (NOT ${ARROW_ORC})
-    message(WARNING "apache-arrow is built without ORC extension, ORC related functionalities will be disabled.")
+
+# Find Arrow only when not building from source (cpp subdir handles source build)
+if(NOT BUILD_ARROW_FROM_SOURCE)
+  find_package(Arrow REQUIRED)
+  find_package(ArrowDataset REQUIRED)
+  if (${Arrow_VERSION} VERSION_GREATER_EQUAL "12.0.0")
+    find_package(ArrowAcero REQUIRED)
+  endif()
+  find_package(Parquet REQUIRED)
+  # Check if ORC is enabled.
+  if (NOT ${ARROW_ORC})
+      message(WARNING "apache-arrow is built without ORC extension, ORC related functionalities will be disabled.")
+  else()
+      add_definitions(-DARROW_ORC) # Add macro, otherwise inconsistent in build phase on ubuntu.
+  endif()
 else()
-    add_definitions(-DARROW_ORC) # Add macro, otherwise inconsistent in build phase on ubuntu.
+  # In source-build mode, cpp has already enabled ORC; keep macro consistent here.
+  add_definitions(-DARROW_ORC)
 endif()
 # Add a library using FindPython's tooling (pybind11 also provides a helper like
 # this)
@@ -50,12 +65,53 @@ python_add_library(_core MODULE src/bindings/types_binding.cc
                                    src/bindings/graph_info_binding.cc
                                    src/bindings/high_level_binding.cc
                                    src/bindings/_core_module.cc WITH_SOABI)
-                                   
-target_link_libraries(_core PRIVATE pybind11::headers graphar Arrow::arrow_shared
-                                    Parquet::parquet_shared
-                                    ArrowDataset::arrow_dataset_shared
-                                    ArrowAcero::arrow_acero_shared
-                                    )
+# Link libraries depending on Arrow mode
+if(BUILD_ARROW_FROM_SOURCE)
+  # Arrow headers from the cpp external build (needed for GraphAr public headers)
+  if(DEFINED GAR_ARROW_INCLUDE_DIR)
+    target_include_directories(_core SYSTEM BEFORE PRIVATE ${GAR_ARROW_INCLUDE_DIR})
+  endif()
+  # graphar already bundles Arrow deps in this mode; link only graphar and pybind11
+  target_link_libraries(_core PRIVATE pybind11::headers graphar)
+else()
+  if(APPLE)
+    if(USE_STATIC_ARROW)
+      target_link_libraries(_core PRIVATE pybind11::headers graphar -Wl,-force_load
+                            Arrow::arrow_static
+                            Parquet::parquet_static
+                            ArrowDataset::arrow_dataset_static)
+      if (TARGET ArrowAcero::arrow_acero_static)
+        target_link_libraries(_core PRIVATE -Wl,-force_load ArrowAcero::arrow_acero_static)
+      endif()
+    else()
+      target_link_libraries(_core PRIVATE pybind11::headers graphar
+                            Arrow::arrow_shared
+                            Parquet::parquet_shared
+                            ArrowDataset::arrow_dataset_shared)
+      if (TARGET ArrowAcero::arrow_acero_shared)
+        target_link_libraries(_core PRIVATE ArrowAcero::arrow_acero_shared)
+      endif()
+    endif()
+  else()
+    if(USE_STATIC_ARROW)
+      target_link_libraries(_core PRIVATE pybind11::headers graphar -Wl,--exclude-libs,ALL -Wl,--whole-archive
+                            Arrow::arrow_static
+                            Parquet::parquet_static
+                            ArrowDataset::arrow_dataset_static -Wl,--no-whole-archive)
+      if (TARGET ArrowAcero::arrow_acero_static)
+        target_link_libraries(_core PRIVATE -Wl,--exclude-libs,ALL -Wl,--whole-archive ArrowAcero::arrow_acero_static -Wl,--no-whole-archive)
+      endif()
+    else()
+      target_link_libraries(_core PRIVATE pybind11::headers graphar
+                            Arrow::arrow_shared
+                            Parquet::parquet_shared
+                            ArrowDataset::arrow_dataset_shared)
+      if (TARGET ArrowAcero::arrow_acero_shared)
+        target_link_libraries(_core PRIVATE ArrowAcero::arrow_acero_shared)
+      endif()
+    endif()
+  endif()
+endif()
 target_include_directories(_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/src)
 target_include_directories(_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/thirdparty)

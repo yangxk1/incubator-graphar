@@ -56,10 +56,6 @@ jobs:
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
-      CIBW_BEFORE_BUILD_LINUX: |
-        dnf install -y https://apache.jfrog.io/artifactory/arrow/almalinux/apache-arrow-release-latest-8.noarch.rpm &&
-        dnf update -y &&
-        dnf install -y arrow-devel parquet-devel libcurl-devel ccache
 
     steps:
       - uses: actions/checkout@v3
