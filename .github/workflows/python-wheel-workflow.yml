@@ -123,7 +123,8 @@ jobs:
       CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-*"
       CIBW_SKIP: "pp* *-musllinux_*"
       CIBW_BUILD_VERBOSITY: "1"
-      CIBW_REPAIR_WHEEL_COMMAND_LINUX: "python -m pip install -U pip auditwheel && auditwheel --version && auditwheel -v show {wheel} && auditwheel -v repair -w {dest_dir} {wheel}"
+      # 下面这一行添加了 export LD_LIBRARY_PATH=/opt/conda/lib:$LD_LIBRARY_PATH
+      CIBW_REPAIR_WHEEL_COMMAND_LINUX: "export LD_LIBRARY_PATH=/opt/conda/lib:$LD_LIBRARY_PATH && python -m pip install -U pip auditwheel && auditwheel --version && auditwheel -v show {wheel} && auditwheel -v repair -w {dest_dir} {wheel}"
       CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux_{0}', matrix.manylinux) || '' }}
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux_{0}', matrix.manylinux) || '' }}
       CIBW_ENVIRONMENT_LINUX: "CMAKE_PREFIX_PATH=/opt/conda LD_LIBRARY_PATH=/opt/conda/lib:$LD_LIBRARY_PATH"
@@ -249,7 +250,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist
-          repository-url: https://test.pypi.org/legacy/
 
       - name: Publish to PyPI (manual)
         if: github.event_name == 'workflow_dispatch' && inputs.publish == 'pypi'
