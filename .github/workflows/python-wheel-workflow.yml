@@ -103,19 +103,19 @@ jobs:
             os: linux
             manylinux: "2_34"
 
-          - platform: x86_64
-            runner: macos-15-intel
-            os: macos
-            deployment_target: "11.0"
+          # - platform: x86_64
+          #   runner: macos-15-intel
+          #   os: macos
+          #   deployment_target: "11.0"
 
-          - platform: arm64
-            runner: macos-latest
-            os: macos
-            deployment_target: "11.0"
+          # - platform: arm64
+          #   runner: macos-latest
+          #   os: macos
+          #   deployment_target: "11.0"
 
-          - platform: amd64
-            runner: windows-2022
-            os: windows
+          # - platform: amd64
+          #   runner: windows-2022
+          #   os: windows
 
     env:
       CIBW_PLATFORM: ${{ matrix.os }}
@@ -141,7 +141,7 @@ jobs:
         curl -Ls "https://micro.mamba.pm/api/micromamba/${mm_plat}/latest" | tar -xvj bin/micromamba
         chmod +x bin/micromamba
         ./bin/micromamba create -y -p /opt/conda -c conda-forge \
-          arrow-cpp=14 \
+          arrow-cpp=14.0.2 \
           cmake \
           ninja \
           pkg-config
