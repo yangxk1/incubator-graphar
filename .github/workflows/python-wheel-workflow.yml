@@ -103,53 +103,46 @@ jobs:
             os: linux
             manylinux: "2_34"
 
-          # - platform: x86_64
-          #   runner: macos-15-intel
-          #   os: macos
-          #   deployment_target: "11.0"
+          - platform: x86_64
+            runner: macos-15-intel
+            os: macos
+            deployment_target: "11.0"
 
-          # - platform: arm64
-          #   runner: macos-latest
-          #   os: macos
-          #   deployment_target: "11.0"
+          - platform: arm64
+            runner: macos-latest
+            os: macos
+            deployment_target: "11.0"
 
-          # - platform: amd64
-          #   runner: windows-2022
-          #   os: windows
+          # Windows build from source is very slow and complex in CI.
+          # Kept here but be aware it might timeout or require more adjustments.
+          - platform: amd64
+            runner: windows-2022
+            os: windows
 
     env:
+      # Define the Arrow version to build from source
+      ARROW_VERSION: "15.0.2"
+      
       CIBW_PLATFORM: ${{ matrix.os }}
       CIBW_ARCHS_LINUX: ${{ matrix.os == 'linux' && matrix.platform || '' }}
       CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-*"
       CIBW_SKIP: "pp* *-musllinux_*"
       CIBW_BUILD_VERBOSITY: "1"
-      # Use bash for better scripting; print useful diagnostics if auditwheel repair fails.
-      CIBW_REPAIR_WHEEL_COMMAND_LINUX: >-
-        bash -lc '
-        set -eux;
-
-        python -m pip install -U pip auditwheel;
-        auditwheel --version;
-
-        echo "=== auditwheel show (pre) ===";
-        auditwheel -v show {wheel} || true;
-
-        echo "=== unpack wheel and ldd ===";
-        workdir="$(mktemp -d)";
-        unzip -q {wheel} -d "$workdir";
-        find "$workdir" -name "*.so" -print -exec ldd {} \; || true;
-
-        echo "=== auditwheel repair ===";
-        plat="manylinux_2_34_$(uname -m)";
-        auditwheel -v repair --plat "$plat" -w {dest_dir} {wheel};
-        '
+      CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel show -v {wheel} && auditwheel repair -w {dest_dir} {wheel}"
       CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux_{0}', matrix.manylinux) || '' }}
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux_{0}', matrix.manylinux) || '' }}
-      CIBW_ENVIRONMENT_LINUX: "CMAKE_PREFIX_PATH=/opt/conda LD_LIBRARY_PATH=/opt/conda/lib:$LD_LIBRARY_PATH"
+      
+      # Point to the local install location for CMake
+      CIBW_ENVIRONMENT_LINUX: "CMAKE_PREFIX_PATH=/usr/local/arrow LD_LIBRARY_PATH=/usr/local/arrow/lib:$LD_LIBRARY_PATH"
+      CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_PREFIX_PATH=/tmp/arrow-dist', matrix.deployment_target) || '' }}
+      CIBW_ENVIRONMENT_WINDOWS: "CMAKE_PREFIX_PATH=C:\\arrow-dist"
 
-      # Install Arrow C++ once per job, then point CMake to it.
+      # -------------------------------------------------------------------------
+      # Build Arrow C++ from Source (Linux)
+      # -------------------------------------------------------------------------
       CIBW_BEFORE_ALL_LINUX: |
         set -eux
+        # 1. Install build tools via micromamba (cmake, ninja) - NO arrow-cpp here
         arch="$(uname -m)"
         case "${arch}" in
           x86_64) mm_plat="linux-64" ;;
@@ -158,14 +151,61 @@ jobs:
         esac
         curl -Ls "https://micro.mamba.pm/api/micromamba/${mm_plat}/latest" | tar -xvj bin/micromamba
         chmod +x bin/micromamba
-        ./bin/micromamba create -y -p /opt/conda -c conda-forge \
-          arrow-cpp \
-          cmake \
-          ninja \
-          pkg-config
+        ./bin/micromamba create -y -p /opt/conda -c conda-forge cmake ninja pkg-config
+        export PATH=/opt/conda/bin:$PATH
+
+        # 2. Download and Build Arrow C++ Static
+        curl -L "https://github.com/apache/arrow/archive/refs/tags/apache-arrow-${ARROW_VERSION}.tar.gz" -o arrow.tar.gz
+        tar -xf arrow.tar.gz
+        cd arrow-apache-arrow-${ARROW_VERSION}/cpp
+        mkdir build && cd build
+        
+        # Configure for Static Build with Bundled Dependencies
+        cmake .. -GNinja \
+          -DCMAKE_INSTALL_PREFIX=/usr/local/arrow \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DARROW_BUILD_STATIC=ON \
+          -DARROW_BUILD_SHARED=OFF \
+          -DARROW_POSITION_INDEPENDENT_CODE=ON \
+          -DARROW_DEPENDENCY_SOURCE=BUNDLED \
+          -DARROW_PARQUET=ON \
+          -DARROW_DATASET=ON \
+          -DARROW_FILESYSTEM=ON \
+          -DARROW_WITH_SNAPPY=ON \
+          -DARROW_WITH_ZLIB=ON \
+          -DARROW_WITH_LZ4=ON \
+          -DARROW_WITH_ZSTD=ON
+        
+        ninja install
+
+      # -------------------------------------------------------------------------
+      # Build Arrow C++ from Source (macOS)
+      # -------------------------------------------------------------------------
       CIBW_BEFORE_ALL_MACOS: |
         set -eux
-        brew install apache-arrow
+        # 1. Install tools
+        brew install cmake ninja
+
+        # 2. Download and Build Arrow C++ Static
+        curl -L "https://github.com/apache/arrow/archive/refs/tags/apache-arrow-${ARROW_VERSION}.tar.gz" -o arrow.tar.gz
+        tar -xf arrow.tar.gz
+        cd arrow-apache-arrow-${ARROW_VERSION}/cpp
+        mkdir build && cd build
+        
+        cmake .. -GNinja \
+          -DCMAKE_INSTALL_PREFIX=/tmp/arrow-dist \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DARROW_BUILD_STATIC=ON \
+          -DARROW_BUILD_SHARED=OFF \
+          -DARROW_POSITION_INDEPENDENT_CODE=ON \
+          -DARROW_DEPENDENCY_SOURCE=BUNDLED \
+          -DARROW_PARQUET=ON \
+          -DARROW_DATASET=ON \
+          -DARROW_FILESYSTEM=ON \
+          -DARROW_WITH_SNAPPY=ON \
+          -DARROW_WITH_ZLIB=ON
+        
+        ninja install
 
     steps:
       - uses: actions/checkout@v4
@@ -196,31 +236,36 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install cibuildwheel
 
-      - name: Setup conda (Windows)
+      # -------------------------------------------------------------------------
+      # Windows Specific Setup (Build Arrow from Source)
+      # Note: Windows builds are tricky in shell scripts. 
+      # -------------------------------------------------------------------------
+      - name: Build Arrow C++ (Windows)
         if: matrix.os == 'windows'
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-update-conda: true
-          miniforge-variant: Miniforge3
-          miniforge-version: latest
-          use-mamba: true
-          channels: conda-forge
-          python-version: "3.11"
-          auto-activate-base: false
-          activate-environment: cibw
-
-      - name: Install Arrow C++ (Windows)
-        if: matrix.os == 'windows'
-        shell: powershell
-        run: |
-          mamba install -y arrow-cpp cmake ninja
-          "CIBW_ENVIRONMENT_WINDOWS=CMAKE_PREFIX_PATH=$env:CONDA_PREFIX\\Library" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-      - name: Set CMAKE_PREFIX_PATH (macOS)
-        if: matrix.os == 'macos'
         shell: bash
         run: |
-          echo "CIBW_ENVIRONMENT_MACOS=${CIBW_ENVIRONMENT_MACOS} CMAKE_PREFIX_PATH=$(brew --prefix)" >> $GITHUB_ENV
+          # Install tools via choco or use pre-installed
+          # GitHub runners have cmake and ninja usually
+          
+          curl -L "https://github.com/apache/arrow/archive/refs/tags/apache-arrow-${ARROW_VERSION}.tar.gz" -o arrow.tar.gz
+          tar -xf arrow.tar.gz
+          cd arrow-apache-arrow-${ARROW_VERSION}/cpp
+          mkdir build
+          cd build
+          
+          cmake .. \
+            -DCMAKE_INSTALL_PREFIX="C:/arrow-dist" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DARROW_BUILD_STATIC=ON \
+            -DARROW_BUILD_SHARED=OFF \
+            -DARROW_POSITION_INDEPENDENT_CODE=ON \
+            -DARROW_DEPENDENCY_SOURCE=BUNDLED \
+            -DARROW_PARQUET=ON \
+            -DARROW_DATASET=ON \
+            -DARROW_WITH_SNAPPY=ON \
+            -DARROW_WITH_ZLIB=ON
+          
+          cmake --build . --config Release --target install
 
       - name: Build wheels
         shell: bash
