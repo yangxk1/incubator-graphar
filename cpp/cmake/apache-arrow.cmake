@@ -104,7 +104,13 @@ function(build_arrow)
                              "-DARROW_S3=ON")
 
     set(GAR_ARROW_INCLUDE_DIR "${GAR_ARROW_PREFIX}/include" CACHE INTERNAL "arrow include directory")
-    set(GAR_ARROW_BUILD_BYPRODUCTS "${GAR_ARROW_STATIC_LIB}" "${GAR_PARQUET_STATIC_LIB}" "${GAR_DATASET_STATIC_LIB}")
+    # Ensure Ninja knows these artifacts are produced by the ExternalProject
+    set(GAR_ARROW_BUILD_BYPRODUCTS
+        "${GAR_ARROW_STATIC_LIB}"
+        "${GAR_PARQUET_STATIC_LIB}"
+        "${GAR_DATASET_STATIC_LIB}"
+        "${GAR_ARROW_BUNDLED_DEPS_STATIC_LIB}"
+    )
 
     find_package(Threads)
     find_package(Arrow QUIET)
@@ -156,7 +162,18 @@ function(build_arrow)
         set_target_properties(${GAR_ARROW_ACERO_LIBRARY_TARGET}
             PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${GAR_ARROW_INCLUDE_DIR}
             IMPORTED_LOCATION ${GAR_ARROW_ACERO_STATIC_LIB})
+        # Add acero to byproducts so the merge target can depend on it
+        list(APPEND GAR_ARROW_BUILD_BYPRODUCTS "${GAR_ARROW_ACERO_STATIC_LIB}")
+        # Update external project with new byproducts
+        set_property(TARGET arrow_ep PROPERTY BUILD_BYPRODUCTS "${GAR_ARROW_BUILD_BYPRODUCTS}")
     endif()
 
+    # Ensure all imported libs depend on the external project
     add_dependencies(${GAR_ARROW_LIBRARY_TARGET} arrow_ep)
+    add_dependencies(${GAR_PARQUET_LIBRARY_TARGET} arrow_ep)
+    add_dependencies(${GAR_DATASET_LIBRARY_TARGET} arrow_ep)
+    add_dependencies(${GAR_ARROW_BUNDLED_DEPS_TARGET} arrow_ep)
+    if (ARROW_VERSION_TO_BUILD GREATER_EQUAL "12.0.0")
+        add_dependencies(${GAR_ARROW_ACERO_LIBRARY_TARGET} arrow_ep)
+    endif()
 endfunction()
