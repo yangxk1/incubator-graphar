@@ -25,9 +25,28 @@ name = "graphar"
 version = "0.13.0"
 description = "GraphAr command line tool"
 readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
 authors = [{ name = "GraphAr community", email = "dev@graphar.apache.org" }]
 requires-python = ">=3.9"
 dependencies = ["typer ~= 0.1", "pydantic ~= 2.0, < 2.12", "pyyaml ~= 6.0", "pytest ~= 7.2"]
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://graphar.apache.org/"
+Source = "https://github.com/apache/incubator-graphar"
+Issues = "https://github.com/apache/incubator-graphar/issues"
 
 [tool.poetry.group.docs]
 optional = true
@@ -40,6 +59,9 @@ test = ["pandas ~= 2.0", "typing_extensions ~= 4.0"]
 
 [tool.scikit-build]
 build-dir = "build"
+
+[tool.scikit-build.sdist]
+include = ["LICENSE", "NOTICE"]
 
 [project.scripts]
 graphar = "cli.graphar_cli:main"
