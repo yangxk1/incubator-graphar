@@ -382,8 +382,15 @@ if (BUILD_ARROW_FROM_SOURCE)
     endif()
     find_package(CURL REQUIRED)
 
-    include(apache-arrow)
-    build_arrow()
+    # When building from the Python wheel top-level CMake project, Arrow may
+    # have already been configured via cpp/cmake/apache-arrow.cmake.
+    # Avoid redefining the ExternalProject target (arrow_ep).
+    if(TARGET arrow_ep OR TARGET gar_arrow_static)
+        message(STATUS "Reusing existing Arrow build targets")
+    else()
+        include(apache-arrow)
+        build_arrow()
+    endif()
     add_definitions(-DARROW_ORC) # Add macro, otherwise inconsistent in build phase with not from source.
     build_graphar_with_arrow_bundled()
 else()
