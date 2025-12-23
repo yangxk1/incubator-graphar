@@ -32,8 +32,23 @@ set(CMAKE_CXX_STANDARD 17)
 option(USE_STATIC_ARROW "Link arrow static library" OFF)
 option(BUILD_ARROW_FROM_SOURCE "Build Arrow from source" OFF)
 
+# Locate GraphAr C++ source directory robustly:
+# 1) parent ../cpp
+# 2) local ./cpp (e.g., when copied into python package)
+# 3) user-provided -DGRAPHAR_CPP_SOURCE_DIR
+set(GRAPHAR_CPP_DIR "")
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/CMakeLists.txt)
+  set(GRAPHAR_CPP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../cpp)
+elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cpp/CMakeLists.txt)
+  set(GRAPHAR_CPP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
+elseif(DEFINED GRAPHAR_CPP_SOURCE_DIR AND EXISTS ${GRAPHAR_CPP_SOURCE_DIR}/CMakeLists.txt)
+  set(GRAPHAR_CPP_DIR ${GRAPHAR_CPP_SOURCE_DIR})
+else()
+  message(FATAL_ERROR "GraphAr C++ source not found. Ensure 'cpp' exists next to python/, or pass -DGRAPHAR_CPP_SOURCE_DIR=/path/to/cpp")
+endif()
+
 # Build C++ core first; it will honor the above options
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../cpp ${CMAKE_BINARY_DIR}/graphar)
+add_subdirectory(${GRAPHAR_CPP_DIR} ${CMAKE_BINARY_DIR}/graphar)
 
 # Find the module development requirements (requires FindPython from 3.17 or
 # scikit-build-core's built-in backport)
@@ -113,8 +128,8 @@ else()
   endif()
 endif()
 target_include_directories(_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_include_directories(_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/src)
-target_include_directories(_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/thirdparty)
+target_include_directories(_core PRIVATE ${GRAPHAR_CPP_DIR}/src)
+target_include_directories(_core PRIVATE ${GRAPHAR_CPP_DIR}/thirdparty)
 
 # This is passing in the version as a define just as an example
 target_compile_definitions(_core PRIVATE VERSION_INFO=${PROJECT_VERSION})
@@ -131,5 +146,7 @@ else()
 endif()
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/cli/ DESTINATION cli)
-install(TARGETS graphar DESTINATION graphar)
+if(TARGET graphar)
+  install(TARGETS graphar DESTINATION graphar)
+endif()
 install(TARGETS _core DESTINATION graphar)

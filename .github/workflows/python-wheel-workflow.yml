@@ -78,10 +78,16 @@ jobs:
           source .venv/bin/activate
           uv pip install packaging cibuildwheel
           mkdir -p python/dist
-          pushd python
-          # Run cibuildwheel from repo root, targeting subdir "python"
-          python -m cibuildwheel --output-dir dist
-          popd
+          # Ensure build tooling available inside build env
+          if [ "${{ matrix.os }}" = "linux" ]; then
+            export CIBW_BEFORE_BUILD="yum -y install openssl-devel libcurl-devel || dnf -y install openssl-devel libcurl-devel || true && pip install cmake ninja"
+          else
+            export CIBW_BEFORE_BUILD="pip install cmake ninja"
+          fi
+          # Build with Arrow from source to avoid system Arrow dependency
+          export CIBW_ENVIRONMENT="CMAKE_ARGS='-DBUILD_ARROW_FROM_SOURCE=ON'"
+          # Run cibuildwheel from repo root, targeting subdir "python" so ../cpp is available in container
+          python -m cibuildwheel --output-dir python/dist python
 
       - name: Store artifacts
         uses: actions/upload-artifact@v4
