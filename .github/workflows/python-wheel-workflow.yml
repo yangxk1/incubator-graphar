@@ -96,12 +96,12 @@ jobs:
           - platform: x86_64
             runner: ubuntu-latest
             os: linux
-            manylinux: "2_34"
+            manylinux: "2_28"
 
           - platform: aarch64
-            runner: ubuntu-22.04-arm
+            runner: ubuntu-latest
             os: linux
-            manylinux: "2_34"
+            manylinux: "2_28"
 
           - platform: x86_64
             runner: macos-15-intel
@@ -119,6 +119,7 @@ jobs:
 
     env:
       CIBW_PLATFORM: ${{ matrix.os }}
+      CIBW_ARCHS_LINUX: ${{ matrix.os == 'linux' && matrix.platform || '' }}
       CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-*"
       CIBW_SKIP: "pp* *-musllinux_*"
       CIBW_BUILD_VERBOSITY: "1"
@@ -149,6 +150,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up QEMU (Linux aarch64)
+        if: matrix.os == 'linux' && matrix.platform == 'aarch64'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
 
       - name: Download sdist
         uses: actions/download-artifact@v4
