@@ -102,6 +102,8 @@ function(build_arrow)
                              "-DARROW_WITH_BZ2=OFF"
                              "-DARROW_OPENSSL_USE_SHARED=OFF"
                             "-DARROW_POSITION_INDEPENDENT_CODE=ON"
+                            "-DARROW_COMPUTE=ON"
+                            "-DARROW_ACERO=ON"
                              "-DARROW_S3=ON")
 
     set(GAR_ARROW_INCLUDE_DIR "${GAR_ARROW_PREFIX}/include" CACHE INTERNAL "arrow include directory")
