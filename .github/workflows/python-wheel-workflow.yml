@@ -28,9 +28,40 @@ on:
   workflow_dispatch:
 
 jobs:
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Build sdist
+        run: |
+          # Bundle C++ sources into python/ so the sdist contains them.
+          rm -rf python/_bundled_cpp
+          cp -a cpp python/_bundled_cpp
+          cd python
+          python -m build --sdist
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: python/dist/*
+
   build_wheels:
     name: Build wheels on ${{ matrix.runner }}
     runs-on: ${{ matrix.runner }}
+    needs: build_sdist
     strategy:
       matrix:
         include:
@@ -50,7 +81,8 @@ jobs:
 
     env:
       CIBW_PLATFORM: ${{ matrix.os }}
-      CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-*"
+      CIBW_BUILD: "cp311-* cp312-* cp313-*"
+      # CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-*"
       CIBW_SKIP: "*-musllinux_*"
       CIBW_ARCHS: ${{ matrix.os == 'windows' && 'AMD64' || 'auto' }}
       CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
@@ -96,62 +128,64 @@ jobs:
           libcurl-devel re2-devel ccache
 
     steps:
-      - uses: actions/checkout@v3
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
 
+      - name: Download sdist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: sdist
+          path: sdist
+
+      - name: Extract sdist
+        shell: bash
+        run: |
+          set -euxo pipefail
+          ls -lah sdist
+
+          SDIST_FILE=""
+          for f in sdist/*.tar.gz sdist/*.zip; do
+            if [ -f "$f" ]; then
+              SDIST_FILE="$f"
+              break
+            fi
+          done
+
+          if [ -z "$SDIST_FILE" ]; then
+            echo "No sdist file found in sdist/" >&2
+            exit 1
+          fi
+
+          mkdir -p sdist_pkg
+          case "$SDIST_FILE" in
+            *.tar.gz) tar -xzf "$SDIST_FILE" -C sdist_pkg ;;
+            *.zip) unzip -q "$SDIST_FILE" -d sdist_pkg ;;
+          esac
+
+          PKGDIR="$(find sdist_pkg -mindepth 1 -maxdepth 1 -type d | head -n 1)"
+          if [ -z "$PKGDIR" ]; then
+            echo "Failed to locate extracted sdist directory" >&2
+            exit 1
+          fi
+
+          echo "PKGDIR=$PKGDIR" >> "$GITHUB_ENV"
+
       - name: Build wheels
         run: |
-          # Bundle C++ sources into python/ so cibuildwheel's isolated copy has them.
-          rm -rf python/_bundled_cpp
-          cp -a cpp python/_bundled_cpp
-
           python -m pip install --upgrade pip
-          pip install build twine
           python -m pip install uv
           uv venv
           source .venv/bin/activate
           uv pip install packaging cibuildwheel
           mkdir -p python/dist
-          pushd python
-          # Run cibuildwheel from repo root, targeting subdir "python"
-          python -m cibuildwheel --output-dir dist
-          popd
+          python -m cibuildwheel --output-dir python/dist "$PKGDIR"
 
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
-          path: python/dist/*
-
-  build_sdist:
-    name: Build source distribution
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.9"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install build twine
-
-      - name: Build sdist
-        run: |
-          cd python
-          python -m build --sdist
-
-      - name: Store artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: sdist
           path: python/dist/*
 
   upload_pypi:
