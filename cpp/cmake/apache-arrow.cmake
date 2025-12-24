@@ -104,6 +104,7 @@ function(build_arrow)
 
     set(GAR_ARROW_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/arrow_ep-build")
     set(GAR_ARROW_CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${GAR_ARROW_PREFIX}"
+                             "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
                              "-DARROW_BUILD_STATIC=ON"
                              "-DARROW_BUILD_SHARED=OFF"
                              "-DARROW_DEPENDENCY_SOURCE=BUNDLED"
@@ -133,7 +134,7 @@ function(build_arrow)
                              "-DARROW_WITH_ZLIB=OFF"
                              "-DARROW_WITH_BROTLI=OFF"
                              "-DARROW_WITH_BZ2=OFF"
-                             "-DARROW_OPENSSL_USE_SHARED=OFF"
+                             "-DARROW_OPENSSL_USE_SHARED=ON"
                             "-DARROW_POSITION_INDEPENDENT_CODE=ON"
                              "-DARROW_S3=ON")
 
