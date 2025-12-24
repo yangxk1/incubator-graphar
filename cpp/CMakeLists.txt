@@ -323,7 +323,6 @@ macro(build_graphar_with_arrow_bundled)
     list(APPEND GAR_BUNDLED_DEPS_STATIC_LIBS
         gar_arrow_static
         gar_parquet_static
-        gar_compute_static
         gar_dataset_static
         gar_acero_static
         gar_arrow_bundled_dependencies_static)
