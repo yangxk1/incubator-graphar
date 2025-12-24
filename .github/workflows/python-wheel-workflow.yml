@@ -58,7 +58,6 @@ jobs:
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
       CIBW_BEFORE_BUILD_LINUX: |
         set -eux
-        ARROW_VERSION="17.0.0"
         if [ -f /etc/system-release-cpe ]; then
           ALMA_MAJOR="$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)"
         else
@@ -82,13 +81,17 @@ jobs:
         dnf config-manager --set-enabled codeready-builder-for-rhel-${ALMA_MAJOR}-rhui-rpms || :
         subscription-manager repos --enable codeready-builder-for-rhel-${ALMA_MAJOR}-$(arch)-rpms || :
 
-        dnf update -y
+        # manylinux images may carry older Arrow packages (e.g. arrow1700-*) which
+        # conflict with the newer packages from the Apache Arrow repo (e.g. arrow2200-*).
+        # Remove any preinstalled Arrow/Parquet RPMs so we install a consistent set.
+        dnf remove -y 'arrow*' 'parquet*' || true
+
         # Required for GraphAr C++ build via Arrow CMake packages
-        dnf install -y \
-          "arrow-devel-${ARROW_VERSION}*" \
-          "arrow-dataset-devel-${ARROW_VERSION}*" \
-          "arrow-acero-devel-${ARROW_VERSION}*" \
-          "parquet-devel-${ARROW_VERSION}*" \
+        dnf install -y --allowerasing \
+          arrow-devel \
+          arrow-dataset-devel \
+          arrow-acero-devel \
+          parquet-devel \
           libcurl-devel re2-devel ccache
 
     steps:
