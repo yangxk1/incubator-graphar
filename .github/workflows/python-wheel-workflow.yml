@@ -84,7 +84,8 @@ jobs:
       # CIBW_BUILD: "cp311-* cp312-* cp313-*"
       CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-*"
       CIBW_SKIP: "*-musllinux_*"
-      CIBW_ARCHS: ${{ matrix.os == 'windows' && 'AMD64' || 'auto' }}
+      # Pin Linux arch to the matrix platform (avoid x86_64 triggering i686 builds)
+      CIBW_ARCHS: ${{ (matrix.os == 'linux' && matrix.platform) || (matrix.os == 'windows' && 'AMD64') || 'auto' }}
       CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
@@ -97,9 +98,6 @@ jobs:
           . /etc/os-release
           ALMA_MAJOR="${VERSION_ID%%.*}"
         fi
-
-          # Pin Linux arch to the matrix platform (avoid x86_64 triggering i686 builds)
-          CIBW_ARCHS: ${{ (matrix.os == 'linux' && matrix.platform) || (matrix.os == 'windows' && 'AMD64') || 'auto' }}
         dnf install -y 'dnf-command(config-manager)' || dnf install -y dnf-plugins-core || true
 
         # Follow official Apache Arrow install instructions for AlmaLinux/RHEL-family
