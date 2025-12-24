@@ -86,10 +86,10 @@ jobs:
             deployment-target: '11.0'
 
           # Job 4: Windows amd64 build
-          # - platform: amd64
-          #   runner: windows-2022
-          #   os: windows
-          #   deployment-target: ''
+          - platform: amd64
+            runner: windows-2022
+            os: windows
+            deployment-target: ''
 
     env:
       CIBW_PLATFORM: ${{ matrix.os }}
