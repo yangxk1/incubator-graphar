@@ -97,7 +97,8 @@ function(build_arrow)
     endif()
 
     set(GAR_ARROW_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/arrow_ep-build")
-    set(GAR_ARROW_CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${GAR_ARROW_PREFIX}"
+    set(GAR_ARROW_CMAKE_ARGS "DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+                             "-DCMAKE_INSTALL_PREFIX=${GAR_ARROW_PREFIX}"
                              "-DARROW_BUILD_STATIC=ON"
                              "-DARROW_BUILD_SHARED=OFF"
                              "-DARROW_DEPENDENCY_SOURCE=BUNDLED"
