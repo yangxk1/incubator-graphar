@@ -198,8 +198,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install cibuildwheel
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
 
       - name: Build wheels
         shell: bash
