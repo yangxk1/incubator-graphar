@@ -161,13 +161,15 @@ jobs:
         run: |
           set -euxo pipefail
           mamba install -y -c conda-forge arrow-cpp
-          echo "CMAKE_PREFIX_PATH=$CONDA_PREFIX" >> "$GITHUB_ENV"
+          # Note: CONDA_PREFIX may be unset unless conda is activated in this shell.
+          # setup-miniconda exports CONDA (base install prefix), which is sufficient here.
+          echo "CMAKE_PREFIX_PATH=$CONDA" >> "$GITHUB_ENV"
 
           # Optional sanity check: ensure Arrow dylib isn't built for a newer macOS than deployment target.
           if command -v otool >/dev/null 2>&1; then
-            ls -lah "$CONDA_PREFIX/lib" || true
-            if [ -f "$CONDA_PREFIX/lib/libarrow.dylib" ]; then
-              otool -l "$CONDA_PREFIX/lib/libarrow.dylib" | (grep -A3 -E 'LC_BUILD_VERSION|LC_VERSION_MIN_MACOSX' || true)
+            ls -lah "$CONDA/lib" || true
+            if [ -f "$CONDA/lib/libarrow.dylib" ]; then
+              otool -l "$CONDA/lib/libarrow.dylib" | (grep -A3 -E 'LC_BUILD_VERSION|LC_VERSION_MIN_MACOSX' || true)
             fi
           fi
 
