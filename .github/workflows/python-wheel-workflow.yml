@@ -148,8 +148,8 @@ jobs:
         chmod +x bin/micromamba
         
         # Install ONLY build tools. DO NOT install arrow-cpp.
-        # Pin CMake to <4 to avoid compatibility breaks in some Arrow deps.
-        ./bin/micromamba create -y -p /opt/tools -c conda-forge "cmake<4" ninja pkg-config
+        # Pin CMake exactly to avoid compatibility breaks in Arrow bundled deps.
+        ./bin/micromamba create -y -p /opt/tools -c conda-forge "cmake=3.26.5" ninja pkg-config
         
         # 2. Install System Dependencies (OpenSSL is required for Arrow)
         # manylinux2014 uses yum, manylinux_2_28+ uses dnf
@@ -168,14 +168,10 @@ jobs:
       CIBW_BEFORE_ALL_MACOS: |
         set -eux
         brew install ninja openssl
-        # Prefer CMake 3.x: some Arrow bundled deps fail with CMake 4.
-        if brew info cmake@3 >/dev/null 2>&1; then
-          brew install cmake@3
-          export PATH="$(brew --prefix cmake@3)/bin:$PATH"
-        else
-          python3 -m pip install --user "cmake<4"
-          export PATH="$(python3 -m site --user-base)/bin:$PATH"
-        fi
+        # Pin CMake exactly: some Arrow bundled deps fail with newer CMake.
+        # Use Python wheel for CMake to ensure a reproducible version.
+        python3 -m pip install --user "cmake==3.26.5"
+        export PATH="$(python3 -m site --user-base)/bin:$PATH"
         cmake --version
         # DO NOT brew install apache-arrow
 
