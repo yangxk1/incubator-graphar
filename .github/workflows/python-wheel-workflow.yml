@@ -82,7 +82,8 @@ jobs:
         subscription-manager repos --enable codeready-builder-for-rhel-${ALMA_MAJOR}-$(arch)-rpms || :
 
         dnf update -y
-        dnf install -y arrow-devel parquet-devel libcurl-devel ccache
+        # Required for GraphAr C++ build via Arrow CMake packages
+        dnf install -y arrow-devel arrow-dataset-devel parquet-devel libcurl-devel re2-devel ccache
 
     steps:
       - uses: actions/checkout@v3
