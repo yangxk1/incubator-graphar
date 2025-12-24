@@ -55,7 +55,7 @@ function(build_arrow)
     if(DEFINED ENV{GAR_ARROW_SOURCE_URL})
         set(GAR_ARROW_SOURCE_URL "$ENV{GAR_ARROW_SOURCE_URL}")
     else()
-        set(ARROW_VERSION_TO_BUILD "15.0.0" CACHE INTERNAL "arrow version")
+        set(ARROW_VERSION_TO_BUILD "17.0.0" CACHE INTERNAL "arrow version")
         if (Arrow_FOUND) # arrow is installed, build the same version as the installed one
             set(ARROW_VERSION_TO_BUILD "${Arrow_VERSION}" CACHE INTERNAL "arrow version")
         endif()
@@ -97,8 +97,7 @@ function(build_arrow)
     endif()
 
     set(GAR_ARROW_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/arrow_ep-build")
-    set(GAR_ARROW_CMAKE_ARGS "DCMAKE_POLICY_VERSION_MINIMUM=3.5"
-                             "-DCMAKE_INSTALL_PREFIX=${GAR_ARROW_PREFIX}"
+    set(GAR_ARROW_CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${GAR_ARROW_PREFIX}"
                              "-DARROW_BUILD_STATIC=ON"
                              "-DARROW_BUILD_SHARED=OFF"
                              "-DARROW_DEPENDENCY_SOURCE=BUNDLED"
@@ -128,7 +127,7 @@ function(build_arrow)
                              "-DARROW_WITH_ZLIB=OFF"
                              "-DARROW_WITH_BROTLI=OFF"
                              "-DARROW_WITH_BZ2=OFF"
-                             "-DARROW_OPENSSL_USE_SHARED=ON"
+                             "-DARROW_OPENSSL_USE_SHARED=OFF"
                             "-DARROW_POSITION_INDEPENDENT_CODE=ON"
                              "-DARROW_S3=ON")
 
