@@ -96,6 +96,12 @@ function(build_arrow)
         list(APPEND GAR_ARROW_BUILD_BYPRODUCTS "${GAR_ARROW_ACERO_STATIC_LIB}")
     endif()
 
+    if(APPLE)
+        set(GAR_ARROW_ORC_OPTION "-DARROW_ORC=OFF")
+    else()
+        set(GAR_ARROW_ORC_OPTION "-DARROW_ORC=ON")
+    endif()
+
     set(GAR_ARROW_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/arrow_ep-build")
     set(GAR_ARROW_CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${GAR_ARROW_PREFIX}"
                              "-DARROW_BUILD_STATIC=ON"
@@ -116,7 +122,7 @@ function(build_arrow)
                              "-DARROW_BUILD_TESTS=OFF"
                              "-DARROW_BUILD_INTEGRATION=OFF"
                              "-DBoost_SOURCE=BUNDLED"
-                             "-DARROW_ORC=ON"
+                             "${GAR_ARROW_ORC_OPTION}"
                              "-DARROW_COMPUTE=ON"
                              "-DARROW_ACERO=ON"
                              "-DARROW_DATASET=ON"
