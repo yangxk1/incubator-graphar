@@ -58,6 +58,7 @@ jobs:
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
       CIBW_BEFORE_BUILD_LINUX: |
         set -eux
+        ARROW_VERSION="17.0.0"
         if [ -f /etc/system-release-cpe ]; then
           ALMA_MAJOR="$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)"
         else
@@ -83,7 +84,12 @@ jobs:
 
         dnf update -y
         # Required for GraphAr C++ build via Arrow CMake packages
-        dnf install -y arrow-devel arrow-dataset-devel parquet-devel libcurl-devel re2-devel ccache
+        dnf install -y \
+          "arrow-devel-${ARROW_VERSION}*" \
+          "arrow-dataset-devel-${ARROW_VERSION}*" \
+          "arrow-acero-devel-${ARROW_VERSION}*" \
+          "parquet-devel-${ARROW_VERSION}*" \
+          libcurl-devel re2-devel ccache
 
     steps:
       - uses: actions/checkout@v3
@@ -95,6 +101,10 @@ jobs:
 
       - name: Build wheels
         run: |
+          # Bundle C++ sources into python/ so cibuildwheel's isolated copy has them.
+          rm -rf python/_bundled_cpp
+          cp -a cpp python/_bundled_cpp
+
           python -m pip install --upgrade pip
           pip install build twine
           python -m pip install uv
