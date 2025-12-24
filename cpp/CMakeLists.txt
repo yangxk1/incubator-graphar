@@ -233,7 +233,7 @@ function(graphar_create_merged_static_lib output_target)
       set(ar_tool ${CMAKE_CXX_COMPILER_AR})
     endif()
 
-    set(BUNDLE_COMMAND ${ar_tool} -M < ${ar_script_path})
+        set(BUNDLE_COMMAND sh -c "\"${ar_tool}\" -M < \"${ar_script_path}\"")
 
   elseif(MSVC)
     if(CMAKE_LIBTOOL)
@@ -250,12 +250,17 @@ function(graphar_create_merged_static_lib output_target)
     message(FATAL_ERROR "Unknown bundle scenario!")
   endif()
 
-  add_custom_target(${output_target}_merge ALL
-                    ${BUNDLE_COMMAND}
-                    DEPENDS ${ARG_ROOT} ${ARG_TO_MERGE}
-                    BYPRODUCTS ${output_lib_path}
-                    COMMENT "Bundling ${output_lib_path}"
-                    VERBATIM)
+    add_custom_command(
+        OUTPUT ${output_lib_path}
+        COMMAND ${BUNDLE_COMMAND}
+        DEPENDS ${ARG_ROOT} ${ARG_TO_MERGE}
+        COMMENT "Bundling ${output_lib_path}"
+        VERBATIM
+    )
+
+    add_custom_target(${output_target}_merge ALL
+        DEPENDS ${output_lib_path}
+    )
 
   message(STATUS "Creating bundled static library target ${output_target} at ${output_lib_path}"
   )
