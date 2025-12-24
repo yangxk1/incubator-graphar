@@ -79,13 +79,25 @@ jobs:
             manylinux: _2_28
             deployment-target: ''
 
+          # Job 3: macOS arm64 build
+          - platform: arm64
+            runner: macos-latest
+            os: macos
+            deployment-target: '11.0'
+
+          # Job 4: Windows amd64 build
+          - platform: amd64
+            runner: windows-2022
+            os: windows
+            deployment-target: ''
+
     env:
       CIBW_PLATFORM: ${{ matrix.os }}
       # CIBW_BUILD: "cp311-* cp312-* cp313-*"
       CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-*"
       CIBW_SKIP: "*-musllinux_*"
-      # Pin Linux arch to the matrix platform (avoid x86_64 triggering i686 builds)
-      CIBW_ARCHS: ${{ (matrix.os == 'linux' && matrix.platform) || (matrix.os == 'windows' && 'AMD64') || 'auto' }}
+      # Pin arch to the matrix platform
+      CIBW_ARCHS: ${{ (matrix.os == 'linux' && matrix.platform) || (matrix.os == 'macos' && matrix.platform) || (matrix.os == 'windows' && 'AMD64') || 'auto' }}
       CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
@@ -127,10 +139,37 @@ jobs:
           libcurl-devel re2-devel ccache
 
     steps:
+      - name: Checkout (needed for some tooling)
+        uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
+
+      - name: Install Arrow (macOS)
+        if: matrix.os == 'macos'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          brew install apache-arrow
+          echo "CMAKE_PREFIX_PATH=$(brew --prefix)" >> "$GITHUB_ENV"
+
+      - name: Set up Miniconda (Windows)
+        if: matrix.os == 'windows'
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-activate-base: true
+          miniforge-version: latest
+          use-mamba: true
+
+      - name: Install Arrow (Windows)
+        if: matrix.os == 'windows'
+        shell: pwsh
+        run: |
+          mamba install -y -c conda-forge arrow-cpp
+          Add-Content $env:GITHUB_ENV "CMAKE_PREFIX_PATH=$env:CONDA_PREFIX\\Library"
+          Add-Content $env:GITHUB_ENV "PATH=$env:CONDA_PREFIX\\Library\\bin;$env:PATH"
 
       - name: Download sdist artifact
         uses: actions/download-artifact@v4
@@ -172,12 +211,11 @@ jobs:
           echo "PKGDIR=$PKGDIR" >> "$GITHUB_ENV"
 
       - name: Build wheels
+        shell: bash
         run: |
+          set -euxo pipefail
           python -m pip install --upgrade pip
-          python -m pip install uv
-          uv venv
-          source .venv/bin/activate
-          uv pip install packaging cibuildwheel
+          python -m pip install packaging cibuildwheel
           mkdir -p python/dist
           python -m cibuildwheel --output-dir python/dist "$PKGDIR"
 
@@ -190,6 +228,7 @@ jobs:
   upload_pypi:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-22.04
+    if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
