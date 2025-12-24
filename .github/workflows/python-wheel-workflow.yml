@@ -167,9 +167,16 @@ jobs:
       # ---------------------------------------------------------------------
       CIBW_BEFORE_ALL_MACOS: |
         set -eux
-        # Pin CMake to v3: some Arrow bundled deps fail with CMake 4.
-        brew install cmake@3 ninja openssl
-        export PATH="$(brew --prefix cmake@3)/bin:$PATH"
+        brew install ninja openssl
+        # Prefer CMake 3.x: some Arrow bundled deps fail with CMake 4.
+        if brew info cmake@3 >/dev/null 2>&1; then
+          brew install cmake@3
+          export PATH="$(brew --prefix cmake@3)/bin:$PATH"
+        else
+          python3 -m pip install --user "cmake<4"
+          export PATH="$(python3 -m site --user-base)/bin:$PATH"
+        fi
+        cmake --version
         # DO NOT brew install apache-arrow
 
     steps:
