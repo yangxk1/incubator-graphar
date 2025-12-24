@@ -127,9 +127,22 @@ function(build_arrow)
                              "-DARROW_WITH_ZLIB=OFF"
                              "-DARROW_WITH_BROTLI=OFF"
                              "-DARROW_WITH_BZ2=OFF"
-                             "-DARROW_OPENSSL_USE_SHARED=OFF"
+                             "-DARROW_OPENSSL_USE_SHARED=ON"
                             "-DARROW_POSITION_INDEPENDENT_CODE=ON"
                              "-DARROW_S3=ON")
+
+    if(OPENSSL_ROOT_DIR)
+        list(APPEND GAR_ARROW_CMAKE_ARGS "-DOPENSSL_ROOT_DIR=${OPENSSL_ROOT_DIR}")
+    endif()
+    if(OPENSSL_INCLUDE_DIR)
+        list(APPEND GAR_ARROW_CMAKE_ARGS "-DOPENSSL_INCLUDE_DIR=${OPENSSL_INCLUDE_DIR}")
+    endif()
+    if(OPENSSL_SSL_LIBRARY)
+        list(APPEND GAR_ARROW_CMAKE_ARGS "-DOPENSSL_SSL_LIBRARY=${OPENSSL_SSL_LIBRARY}")
+    endif()
+    if(OPENSSL_CRYPTO_LIBRARY)
+        list(APPEND GAR_ARROW_CMAKE_ARGS "-DOPENSSL_CRYPTO_LIBRARY=${OPENSSL_CRYPTO_LIBRARY}")
+    endif()
 
     set(GAR_ARROW_INCLUDE_DIR "${GAR_ARROW_PREFIX}/include" CACHE INTERNAL "arrow include directory")
     

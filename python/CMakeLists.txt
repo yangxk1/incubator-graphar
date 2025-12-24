@@ -31,6 +31,8 @@ set(CMAKE_CXX_STANDARD 17)
 # -----------------------------------------------------------------------------
 # 1. Locate GraphAr C++ Sources
 # -----------------------------------------------------------------------------
+find_package(OpenSSL REQUIRED)
+
 # When building from a source checkout, the C++ sources live in ../cpp.
 # When building from an sdist, CI vendors the C++ sources into ./cpp.
 set(GRAPHAR_CPP_SOURCE_DIR "")
@@ -75,11 +77,6 @@ add_subdirectory(${GRAPHAR_CPP_SOURCE_DIR} ${CMAKE_BINARY_DIR}/graphar)
 # -----------------------------------------------------------------------------
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
-
-# We need OpenSSL because Arrow is statically linked and likely depends on it.
-# Arrow's CMake config usually handles this, but since we are manually linking
-# static libs, we might need to expose OpenSSL symbols to the final shared object.
-find_package(OpenSSL REQUIRED)
 
 # NOTE: We DO NOT find_package(Arrow/Parquet) here anymore, 
 # because we are using the targets defined by build_arrow().
