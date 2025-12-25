@@ -54,9 +54,7 @@ jobs:
 
       - name: update pyporject version
         run: |
-          SHORT_SHA=$(git rev-parse --short=7 HEAD)
-          echo "Short SHA: $SHORT_SHA"
-          echo "COMMIT_SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+          export COMMIT_SHORT_SHA=$(git rev-parse --short=7 HEAD)
           python .github/scripts/update_version.py
 
       - name: Build sdist
