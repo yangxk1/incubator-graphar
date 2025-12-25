@@ -1,32 +1,65 @@
-import sys
+import json
 import re
-import os
+import sys
+import urllib.request
+from packaging.version import Version
 
-def update_version():
-    file_path = "python/pyproject.toml"
-    
-    suffix = os.getenv("COMMIT_SHORT_SHA", "0") 
-    
-    with open(file_path, "r", encoding="utf-8") as f:
-        content = f.read()
+PACKAGE_NAME = "graphar"
+FILE_PATH = "python/pyproject.toml"
 
-    match = re.search(r'version\s*=\s*"(.*?)"', content)
+def get_next_version():
+    versions = []
+    urls = [
+        f"https://pypi.org/pypi/{PACKAGE_NAME}/json",
+        f"https://test.pypi.org/pypi/{PACKAGE_NAME}/json"
+    ]
     
-    if not match:
-        print("Error: version not found in pyproject.toml")
+    print(f"Fetching versions for {PACKAGE_NAME}...")
+    for url in urls:
+        try:
+            with urllib.request.urlopen(url, timeout=5) as r:
+                data = json.load(r)
+                versions.extend(data.get("releases", {}).keys())
+        except Exception:
+            pass
+
+    if not versions:
+        return "0.0.1.dev1"
+
+    latest = max([Version(v) for v in versions])
+    print(f"Latest version found: {latest}")
+
+    if latest.is_devrelease:
+        return f"{latest.major}.{latest.minor}.{latest.micro}.dev{latest.dev + 1}"
+    else:
+        return f"{latest.major}.{latest.minor}.{latest.micro + 1}.dev1"
+
+def main():
+    new_ver = get_next_version()
+    print(f"Target version: {new_ver}")
+
+    try:
+        with open(FILE_PATH, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        new_content, count = re.subn(
+            r'(version\s*=\s*")([^"]+)(")', 
+            rf'\g<1>{new_ver}\g<3>', 
+            content
+        )
+        
+        if count == 0:
+            print(f"Error: Could not find 'version' key in {FILE_PATH}")
+            sys.exit(1)
+
+        with open(FILE_PATH, "w", encoding="utf-8") as f:
+            f.write(new_content)
+            
+        print(f"Successfully updated {FILE_PATH} to {new_ver}")
+        
+    except FileNotFoundError:
+        print(f"Error: File {FILE_PATH} not found.")
         sys.exit(1)
 
-    old_version = match.group(1)
-
-    new_version = f"{old_version}{suffix}"
-    print(f"Build GraphAr Version: {new_version}")
-
-    new_content = content.replace(f'version = "{old_version}"', f'version = "{new_version}"')
-    
-    with open(file_path, "w", encoding="utf-8") as f:
-        f.write(new_content)
-        
-    print("pyproject.toml updated successfully.")
-
 if __name__ == "__main__":
-    update_version()
+    main()
