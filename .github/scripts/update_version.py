@@ -3,7 +3,7 @@ import re
 import os
 
 def update_version():
-    file_path = "pyproject.toml"
+    file_path = "python/pyproject.toml"
     
     suffix = os.getenv("COMMIT_SHORT_SHA", "0") 
     
