@@ -22,8 +22,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "graphar"
-dynamic = ["version"]
-# version = "0.13.0"
+version = "0.13.0-dev"
 description = "An open source, standard data file format for graph data storage and retrieval."
 readme = "README.md"
 authors = [{ name = "GraphAr community", email = "dev@graphar.apache.org" }]
@@ -39,10 +38,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-
-[tool.setuptools_scm]
-version_scheme = "post-release" 
-local_scheme = "node-and-date"
 
 [tool.scikit-build]
 build-dir = "build"
