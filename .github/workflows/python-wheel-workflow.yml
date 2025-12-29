@@ -27,7 +27,7 @@ on:
   # but only for the main branch
   push:
     branches:
-      - "main"
+      - "**"
     paths:
       - 'cpp/**'
       - 'python/**'
@@ -160,6 +160,9 @@ jobs:
         with:
           python-version: "3.9"
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        
       - name: Set up Miniconda (macOS/Windows)
         if: matrix.os == 'windows' || matrix.os == 'macos'
         uses: conda-incubator/setup-miniconda@v3
