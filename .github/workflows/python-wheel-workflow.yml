@@ -120,38 +120,38 @@ jobs:
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
-      CIBW_BEFORE_BUILD_LINUX: |
-        set -eux
-        if [ -f /etc/system-release-cpe ]; then
-          ALMA_MAJOR="$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)"
-        else
-          . /etc/os-release
-          ALMA_MAJOR="${VERSION_ID%%.*}"
-        fi
-        dnf install -y 'dnf-command(config-manager)' || dnf install -y dnf-plugins-core || true
-        # Follow official Apache Arrow install instructions for AlmaLinux/RHEL-family
-        dnf install -y epel-release || \
-          dnf install -y oracle-epel-release-el${ALMA_MAJOR} || \
-          dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${ALMA_MAJOR}.noarch.rpm
-        dnf install -y https://packages.apache.org/artifactory/arrow/almalinux/${ALMA_MAJOR}/apache-arrow-release-latest.rpm
-        dnf config-manager --set-enabled epel || :
-        dnf config-manager --set-enabled powertools || :
-        dnf config-manager --set-enabled crb || :
-        dnf config-manager --set-enabled ol${ALMA_MAJOR}_codeready_builder || :
-        dnf config-manager --set-enabled codeready-builder-for-rhel-${ALMA_MAJOR}-rhui-rpms || :
-        subscription-manager repos --enable codeready-builder-for-rhel-${ALMA_MAJOR}-$(arch)-rpms || :
-        # manylinux images may carry older Arrow packages (e.g. arrow1700-*) which
-        # conflict with the newer packages from the Apache Arrow repo (e.g. arrow2200-*).
-        # Remove any preinstalled Arrow/Parquet RPMs so we install a consistent set.
-        dnf remove -y 'arrow*' 'parquet*' || true
-        # Required for GraphAr C++ build via Arrow CMake packages
-        dnf install -y --allowerasing \
-          arrow-devel \
-          arrow-dataset-devel \
-          arrow-acero-devel \
-          parquet-devel \
-          arrow-filesystem-s3-devel \
-          libcurl-devel re2-devel ccache
+      # CIBW_BEFORE_BUILD_LINUX: |
+      #   set -eux
+      #   if [ -f /etc/system-release-cpe ]; then
+      #     ALMA_MAJOR="$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)"
+      #   else
+      #     . /etc/os-release
+      #     ALMA_MAJOR="${VERSION_ID%%.*}"
+      #   fi
+      #   dnf install -y 'dnf-command(config-manager)' || dnf install -y dnf-plugins-core || true
+      #   # Follow official Apache Arrow install instructions for AlmaLinux/RHEL-family
+      #   dnf install -y epel-release || \
+      #     dnf install -y oracle-epel-release-el${ALMA_MAJOR} || \
+      #     dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${ALMA_MAJOR}.noarch.rpm
+      #   dnf install -y https://packages.apache.org/artifactory/arrow/almalinux/${ALMA_MAJOR}/apache-arrow-release-latest.rpm
+      #   dnf config-manager --set-enabled epel || :
+      #   dnf config-manager --set-enabled powertools || :
+      #   dnf config-manager --set-enabled crb || :
+      #   dnf config-manager --set-enabled ol${ALMA_MAJOR}_codeready_builder || :
+      #   dnf config-manager --set-enabled codeready-builder-for-rhel-${ALMA_MAJOR}-rhui-rpms || :
+      #   subscription-manager repos --enable codeready-builder-for-rhel-${ALMA_MAJOR}-$(arch)-rpms || :
+      #   # manylinux images may carry older Arrow packages (e.g. arrow1700-*) which
+      #   # conflict with the newer packages from the Apache Arrow repo (e.g. arrow2200-*).
+      #   # Remove any preinstalled Arrow/Parquet RPMs so we install a consistent set.
+      #   dnf remove -y 'arrow*' 'parquet*' || true
+      #   # Required for GraphAr C++ build via Arrow CMake packages
+      #   dnf install -y --allowerasing \
+      #     arrow-devel \
+      #     arrow-dataset-devel \
+      #     arrow-acero-devel \
+      #     parquet-devel \
+      #     arrow-filesystem-s3-devel \
+      #     libcurl-devel re2-devel ccache
     steps:
       - name: Checkout (needed for some tooling)
         uses: actions/checkout@v4
@@ -162,15 +162,15 @@ jobs:
           python-version: "3.9"
 
       - name: Set up Miniconda (macOS/Windows)
-        if: matrix.os == 'windows' || matrix.os == 'macos'
+        # if: matrix.os == 'windows' || matrix.os == 'macos'
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-activate-base: true
           miniforge-version: latest
           use-mamba: true
 
-      - name: Install Arrow (macOS)
-        if: matrix.os == 'macos'
+      - name: Install Arrow (macOS / Linux)
+        if: matrix.os == 'macos' || matrix.os == 'linux'
         shell: bash
         run: |
           set -euxo pipefail
