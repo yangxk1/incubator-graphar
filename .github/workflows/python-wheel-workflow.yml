@@ -150,6 +150,7 @@ jobs:
           arrow-dataset-devel \
           arrow-acero-devel \
           parquet-devel \
+          arrow-filesystem-s3-devel \
           libcurl-devel re2-devel ccache
     steps:
       - name: Checkout (needed for some tooling)
@@ -160,9 +161,6 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        
       - name: Set up Miniconda (macOS/Windows)
         if: matrix.os == 'windows' || matrix.os == 'macos'
         uses: conda-incubator/setup-miniconda@v3
@@ -235,6 +233,11 @@ jobs:
           python -m pip install packaging cibuildwheel
           mkdir -p python/dist
           python -m cibuildwheel --output-dir python/dist "$PKGDIR"
+          
+      - name: Setup tmate session
+        if: matrix.os == 'linux'
+        uses: mxschmitt/action-tmate@v3
+        
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
