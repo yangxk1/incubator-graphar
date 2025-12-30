@@ -133,7 +133,7 @@ jobs:
         bash Miniforge3-Linux-$(uname -m).sh -b -p /opt/conda
         mamba --version
         mamba install -y -c conda-forge \
-          arrow-cpp \
+          arrow-cpp=22.0.0 \
           libcurl \
           re2 \
           ccache
@@ -176,6 +176,10 @@ jobs:
               otool -l "$CONDA/lib/libarrow.dylib" | (grep -A3 -E 'LC_BUILD_VERSION|LC_VERSION_MIN_MACOSX' || true)
             fi
           fi
+          echo "=== 🔍 DEBUG: Looking for Arrow Config ==="
+          find /opt/conda -name "ArrowConfig.cmake" || echo "❌ ArrowConfig.cmake not found!"
+          echo "=== 🔍 DEBUG: Checking lib dir ==="
+          ls -F /opt/conda/lib/ || echo "❌ /opt/conda/lib missing"
       - name: Install Arrow (Windows)
         if: matrix.os == 'windows'
         shell: pwsh
