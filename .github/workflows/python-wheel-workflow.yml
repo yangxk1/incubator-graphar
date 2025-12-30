@@ -131,8 +131,9 @@ jobs:
           libcurl \
           re2 \
           ccache
-        echo "CMAKE_PREFIX_PATH=/opt/conda" >> "$GITHUB_ENV"
-        echo "PATH=/opt/conda/bin:$PATH" >> "$GITHUB_ENV"
+
+        export CMAKE_PREFIX_PATH=/opt/conda
+        export PATH=/opt/conda/bin:$PATH
 
     steps:
       - name: Checkout (needed for some tooling)
