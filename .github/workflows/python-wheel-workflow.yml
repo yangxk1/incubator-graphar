@@ -119,12 +119,12 @@ jobs:
       CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_ENVIRONMENT_LINUX: >
+        PATH=/opt/conda/bin:$PATH
         CMAKE_PREFIX_PATH=/opt/conda
-        Arrow_DIR=/opt/conda/lib/cmake/arrow
         PKG_CONFIG_PATH=/opt/conda/lib/pkgconfig
         LD_LIBRARY_PATH=/opt/conda/lib:$LD_LIBRARY_PATH
-        PATH=/opt/conda/bin:$PATH
         CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=0"
+        SKBUILD_CMAKE_ARGS="-DCMAKE_PREFIX_PATH=/opt/conda -DArrow_DIR=/opt/conda/lib/cmake/arrow"
       CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
       CIBW_BEFORE_BUILD_LINUX: |
@@ -137,6 +137,11 @@ jobs:
           libcurl \
           re2 \
           ccache
+        
+        echo "=== 🔍 DEBUG: Looking for Arrow Config ==="
+        find /opt/conda -name "ArrowConfig.cmake" || echo "❌ ArrowConfig.cmake not found!"
+        echo "=== 🔍 DEBUG: Checking lib dir ==="
+        ls -F /opt/conda/lib/ || echo "❌ /opt/conda/lib missing"
 
     steps:
       - name: Checkout (needed for some tooling)
