@@ -133,7 +133,7 @@ jobs:
         bash Miniforge3-Linux-$(uname -m).sh -b -p /opt/conda
         mamba --version
         mamba install -y -c conda-forge \
-          arrow-cpp=22.0.0 \
+          arrow-cpp=18.0.0 \
           libcurl \
           re2 \
           ccache
