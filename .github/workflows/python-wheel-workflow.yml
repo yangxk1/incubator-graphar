@@ -27,7 +27,7 @@ on:
   # but only for the main branch
   push:
     branches:
-      - "main"
+      - "**"
     paths:
       - 'cpp/**'
       - 'python/**'
@@ -123,34 +123,61 @@ jobs:
       CIBW_BEFORE_BUILD_LINUX: |
         set -eux
         if [ -f /etc/system-release-cpe ]; then
-          ALMA_MAJOR="$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)"
+          OS_MAJOR="$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)"
         else
           . /etc/os-release
-          ALMA_MAJOR="${VERSION_ID%%.*}"
+          OS_MAJOR="${VERSION_ID%%.*}"
         fi
-        dnf install -y 'dnf-command(config-manager)' || dnf install -y dnf-plugins-core || true
-        # Follow official Apache Arrow install instructions for AlmaLinux/RHEL-family
-        dnf install -y epel-release || \
-          dnf install -y oracle-epel-release-el${ALMA_MAJOR} || \
-          dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${ALMA_MAJOR}.noarch.rpm
-        dnf install -y https://packages.apache.org/artifactory/arrow/almalinux/${ALMA_MAJOR}/apache-arrow-release-latest.rpm
-        dnf config-manager --set-enabled epel || :
-        dnf config-manager --set-enabled powertools || :
-        dnf config-manager --set-enabled crb || :
-        dnf config-manager --set-enabled ol${ALMA_MAJOR}_codeready_builder || :
-        dnf config-manager --set-enabled codeready-builder-for-rhel-${ALMA_MAJOR}-rhui-rpms || :
-        subscription-manager repos --enable codeready-builder-for-rhel-${ALMA_MAJOR}-$(arch)-rpms || :
-        # manylinux images may carry older Arrow packages (e.g. arrow1700-*) which
-        # conflict with the newer packages from the Apache Arrow repo (e.g. arrow2200-*).
-        # Remove any preinstalled Arrow/Parquet RPMs so we install a consistent set.
-        dnf remove -y 'arrow*' 'parquet*' || true
-        # Required for GraphAr C++ build via Arrow CMake packages
-        dnf install -y --allowerasing \
-          arrow-devel \
-          arrow-dataset-devel \
-          arrow-acero-devel \
-          parquet-devel \
-          libcurl-devel re2-devel ccache
+
+        if command -v dnf >/dev/null; then
+            dnf remove -y 'arrow*' 'parquet*' || true
+        else
+            yum remove -y 'arrow*' 'parquet*' || true
+        fi
+
+        if [ "$OS_MAJOR" = "7" ]; then
+            echo "Detected CentOS 7 (manylinux2014)"
+            yum install -y epel-release || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+            yum install -y https://packages.apache.org/artifactory/arrow/centos/7/apache-arrow-release-latest.rpm
+            
+            yum install -y --enablerepo=epel \
+              arrow-devel \
+              arrow-glib-devel \
+              arrow-dataset-devel \
+              arrow-dataset-glib-devel \
+              arrow-acero-devel \
+              parquet-devel \
+              parquet-glib-devel \
+              libcurl-devel re2-devel ccache
+
+        else
+            echo "Detected AlmaLinux/RHEL ${OS_MAJOR} (manylinux_2_28+)"
+            dnf install -y 'dnf-command(config-manager)' || dnf install -y dnf-plugins-core || true
+            dnf install -y epel-release || dnf install -y oracle-epel-release-el${OS_MAJOR} || dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${OS_MAJOR}.noarch.rpm
+
+            dnf install -y https://packages.apache.org/artifactory/arrow/almalinux/${OS_MAJOR}/apache-arrow-release-latest.rpm
+            
+            dnf config-manager --set-enabled epel || :
+            dnf config-manager --set-enabled powertools || :
+            dnf config-manager --set-enabled crb || :
+            dnf config-manager --set-enabled ol${OS_MAJOR}_codeready_builder || :
+            
+            dnf install -y --allowerasing \
+              arrow-devel \
+              arrow-glib-devel \
+              arrow-dataset-devel \
+              arrow-dataset-glib-devel \
+              arrow-acero-devel \
+              arrow-flight-devel \
+              arrow-flight-glib-devel \
+              arrow-flight-sql-devel \
+              arrow-flight-sql-glib-devel \
+              gandiva-devel \
+              gandiva-glib-devel \
+              parquet-devel \
+              parquet-glib-devel \
+              libcurl-devel re2-devel ccache
+        fi
     steps:
       - name: Checkout (needed for some tooling)
         uses: actions/checkout@v4
@@ -232,6 +259,11 @@ jobs:
           python -m pip install packaging cibuildwheel
           mkdir -p python/dist
           python -m cibuildwheel --output-dir python/dist "$PKGDIR"
+
+      - name: Setup tmate session
+        if: matrix.os == 'linux'
+        uses: mxschmitt/action-tmate@v3
+
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
