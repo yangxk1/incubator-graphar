@@ -131,7 +131,7 @@ jobs:
           libcurl \
           re2 \
           ccache
-        echo "CMAKE_PREFIX_PATH=/opt/conda" >> "$GITHUB_ENV"】
+        echo "CMAKE_PREFIX_PATH=/opt/conda" >> "$GITHUB_ENV"
         echo "PATH=/opt/conda/bin:$PATH" >> "$GITHUB_ENV"
 
     steps:
