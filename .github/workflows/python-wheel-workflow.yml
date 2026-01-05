@@ -161,7 +161,7 @@ jobs:
         export PATH=/opt/conda/bin:$PATH
 
         if [ "$MAMBA_PLATFORM" = "linux-aarch64" ]; then
-          ARROW_VERSION="17.0.0"
+          ARROW_VERSION="22.0.0"
           TMPARROW="$(mktemp -d)"
           curl -LfsS "https://downloads.apache.org/arrow/arrow-${ARROW_VERSION}/apache-arrow-${ARROW_VERSION}.tar.gz" \
             -o "${TMPARROW}/arrow.tgz"
