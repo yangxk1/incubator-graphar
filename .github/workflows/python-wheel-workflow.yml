@@ -177,6 +177,7 @@ jobs:
               gandiva-glib-devel \
               parquet-devel \
               parquet-glib-devel \
+              arrow-filesystem-s3-devel \
               libcurl-devel re2-devel ccache
         fi
     steps:
