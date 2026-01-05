@@ -120,90 +120,66 @@ jobs:
       CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
-      CIBW_ENVIRONMENT_LINUX: CMAKE_PREFIX_PATH=/opt/conda PATH=/opt/conda/bin:$PATH
-      CIBW_REPAIR_WHEEL_COMMAND_LINUX: LD_LIBRARY_PATH=/opt/conda/lib:$LD_LIBRARY_PATH auditwheel repair -w {dest_dir} {wheel}
+      CIBW_ENVIRONMENT_LINUX: export GAR_WITH_S3=OFF export ARROW_S3=OFF
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
       CIBW_BEFORE_BUILD_LINUX: |
         set -eux
-        # Use Conda (Mamba) to install build dependencies on Linux, instead of dnf/yum.
-        # This runs inside the manylinux container used by cibuildwheel.
-
-        ARCH="$(uname -m)"
-        case "$ARCH" in
-          x86_64) MAMBA_PLATFORM="linux-64" ;;
-          aarch64|arm64) MAMBA_PLATFORM="linux-aarch64" ;;
-          *) echo "Unsupported arch for micromamba: $ARCH" >&2; exit 1 ;;
-        esac
-
-        if ! command -v micromamba >/dev/null 2>&1; then
-          TMPDIR="$(mktemp -d)"
-          ( \
-            cd "$TMPDIR" && \
-            curl -Ls "https://micro.mamba.pm/api/micromamba/${MAMBA_PLATFORM}/latest" \
-              | tar -xvj bin/micromamba && \
-            mv bin/micromamba /usr/local/bin/micromamba \
-          )
-          rm -rf "$TMPDIR"
-        fi
-
-        export MAMBA_ROOT_PREFIX=/opt/micromamba
-        mkdir -p /opt/conda
-
-        # Create/update a fixed prefix so CIBW_ENVIRONMENT_LINUX can point at it.
-        # Note: conda-forge's prebuilt Arrow on aarch64 may carry too-new
-        # versioned symbols for manylinux_2_28, causing auditwheel repair to fail.
-        # For aarch64, build Arrow from source with the manylinux toolchain.
-
-        micromamba create -y -p /opt/conda -c conda-forge \
-          cmake \
-          ninja \
-          ccache
-
-        export PATH=/opt/conda/bin:$PATH
-
-        if [ "$MAMBA_PLATFORM" = "linux-aarch64" ]; then
-          ARROW_VERSION="22.0.0"
-          TMPARROW="$(mktemp -d)"
-          curl -LfsS "https://downloads.apache.org/arrow/arrow-${ARROW_VERSION}/apache-arrow-${ARROW_VERSION}.tar.gz" \
-            -o "${TMPARROW}/arrow.tgz"
-          tar -xzf "${TMPARROW}/arrow.tgz" -C "${TMPARROW}"
-
-          ARROW_SRC_DIR="${TMPARROW}/apache-arrow-${ARROW_VERSION}/cpp"
-          cmake -S "${ARROW_SRC_DIR}" -B "${TMPARROW}/build" -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=/opt/conda \
-            -DARROW_BUILD_SHARED=ON \
-            -DARROW_BUILD_STATIC=OFF \
-            -DARROW_COMPUTE=ON \
-            -DARROW_CSV=ON \
-            -DARROW_JSON=ON \
-            -DARROW_DATASET=ON \
-            -DARROW_ACERO=ON \
-            -DARROW_PARQUET=ON \
-            -DARROW_ORC=OFF \
-            -DARROW_FLIGHT=OFF \
-            -DARROW_GANDIVA=OFF \
-            -DARROW_WITH_ZLIB=ON \
-            -DARROW_WITH_ZSTD=OFF \
-            -DARROW_WITH_LZ4=OFF \
-            -DARROW_WITH_SNAPPY=OFF \
-            -DARROW_WITH_BROTLI=OFF \
-            -DARROW_WITH_BZ2=OFF \
-            -DARROW_WITH_RE2=ON \
-            -DARROW_DEPENDENCY_SOURCE=BUNDLED \
-            -DARROW_BUILD_TESTS=OFF \
-            -DARROW_BUILD_BENCHMARKS=OFF \
-            -DARROW_BUILD_EXAMPLES=OFF
-
-          cmake --build "${TMPARROW}/build" -j"$(getconf _NPROCESSORS_ONLN || echo 2)"
-          cmake --install "${TMPARROW}/build"
-          rm -rf "${TMPARROW}"
+        if [ -f /etc/system-release-cpe ]; then
+          OS_MAJOR="$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)"
         else
-          micromamba install -y -p /opt/conda -c conda-forge \
-            arrow-cpp
+          . /etc/os-release
+          OS_MAJOR="${VERSION_ID%%.*}"
         fi
 
-        micromamba clean -a -y
+        if command -v dnf >/dev/null; then
+            dnf remove -y 'arrow*' 'parquet*' || true
+        else
+            yum remove -y 'arrow*' 'parquet*' || true
+        fi
+
+        if [ "$OS_MAJOR" = "7" ]; then
+            echo "Detected CentOS 7 (manylinux2014)"
+            yum install -y epel-release || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+            yum install -y https://packages.apache.org/artifactory/arrow/centos/7/apache-arrow-release-latest.rpm
+            
+            yum install -y --enablerepo=epel \
+              arrow-devel \
+              arrow-glib-devel \
+              arrow-dataset-devel \
+              arrow-dataset-glib-devel \
+              arrow-acero-devel \
+              parquet-devel \
+              parquet-glib-devel \
+              libcurl-devel re2-devel ccache
+
+        else
+            echo "Detected AlmaLinux/RHEL ${OS_MAJOR} (manylinux_2_28+)"
+            dnf install -y 'dnf-command(config-manager)' || dnf install -y dnf-plugins-core || true
+            dnf install -y epel-release || dnf install -y oracle-epel-release-el${OS_MAJOR} || dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${OS_MAJOR}.noarch.rpm
+
+            dnf install -y https://packages.apache.org/artifactory/arrow/almalinux/${OS_MAJOR}/apache-arrow-release-latest.rpm
+            
+            dnf config-manager --set-enabled epel || :
+            dnf config-manager --set-enabled powertools || :
+            dnf config-manager --set-enabled crb || :
+            dnf config-manager --set-enabled ol${OS_MAJOR}_codeready_builder || :
+            
+            dnf install -y --allowerasing \
+              arrow-devel \
+              arrow-glib-devel \
+              arrow-dataset-devel \
+              arrow-dataset-glib-devel \
+              arrow-acero-devel \
+              arrow-flight-devel \
+              arrow-flight-glib-devel \
+              arrow-flight-sql-devel \
+              arrow-flight-sql-glib-devel \
+              gandiva-devel \
+              gandiva-glib-devel \
+              parquet-devel \
+              parquet-glib-devel \
+              libcurl-devel re2-devel ccache
+        fi
     steps:
       - name: Checkout (needed for some tooling)
         uses: actions/checkout@v4
@@ -295,9 +271,9 @@ jobs:
           python -c "import graphar; import graphar._core; print('graphar import ok')"
           graphar --help >/dev/null
 
-      # - name: Setup tmate session
-      #   if: matrix.os == 'linux'
-      #   uses: mxschmitt/action-tmate@v3
+      - name: Setup tmate session
+        if: matrix.os == 'linux'
+        uses: mxschmitt/action-tmate@v3
 
       - name: Store artifacts
         uses: actions/upload-artifact@v4
