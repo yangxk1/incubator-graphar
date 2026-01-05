@@ -112,7 +112,8 @@ jobs:
 
     env:
       CIBW_PLATFORM: ${{ matrix.os }}
-      CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-*"
+      # CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-*"
+      CIBW_BUILD: "cp39-*"
       CIBW_SKIP: "*-musllinux_*"
       # Pin arch to the matrix platform
       CIBW_ARCHS: ${{ matrix.platform }}
@@ -260,9 +261,18 @@ jobs:
           mkdir -p python/dist
           python -m cibuildwheel --output-dir python/dist "$PKGDIR"
 
-      - name: Setup tmate session
-        if: matrix.os == 'linux'
-        uses: mxschmitt/action-tmate@v3
+      - name: Smoke test wheel (import + CLI)
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python -m pip uninstall -y graphar || true
+          python -m pip install --no-deps python/dist/*.whl
+          python -c "import graphar; import graphar._core; print('graphar import ok')"
+          graphar --help >/dev/null
+
+      # - name: Setup tmate session
+      #   if: matrix.os == 'linux'
+      #   uses: mxschmitt/action-tmate@v3
 
       - name: Store artifacts
         uses: actions/upload-artifact@v4
