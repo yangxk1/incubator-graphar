@@ -27,7 +27,7 @@ on:
   # but only for the main branch
   push:
     branches:
-      - "**"
+      - "main"
     paths:
       - 'cpp/**'
       - 'python/**'
@@ -93,14 +93,14 @@ jobs:
           - platform: x86_64
             runner: ubuntu-latest # This is the standard x86_64 runner
             os: linux
-            manylinux: _2_34
+            manylinux: _2_28
             deployment-target: ''
 
           # Job 2: Native aarch64 build
           - platform: aarch64
             runner: ubuntu-22.04-arm # This is a native ARM64 runner
             os: linux
-            manylinux: _2_34
+            manylinux: _2_28
             deployment-target: ''
 
           # Job 3: macOS arm64 build
@@ -120,37 +120,10 @@ jobs:
       CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
-      CIBW_ENVIRONMENT_LINUX: CMAKE_PREFIX_PATH=/opt/conda PATH=/opt/conda/bin:$PATH LD_LIBRARY_PATH=/opt/conda/lib:$LD_LIBRARY_PATH
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
       CIBW_BEFORE_BUILD_LINUX: |
-        set -eux
-        # Use Conda (Mamba) to install build dependencies on Linux, instead of dnf/yum.
-        # This runs inside the manylinux container used by cibuildwheel.
-        ARCH="$(uname -m)"
-        case "$ARCH" in
-          x86_64) MAMBA_PLATFORM="linux-64" ;;
-          aarch64|arm64) MAMBA_PLATFORM="linux-aarch64" ;;
-          *) echo "Unsupported arch for micromamba: $ARCH" >&2; exit 1 ;;
-        esac
-        if ! command -v micromamba >/dev/null 2>&1; then
-          TMPDIR="$(mktemp -d)"
-          ( \
-            cd "$TMPDIR" && \
-            curl -Ls "https://micro.mamba.pm/api/micromamba/${MAMBA_PLATFORM}/latest" \
-              | tar -xvj bin/micromamba && \
-            mv bin/micromamba /usr/local/bin/micromamba \
-          )
-          rm -rf "$TMPDIR"
-        fi
-        export MAMBA_ROOT_PREFIX=/opt/micromamba
-        mkdir -p /opt/conda
-        # Create/update a fixed prefix so CIBW_ENVIRONMENT_LINUX can point at it.
-        micromamba create -y -p /opt/conda -c conda-forge \
-          arrow-cpp \
-          libcurl \
-          re2 \
-          ccache
-        micromamba clean -a -y
+        yum install -y openssl-devel libcurl-devel libarrow
+
     steps:
       - name: Checkout (needed for some tooling)
         uses: actions/checkout@v4
@@ -232,6 +205,7 @@ jobs:
           python -m pip install packaging cibuildwheel
           mkdir -p python/dist
           python -m cibuildwheel --output-dir python/dist "$PKGDIR"
+
       - name: Smoke test wheel (import + CLI)
         shell: bash
         run: |
@@ -240,9 +214,6 @@ jobs:
           python -m pip install --no-deps python/dist/*.whl
           python -c "import graphar; import graphar._core; print('graphar import ok')"
           graphar --help >/dev/null
-      # - name: Setup tmate session
-      #   if: matrix.os == 'linux'
-      #   uses: mxschmitt/action-tmate@v3
 
       - name: Store artifacts
         uses: actions/upload-artifact@v4
