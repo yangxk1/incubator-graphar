@@ -28,6 +28,8 @@ project(
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(BUILD_ARROW_FROM_SOURCE ON CACHE BOOL "Force build arrow from source" FORCE)
+set(USE_STATIC_ARROW ON CACHE BOOL "Link arrow static library" FORCE)
 # The Python wheel build (e.g. via cibuildwheel) may run from an isolated copy of
 # the `python/` directory, where `../cpp` doesn't exist. In CI we bundle `cpp/`
 # into the project directory as `_bundled_cpp/`.
@@ -53,10 +55,12 @@ add_subdirectory(${GRAPHAR_CPP_SOURCE_DIR} ${CMAKE_BINARY_DIR}/graphar)
 # scikit-build-core's built-in backport)
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
-find_package(Arrow REQUIRED)
-find_package(ArrowDataset REQUIRED)
-find_package(ArrowAcero REQUIRED)
-find_package(Parquet REQUIRED)
+if (NOT BUILD_ARROW_FROM_SOURCE)
+  find_package(Arrow REQUIRED)
+  find_package(ArrowDataset REQUIRED)
+  find_package(ArrowAcero REQUIRED)
+  find_package(Parquet REQUIRED)
+endif()
 
 if(APPLE)
   # cibuildwheel uses delocate to bundle external dylibs into the wheel.
@@ -94,11 +98,16 @@ python_add_library(_core MODULE src/bindings/types_binding.cc
                                    src/bindings/high_level_binding.cc
                                    src/bindings/_core_module.cc WITH_SOABI)
                                    
-target_link_libraries(_core PRIVATE pybind11::headers graphar Arrow::arrow_shared
+if (BUILD_ARROW_FROM_SOURCE)
+    target_link_libraries(_core PRIVATE pybind11::headers graphar)
+else()
+    target_link_libraries(_core PRIVATE pybind11::headers graphar 
+                                    Arrow::arrow_shared
                                     Parquet::parquet_shared
                                     ArrowDataset::arrow_dataset_shared
                                     ArrowAcero::arrow_acero_shared
                                     )
+endif()
 target_include_directories(_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(_core PRIVATE ${GRAPHAR_CPP_SOURCE_DIR}/src)
 target_include_directories(_core PRIVATE ${GRAPHAR_CPP_SOURCE_DIR}/thirdparty)
