@@ -122,15 +122,15 @@ jobs:
       CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
       CIBW_BEFORE_BUILD_LINUX: |
-        sudo yum install -y epel-release || sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1).noarch.rpm
-        sudo yum install -y https://packages.apache.org/artifactory/arrow/centos/$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)/apache-arrow-release-latest.rpm
-        sudo yum install -y --enablerepo=epel arrow-devel # For C++
-        sudo yum install -y --enablerepo=epel arrow-glib-devel # For GLib (C)
-        sudo yum install -y --enablerepo=epel arrow-dataset-devel # For Apache Arrow Dataset C++
-        sudo yum install -y --enablerepo=epel arrow-dataset-glib-devel # For Apache Arrow Dataset GLib (C)
-        sudo yum install -y --enablerepo=epel arrow-acero-devel # For Apache Arrow Acero
-        sudo yum install -y --enablerepo=epel parquet-devel # For Apache Parquet C++
-        sudo yum install -y --enablerepo=epel parquet-glib-devel # For Apache Parquet GLib (C)
+        yum install -y epel-release || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1).noarch.rpm
+        yum install -y https://packages.apache.org/artifactory/arrow/centos/$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)/apache-arrow-release-latest.rpm
+        yum install -y --enablerepo=epel arrow-devel # For C++
+        yum install -y --enablerepo=epel arrow-glib-devel # For GLib (C)
+        yum install -y --enablerepo=epel arrow-dataset-devel # For Apache Arrow Dataset C++
+        yum install -y --enablerepo=epel arrow-dataset-glib-devel # For Apache Arrow Dataset GLib (C)
+        yum install -y --enablerepo=epel arrow-acero-devel # For Apache Arrow Acero
+        yum install -y --enablerepo=epel parquet-devel # For Apache Parquet C++
+        yum install -y --enablerepo=epel parquet-glib-devel # For Apache Parquet GLib (C)
 
     steps:
       - name: Checkout (needed for some tooling)
