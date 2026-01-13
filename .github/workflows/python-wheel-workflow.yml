@@ -122,49 +122,10 @@ jobs:
       CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
       CIBW_BEFORE_BUILD_LINUX: |
-        set -euxo pipefail
-        ARROW_VERSION=17.0.0
-
-        dnf install -y epel-release
-        dnf install -y git cmake gcc-c++ make wget \
-                      openssl-devel libcurl-devel zlib-devel \
-                      snappy-devel rapidjson-devel lz4-devel libzstd-devel \
-                      utf8proc-devel re2-devel
-
-        wget https://github.com/apache/arrow/archive/apache-arrow-${ARROW_VERSION}.tar.gz
-        tar -xf apache-arrow-${ARROW_VERSION}.tar.gz
-        mkdir -p arrow-build
-        cd arrow-build
-
-        cmake ../arrow-apache-arrow-${ARROW_VERSION}/cpp \
-            -DCMAKE_INSTALL_PREFIX=/usr/local \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DARROW_BUILD_STATIC=ON \
-            -DARROW_BUILD_SHARED=OFF \
-            -DARROW_WITH_ZLIB=ON \
-            -DARROW_WITH_LZ4=ON \
-            -DARROW_WITH_SNAPPY=ON \
-            -DARROW_WITH_ZSTD=ON \
-            -DARROW_PARQUET=ON \
-            -DARROW_DATASET=ON \
-            -DARROW_COMPUTE=ON \
-            -DARROW_CSV=ON \
-            -DARROW_JSON=ON \
-            -DARROW_FILESYSTEM=ON \
-            -DARROW_GANDIVA=OFF \
-            -DARROW_FLIGHT=OFF \
-            -Dsnappy_SOURCE=SYSTEM \
-            -DRapidJSON_SOURCE=SYSTEM \
-            -DLZ4_SOURCE=SYSTEM \
-            -Dzstd_SOURCE=SYSTEM \
-            -Dutf8proc_SOURCE=SYSTEM \
-            -Dre2_SOURCE=SYSTEM
-
-        make -j$(nproc)
-        make install
-
-        echo "Arrow ${ARROW_VERSION} static build installed to /usr/local"
-
+        # set -eux
+        dnf install -y epel-release || dnf install -y oracle-epel-release-el$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1) || dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1).noarch.rpm
+        dnf install -y https://packages.apache.org/artifactory/arrow/almalinux/$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)/apache-arrow-release-latest.rpm
+        
     steps:
       - name: Checkout (needed for some tooling)
         uses: actions/checkout@v4
