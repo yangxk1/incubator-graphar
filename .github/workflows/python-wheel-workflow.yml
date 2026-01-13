@@ -96,18 +96,18 @@ jobs:
             manylinux: _2_28
             deployment-target: ''
 
-          # Job 2: Native aarch64 build
-          - platform: aarch64
-            runner: ubuntu-22.04-arm # This is a native ARM64 runner
-            os: linux
-            manylinux: _2_28
-            deployment-target: ''
+          # # Job 2: Native aarch64 build
+          # - platform: aarch64
+          #   runner: ubuntu-22.04-arm # This is a native ARM64 runner
+          #   os: linux
+          #   manylinux: _2_28
+          #   deployment-target: ''
 
-          # Job 3: macOS arm64 build
-          - platform: arm64
-            runner: macos-latest
-            os: macos
-            deployment-target: '11.0'
+          # # Job 3: macOS arm64 build
+          # - platform: arm64
+          #   runner: macos-latest
+          #   os: macos
+          #   deployment-target: '11.0'
 
 
     env:
