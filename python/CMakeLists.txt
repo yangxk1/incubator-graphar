@@ -58,6 +58,57 @@ find_package(ArrowDataset REQUIRED)
 find_package(ArrowAcero REQUIRED)
 find_package(Parquet REQUIRED)
 
+# Print dependency versions/locations at configure time.
+function(_graphar_print_var _label _var)
+  if(DEFINED ${_var})
+    message(STATUS "${_label}: ${${_var}}")
+  else()
+    message(STATUS "${_label}: (not set)")
+  endif()
+endfunction()
+
+function(_graphar_print_target_imported_location _label _tgt)
+  if(TARGET ${_tgt})
+    get_target_property(_loc ${_tgt} IMPORTED_LOCATION_RELEASE)
+    if(NOT _loc)
+      get_target_property(_loc ${_tgt} IMPORTED_LOCATION)
+    endif()
+    if(_loc)
+      message(STATUS "${_label}: ${_loc}")
+    else()
+      message(STATUS "${_label}: (no IMPORTED_LOCATION on target '${_tgt}')")
+    endif()
+  else()
+    message(STATUS "${_label}: (target '${_tgt}' not found)")
+  endif()
+endfunction()
+
+message(STATUS "=== GraphAr Python build configuration ===")
+message(STATUS "CMake version: ${CMAKE_VERSION}")
+message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_VERSION}")
+message(STATUS "C++ compiler: ${CMAKE_CXX_COMPILER} (${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION})")
+message(STATUS "C++ standard: ${CMAKE_CXX_STANDARD}")
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+_graphar_print_var("Python version" Python_VERSION)
+_graphar_print_var("Python executable" Python_EXECUTABLE)
+_graphar_print_var("pybind11 version" pybind11_VERSION)
+
+# Arrow/Parquet config files use different variable names across versions/builds.
+_graphar_print_var("Arrow version (Arrow_VERSION)" Arrow_VERSION)
+_graphar_print_var("Arrow version (ARROW_VERSION)" ARROW_VERSION)
+_graphar_print_var("Arrow version (Arrow_VERSION_STRING)" Arrow_VERSION_STRING)
+_graphar_print_var("Parquet version (Parquet_VERSION)" Parquet_VERSION)
+_graphar_print_var("Parquet version (PARQUET_VERSION)" PARQUET_VERSION)
+
+_graphar_print_var("ARROW_ORC" ARROW_ORC)
+
+_graphar_print_target_imported_location("Arrow shared library" Arrow::arrow_shared)
+_graphar_print_target_imported_location("Arrow Dataset shared library" ArrowDataset::arrow_dataset_shared)
+_graphar_print_target_imported_location("Arrow Acero shared library" ArrowAcero::arrow_acero_shared)
+_graphar_print_target_imported_location("Parquet shared library" Parquet::parquet_shared)
+message(STATUS "=========================================")
+
 if(APPLE)
   # cibuildwheel uses delocate to bundle external dylibs into the wheel.
   # delocate needs to be able to resolve @rpath dependencies (e.g.
