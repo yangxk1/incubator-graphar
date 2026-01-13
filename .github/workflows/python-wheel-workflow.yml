@@ -126,7 +126,8 @@ jobs:
         echo $(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)
         dnf install -y libboost-graph-dev
         dnf install -y ccache
-        dnf install -y openssl
+        dnf install -y openssl-devel
+        dnf install -y libcurl-devel
     steps:
       - name: Checkout (needed for some tooling)
         uses: actions/checkout@v4
