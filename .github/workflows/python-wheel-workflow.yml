@@ -125,7 +125,7 @@ jobs:
         set -euxo pipefail
         ARROW_VERSION=17.0.0
 
-        dnf install -y git cmake gcc-c++ make openssl-devel libcurl-devel zlib-devel
+        dnf install -y git cmake gcc-c++ make openssl-devel libcurl-devel zlib-devel wget
 
         wget https://github.com/apache/arrow/archive/apache-arrow-${ARROW_VERSION}.tar.gz
         tar -xf apache-arrow-${ARROW_VERSION}.tar.gz
