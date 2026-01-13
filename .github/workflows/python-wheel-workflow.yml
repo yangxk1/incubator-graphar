@@ -125,7 +125,10 @@ jobs:
         set -euxo pipefail
         ARROW_VERSION=17.0.0
 
-        dnf install -y git cmake gcc-c++ make openssl-devel libcurl-devel zlib-devel wget
+        dnf install -y epel-release
+        dnf install -y git cmake gcc-c++ make wget \
+                 openssl-devel libcurl-devel zlib-devel \
+                 snappy-devel rapidjson-devel lz4-devel libzstd-devel
 
         wget https://github.com/apache/arrow/archive/apache-arrow-${ARROW_VERSION}.tar.gz
         tar -xf apache-arrow-${ARROW_VERSION}.tar.gz
@@ -148,7 +151,11 @@ jobs:
             -DARROW_JSON=ON \
             -DARROW_FILESYSTEM=ON \
             -DARROW_GANDIVA=OFF \
-            -DARROW_FLIGHT=OFF 
+            -DARROW_FLIGHT=OFF \
+            -Dsnappy_SOURCE=SYSTEM \
+            -DRapidJSON_SOURCE=SYSTEM \
+            -DLZ4_SOURCE=SYSTEM \
+            -Dzstd_SOURCE=SYSTEM
 
         make -j$(nproc)
         make install
