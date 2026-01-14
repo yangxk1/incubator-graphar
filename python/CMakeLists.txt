@@ -104,7 +104,6 @@ _graphar_print_var("Parquet version (PARQUET_VERSION)" PARQUET_VERSION)
 _graphar_print_var("ARROW_ORC" ARROW_ORC)
 
 _graphar_print_target_imported_location("Arrow shared library" Arrow::arrow_shared)
-_graphar_print_target_imported_location("Arrow filesystem shared library" Arrow::arrow_fs_shared)
 _graphar_print_target_imported_location("Arrow Dataset shared library" ArrowDataset::arrow_dataset_shared)
 _graphar_print_target_imported_location("Arrow Acero shared library" ArrowAcero::arrow_acero_shared)
 _graphar_print_target_imported_location("Parquet shared library" Parquet::parquet_shared)
@@ -151,12 +150,6 @@ target_link_libraries(_core PRIVATE pybind11::headers graphar Arrow::arrow_share
                                     ArrowDataset::arrow_dataset_shared
                                     ArrowAcero::arrow_acero_shared
                                     )
-
-# Arrow filesystem is a separate library in many builds. Link it when the CMake
-# target is available so the wheel records an explicit dependency.
-if(TARGET Arrow::arrow_fs_shared)
-  target_link_libraries(_core PRIVATE Arrow::arrow_fs_shared)
-endif()
 target_include_directories(_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(_core PRIVATE ${GRAPHAR_CPP_SOURCE_DIR}/src)
 target_include_directories(_core PRIVATE ${GRAPHAR_CPP_SOURCE_DIR}/thirdparty)

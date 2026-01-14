@@ -293,21 +293,6 @@ macro(build_graphar)
     target_include_directories(graphar PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
     target_link_libraries(graphar PRIVATE ${CMAKE_DL_LIBS})
 
-    # Arrow filesystem lives in a separate library in many Arrow builds.
-    # If we don't link it explicitly, we may end up with runtime loader errors
-    # (e.g. undefined symbol: arrow::fs::InitializeS3).
-    function(_graphar_link_arrow_filesystem _tgt)
-        if(TARGET Arrow::arrow_fs_shared)
-            target_link_libraries(${_tgt} PRIVATE Arrow::arrow_fs_shared)
-        elseif(TARGET Arrow::arrow_fs_static)
-            target_link_libraries(${_tgt} PRIVATE Arrow::arrow_fs_static)
-        elseif(TARGET Arrow::arrow_fs)
-            target_link_libraries(${_tgt} PRIVATE Arrow::arrow_fs)
-        else()
-            message(FATAL_ERROR "Arrow filesystem target not found (expected Arrow::arrow_fs_shared/Arrow::arrow_fs_static/Arrow::arrow_fs). Please install Arrow filesystem library (e.g. libarrow_fs) and retry.")
-        endif()
-    endfunction()
-
     if(APPLE)
         if(USE_STATIC_ARROW)
             target_link_libraries(graphar PRIVATE -Wl,-force_load
@@ -315,13 +300,11 @@ macro(build_graphar)
                 Parquet::parquet_static
                 ArrowDataset::arrow_dataset_static
                 ArrowAcero::arrow_acero_static)
-            _graphar_link_arrow_filesystem(graphar)
         else()
             target_link_libraries(graphar PRIVATE -Wl,-force_load Arrow::arrow_shared
                 Parquet::parquet_shared
                 ArrowDataset::arrow_dataset_shared
                 ArrowAcero::arrow_acero_shared)
-            _graphar_link_arrow_filesystem(graphar)
         endif()
     elseif(MSVC)
         # MSVC doesn't support GNU ld-style -Wl flags. For shared libraries we
@@ -332,14 +315,12 @@ macro(build_graphar)
                 Parquet::parquet_static
                 ArrowDataset::arrow_dataset_static
                 ArrowAcero::arrow_acero_static)
-            _graphar_link_arrow_filesystem(graphar)
         else()
             target_link_libraries(graphar PRIVATE
                 Arrow::arrow_shared
                 Parquet::parquet_shared
                 ArrowDataset::arrow_dataset_shared
                 ArrowAcero::arrow_acero_shared)
-            _graphar_link_arrow_filesystem(graphar)
         endif()
     else()
         if(USE_STATIC_ARROW)
@@ -348,13 +329,11 @@ macro(build_graphar)
                 Parquet::parquet_static
                 ArrowDataset::arrow_dataset_static
                 ArrowAcero::arrow_acero_static -Wl,--no-whole-archive)
-            _graphar_link_arrow_filesystem(graphar)
         else()
             target_link_libraries(graphar PRIVATE -Wl,--exclude-libs,ALL -Wl,--whole-archive Arrow::arrow_shared
                 Parquet::parquet_shared
                 ArrowDataset::arrow_dataset_shared
                 ArrowAcero::arrow_acero_shared -Wl,--no-whole-archive)
-            _graphar_link_arrow_filesystem(graphar)
         endif()
     endif()
 endmacro()
