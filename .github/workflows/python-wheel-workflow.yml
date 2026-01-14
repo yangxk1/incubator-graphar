@@ -131,9 +131,9 @@ jobs:
         set -e
         echo "Installing build dependencies..."
         if command -v dnf >/dev/null; then
-          dnf install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd pkg-config bison flex autoconf automake libtool
+          dnf install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd perl-core pkg-config bison flex autoconf automake libtool ninja-build
         elif command -v yum >/dev/null; then
-          yum install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd pkg-config bison flex autoconf automake libtool
+          yum install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd perl-core pkg-config bison flex autoconf automake libtool ninja-build
         fi
         
         echo "Setting up vcpkg..."
@@ -143,13 +143,19 @@ jobs:
         fi
         cd vcpkg
         ./bootstrap-vcpkg.sh -disableMetrics
-        
+
+        echo "Preparing Triplet..."
+        if [ -f "triplets/community/${{ matrix.vcpkg_triplet }}.cmake" ]; then
+          cp "triplets/community/${{ matrix.vcpkg_triplet }}.cmake" triplets/
+        else
+          echo "Warning: Triplet file not found in community folder, assuming it exists in standard triplets."
+        fi
+
         echo "Installing Arrow via vcpkg (Static)..."
         # Install Arrow with required features. 
         # Note: This compiles from source and may take time.
         ./vcpkg install \
-          arrow[parquet,dataset,acero,compute,csv,json,filesystem]:${{ matrix.vcpkg_triplet }} \
-          --overlay-triplets=triplets/community \
+          "arrow[parquet,dataset,acero,compute,csv,json,filesystem]:${{ matrix.vcpkg_triplet }}" \
           --clean-after-build
 
       # Pass vcpkg toolchain to the pip build process
