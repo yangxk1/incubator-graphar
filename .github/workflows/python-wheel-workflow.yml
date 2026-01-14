@@ -131,9 +131,9 @@ jobs:
         set -e
         echo "Installing build dependencies..."
         if command -v dnf >/dev/null; then
-          dnf install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd pkg-config bison flex
+          dnf install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd pkg-config bison flex autoconf automake libtool
         elif command -v yum >/dev/null; then
-          yum install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd pkg-config bison flex
+          yum install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd pkg-config bison flex autoconf automake libtool
         fi
         
         echo "Setting up vcpkg..."
