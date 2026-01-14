@@ -93,7 +93,7 @@ jobs:
           - platform: x86_64
             runner: ubuntu-latest # This is the standard x86_64 runner
             os: linux
-            manylinux: _2_31
+            manylinux: _2_34
             deployment-target: ''
 
           # # Job 2: Native aarch64 build
