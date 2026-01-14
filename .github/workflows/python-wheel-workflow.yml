@@ -114,9 +114,8 @@ jobs:
             deployment-target: '12.0'
 
     env:
-      # Common Config
       CIBW_PLATFORM: ${{ matrix.os }}
-      CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-*" # Define supported python versions
+      CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-*"
       CIBW_SKIP: "*-musllinux_*"
       CIBW_ARCHS: ${{ matrix.platform }}
       
@@ -124,51 +123,39 @@ jobs:
       CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       
-      # --- VCPKG Integration for Linux ---
-      # We install vcpkg to /project/vcpkg inside the container
-      # This script runs ONCE per job (before building any wheels)
       CIBW_BEFORE_ALL_LINUX: |
         set -e
-        echo "Installing build dependencies..."
-        if command -v dnf >/dev/null; then
-          dnf install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd perl-core pkg-config bison flex autoconf automake libtool ninja-build
-        elif command -v yum >/dev/null; then
-          yum install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd perl-core pkg-config bison flex autoconf automake libtool ninja-build
+        if [ "$(uname -m)" = "aarch64" ]; then
+          MAMBA_URL="https://micro.mamba.pm/api/micromamba/linux-aarch64/latest"
+        else
+          MAMBA_URL="https://micro.mamba.pm/api/micromamba/linux-64/latest"
         fi
         
-        echo "Setting up vcpkg..."
-        cd /project
-        if [ ! -d "vcpkg" ]; then
-          git clone https://github.com/microsoft/vcpkg.git
-        fi
-        cd vcpkg
-        ./bootstrap-vcpkg.sh -disableMetrics
+        echo "Downloading Micromamba..."
+        curl -Ls "$MAMBA_URL" | tar -xvj bin/micromamba
+        
+        echo "Installing Arrow binaries from conda-forge..."
+        ./bin/micromamba create -p /project/arrow-env \
+          -c conda-forge \
+          arrow-cpp=17.0.0 \
+          pkg-config \
+          cmake \
+          make \
+          gcc_linux-64 \
+          gxx_linux-64 \
+          -y
+          
+        ./bin/micromamba clean -a -y
 
-        echo "Preparing Triplet..."
-        if [ -f "triplets/community/${{ matrix.vcpkg_triplet }}.cmake" ]; then
-          cp "triplets/community/${{ matrix.vcpkg_triplet }}.cmake" triplets/
-        else
-          echo "Warning: Triplet file not found in community folder, assuming it exists in standard triplets."
-        fi
-
-        echo "Installing Arrow via vcpkg (Static)..."
-        # Install Arrow with required features. 
-        # Note: This compiles from source and may take time.
-        ./vcpkg install \
-          "arrow[parquet,dataset,acero,compute,csv,json,filesystem]:${{ matrix.vcpkg_triplet }}" \
-          --clean-after-build
-
-      # Pass vcpkg toolchain to the pip build process
       CIBW_ENVIRONMENT_LINUX: >
-        CMAKE_TOOLCHAIN_FILE="/project/vcpkg/scripts/buildsystems/vcpkg.cmake"
-        VCPKG_TARGET_TRIPLET="${{ matrix.vcpkg_triplet }}"
-        CXX_FLAGS="-fvisibility=hidden"
+        CMAKE_PREFIX_PATH="/project/arrow-env"
+        PKG_CONFIG_PATH="/project/arrow-env/lib/pkgconfig"
+        PATH="/project/arrow-env/bin:$PATH"
+        LD_LIBRARY_PATH="/project/arrow-env/lib:$LD_LIBRARY_PATH"
 
-      # macOS Config (Keep using Conda for speed, vcpkg is too slow on macOS runners)
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0}', matrix.deployment-target) || '' }}
-      
-      # Windows Config
-      CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
+      CIBW_REPAIR_WHEEL_COMMAND_MACOS: "delocate-listdeps {wheel} && delocate-wheel -w {dest_dir} -v {wheel}"
+
 
     steps:
       - name: Checkout
