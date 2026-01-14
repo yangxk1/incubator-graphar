@@ -182,7 +182,7 @@ jobs:
             -DARROW_WITH_BROTLI=OFF \
             -DARROW_WITH_BZ2=OFF \
             -DARROW_OPENSSL_USE_SHARED=ON \
-            -DARROW_S3=ON
+            -DARROW_S3=ON \
             -DCMAKE_POLICY_DEFAULT_CMP0074=NEW \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
