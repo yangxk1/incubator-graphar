@@ -53,10 +53,22 @@ add_subdirectory(${GRAPHAR_CPP_SOURCE_DIR} ${CMAKE_BINARY_DIR}/graphar)
 # scikit-build-core's built-in backport)
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
-find_package(Arrow REQUIRED)
-find_package(ArrowDataset REQUIRED)
-find_package(ArrowAcero REQUIRED)
-find_package(Parquet REQUIRED)
+
+# if(BUILD_ARROW_FROM_SOURCE)
+#     set(ARROW_LOCAL_INSTALL "${CMAKE_BINARY_DIR}/_deps/arrow-src/install")
+    
+#     list(PREPEND CMAKE_PREFIX_PATH "${ARROW_LOCAL_INSTALL}")
+    
+#     message(STATUS "Build from source detected. Looking for Arrow in: ${ARROW_LOCAL_INSTALL}")
+# endif()
+
+# if(NOT TARGET Arrow::arrow_static AND NOT TARGET Arrow::arrow_shared)
+#     find_package(Arrow REQUIRED)
+# endif()
+
+# find_package(ArrowDataset REQUIRED)
+# find_package(ArrowAcero REQUIRED)
+# find_package(Parquet REQUIRED)
 
 # Print dependency versions/locations at configure time.
 function(_graphar_print_var _label _var)
@@ -144,7 +156,7 @@ python_add_library(_core MODULE src/bindings/types_binding.cc
                                    src/bindings/graph_info_binding.cc
                                    src/bindings/high_level_binding.cc
                                    src/bindings/_core_module.cc WITH_SOABI)
-                                   
+
 if(GRAPHAR_BUILD_STATIC OR USE_STATIC_ARROW OR ARROW_BUILD_STATIC)
     message(STATUS "Linking _core against STATIC Arrow libraries")
     target_link_libraries(_core PRIVATE 
