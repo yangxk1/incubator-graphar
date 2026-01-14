@@ -123,7 +123,68 @@ jobs:
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
       CIBW_ENVIRONMENT: CMAKE_ARGS="-DBUILD_ARROW_FROM_SOURCE=ON -DGRAPHAR_BUILD_STATIC=ON"
       CIBW_BEFORE_BUILD_LINUX: |
+        set -e
         dnf install -y git cmake gcc-c++ make openssl-devel libcurl-devel
+
+        ARROW_VERSION="17.0.0"
+        INSTALL_PREFIX="${1:-$(pwd)/thirdparty/arrow}"
+        BUILD_DIR="arrow-build-temp"
+        SOURCE_DIR="arrow-src-temp"
+
+        mkdir -p "${INSTALL_PREFIX}"
+        mkdir -p "${BUILD_DIR}"
+
+        ARROW_TAR="apache-arrow-${ARROW_VERSION}.tar.gz"
+        ARROW_URL="https://www.apache.org/dyn/closer.lua?action=download&filename=arrow/arrow-${ARROW_VERSION}/${ARROW_TAR}"
+
+        if [ ! -f "${ARROW_TAR}" ]; then
+            wget -O "${ARROW_TAR}" "${ARROW_URL}" || curl -L -o "${ARROW_TAR}" "${ARROW_URL}"
+        else
+            echo "arrow already exists, skipping download"
+        fi
+
+        if [ ! -d "${SOURCE_DIR}" ]; then
+            mkdir -p "${SOURCE_DIR}"
+            tar -xf "${ARROW_TAR}" -C "${SOURCE_DIR}" --strip-components=1
+        fi
+
+        cd "${BUILD_DIR}"
+
+        cmake "../${SOURCE_DIR}/cpp" \
+            -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}" \
+            -DCMAKE_INSTALL_LIBDIR=lib \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DARROW_BUILD_STATIC=ON \
+            -DARROW_BUILD_SHARED=OFF \
+            -DARROW_DEPENDENCY_SOURCE=BUNDLED \
+            -DARROW_DEPENDENCY_USE_SHARED=OFF \
+            -Dxsimd_SOURCE=BUNDLED \
+            -DARROW_PARQUET=ON \
+            -DARROW_WITH_RE2=OFF \
+            -DARROW_WITH_UTF8PROC=OFF \
+            -DARROW_FILESYSTEM=ON \
+            -DARROW_CSV=ON \
+            -DARROW_JSON=ON \
+            -DARROW_PYTHON=OFF \
+            -DARROW_BUILD_BENCHMARKS=OFF \
+            -DARROW_BUILD_TESTS=OFF \
+            -DARROW_BUILD_INTEGRATION=OFF \
+            -DBoost_SOURCE=BUNDLED \
+            -DARROW_ORC=ON \
+            -DARROW_COMPUTE=ON \
+            -DARROW_ACERO=ON \
+            -DARROW_DATASET=ON \
+            -DARROW_JEMALLOC=OFF \
+            -DARROW_WITH_SNAPPY=OFF \
+            -DARROW_WITH_LZ4=OFF \
+            -DARROW_WITH_ZSTD=ON \
+            -DARROW_WITH_ZLIB=OFF \
+            -DARROW_WITH_BROTLI=OFF \
+            -DARROW_WITH_BZ2=OFF \
+            -DARROW_OPENSSL_USE_SHARED=ON \
+            -DARROW_S3=ON
+
+        cmake --build . --target install -- -j$(nproc)
 
     steps:
       - name: Checkout (needed for some tooling)
