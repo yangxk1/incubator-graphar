@@ -125,13 +125,20 @@ jobs:
       
       CIBW_BEFORE_ALL_LINUX: |
         set -e
+        echo "Installing base tools..."
+        if command -v dnf >/dev/null; then
+          dnf install -y curl tar bzip2 make git
+        elif command -v yum >/dev/null; then
+          yum install -y curl tar bzip2 make git
+        fi
+
         if [ "$(uname -m)" = "aarch64" ]; then
           MAMBA_URL="https://micro.mamba.pm/api/micromamba/linux-aarch64/latest"
         else
           MAMBA_URL="https://micro.mamba.pm/api/micromamba/linux-64/latest"
         fi
         
-        echo "Downloading Micromamba..."
+        echo "Downloading Micromamba from $MAMBA_URL..."
         curl -Ls "$MAMBA_URL" | tar -xvj bin/micromamba
         
         echo "Installing Arrow binaries from conda-forge..."
@@ -141,10 +148,9 @@ jobs:
           pkg-config \
           cmake \
           make \
-          gcc_linux-64 \
-          gxx_linux-64 \
           -y
           
+        echo "Cleaning up..."
         ./bin/micromamba clean -a -y
 
       CIBW_ENVIRONMENT_LINUX: >
