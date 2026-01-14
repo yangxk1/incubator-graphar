@@ -25,6 +25,7 @@
 #endif
 #include <arrow/compute/api.h>
 #include "arrow/api.h"
+#include "arrow/config.h"
 #include "arrow/csv/api.h"
 #include "arrow/dataset/api.h"
 #include "parquet/arrow/reader.h"
@@ -32,7 +33,9 @@
 #include "arrow/dataset/file_json.h"
 #endif
 #include "arrow/filesystem/api.h"
+#ifdef ARROW_S3
 #include "arrow/filesystem/s3fs.h"
+#endif
 #include "arrow/ipc/writer.h"
 #include "parquet/arrow/writer.h"
 #include "simple-uri-parser/uri_parser.h"
@@ -369,23 +372,42 @@ Result<std::shared_ptr<FileSystem>> FileSystemFromUriOrPath(
 
 // arrow::fs::InitializeS3 and arrow::fs::FinalizeS3 need arrow_version >= 15
 Status InitializeS3() {
-#if defined(ARROW_VERSION) && ARROW_VERSION > 14000000
-  auto options = arrow::fs::S3GlobalOptions::Defaults();
+#ifndef ARROW_S3
+  return Status::Invalid(
+      "Arrow was built without S3 support (ARROW_S3 is not defined). "
+      "Rebuild Arrow with -DARROW_S3=ON (and its AWS SDK dependencies), "
+      "or build GraphAr without S3 usage.");
 #else
-  arrow::fs::S3GlobalOptions options;
-  options.log_level = arrow::fs::S3LogLevel::Fatal;
-#endif
+  // Arrow provides InitializeS3/FinalizeS3 starting from version 15.
+  // When ARROW_S3 is enabled, these symbols must be provided by the linked
+  // libarrow; otherwise loading libgraphar will fail at runtime.
 #if defined(ARROW_VERSION) && ARROW_VERSION >= 15000000
+  auto options = arrow::fs::S3GlobalOptions::Defaults();
   RETURN_NOT_ARROW_OK(arrow::fs::InitializeS3(options));
-#endif
   return Status::OK();
+#else
+  return Status::Invalid(
+      "Arrow version does not support S3 global initialization. "
+      "Require Arrow >= 15.");
+#endif
+#endif
 }
 
 Status FinalizeS3() {
+#ifndef ARROW_S3
+  return Status::Invalid(
+      "Arrow was built without S3 support (ARROW_S3 is not defined). "
+      "Nothing to finalize.");
+#else
 #if defined(ARROW_VERSION) && ARROW_VERSION >= 15000000
   RETURN_NOT_ARROW_OK(arrow::fs::FinalizeS3());
-#endif
   return Status::OK();
+#else
+  return Status::Invalid(
+      "Arrow version does not support S3 global finalization. "
+      "Require Arrow >= 15.");
+#endif
+#endif
 }
 
 /// template specialization for std::string
