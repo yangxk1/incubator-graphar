@@ -131,9 +131,9 @@ jobs:
         set -e
         echo "Installing build dependencies..."
         if command -v dnf >/dev/null; then
-          dnf install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd
+          dnf install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd pkg-config bison flex
         elif command -v yum >/dev/null; then
-          yum install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd
+          yum install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd pkg-config bison flex
         fi
         
         echo "Setting up vcpkg..."
@@ -149,6 +149,7 @@ jobs:
         # Note: This compiles from source and may take time.
         ./vcpkg install \
           arrow[parquet,dataset,acero,compute,csv,json,filesystem]:${{ matrix.vcpkg_triplet }} \
+          --overlay-triplets=triplets/community \
           --clean-after-build
 
       # Pass vcpkg toolchain to the pip build process
