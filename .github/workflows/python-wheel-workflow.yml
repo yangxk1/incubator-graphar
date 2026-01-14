@@ -93,7 +93,7 @@ jobs:
           - platform: x86_64
             runner: ubuntu-latest # This is the standard x86_64 runner
             os: linux
-            manylinux: _2_28
+            manylinux: _2_31
             deployment-target: ''
 
           # # Job 2: Native aarch64 build
@@ -122,28 +122,17 @@ jobs:
       CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
       CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
       CIBW_BEFORE_BUILD_LINUX: |
-        # set -eux
-        dnf install -y epel-release || dnf install -y oracle-epel-release-el$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1) || dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1).noarch.rpm
-        dnf install -y https://packages.apache.org/artifactory/arrow/almalinux/$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)/apache-arrow-release-latest.rpm
-        dnf config-manager --set-enabled epel || :
-        dnf config-manager --set-enabled powertools || :
-        dnf config-manager --set-enabled crb || :
-        dnf config-manager --set-enabled ol$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)_codeready_builder || :
-        dnf config-manager --set-enabled codeready-builder-for-rhel-$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)-rhui-rpms || :
-        subscription-manager repos --enable codeready-builder-for-rhel-$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)-$(arch)-rpms || :
-        dnf install -y arrow-devel-17.0.0 # For C++
-        dnf install -y arrow-glib-devel-17.0.0 # For GLib (C)
-        dnf install -y arrow-dataset-devel-17.0.0 # For Apache Arrow Dataset C++
-        dnf install -y arrow-dataset-glib-devel-17.0.0 # For Apache Arrow Dataset GLib (C)
-        dnf install -y arrow-acero-devel-17.0.0 # For Apache Arrow Acero C++
-        dnf install -y arrow-flight-devel-17.0.0 # For Apache Arrow Flight C++
-        dnf install -y arrow-flight-glib-devel-17.0.0 # For Apache Arrow Flight GLib (C)
-        dnf install -y arrow-flight-sql-devel-17.0.0 # For Apache Arrow Flight SQL C++
-        dnf install -y arrow-flight-sql-glib-devel-17.0.0 # For Apache Arrow Flight SQL GLib (C)
-        dnf install -y gandiva-devel-17.0.0 # For Apache Gandiva C++
-        dnf install -y gandiva-glib-devel-17.0.0 # For Apache Gandiva GLib (C)
-        dnf install -y parquet-devel-17.0.0 # For Apache Parquet C++
-        dnf install -y parquet-glib-devel-17.0.0 # For Apache Parquet GLib (C)
+        set -eux
+        wget -c https://apache.jfrog.io/artifactory/arrow/"$(lsb_release --id --short | tr 'A-Z' 'a-z')"/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb \
+            -P /tmp/
+        sudo apt-get install -y /tmp/apache-arrow-apt-source-latest-"$(lsb_release --codename --short)".deb
+        sudo apt-get update -y
+        sudo apt install -y libarrow-dev=17.0.0-1 \
+                            libarrow-dataset-dev=17.0.0-1 \
+                            libarrow-acero-dev=17.0.0-1 \
+                            libparquet-dev=17.0.0-1
+        sudo apt-get install -y libboost-graph-dev ccache libcurl4-openssl-dev doxygen lcov
+
         
     steps:
       - name: Checkout (needed for some tooling)
