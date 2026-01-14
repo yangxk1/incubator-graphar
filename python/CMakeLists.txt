@@ -145,10 +145,27 @@ python_add_library(_core MODULE src/bindings/types_binding.cc
                                    src/bindings/high_level_binding.cc
                                    src/bindings/_core_module.cc WITH_SOABI)
                                    
-target_link_libraries(_core PRIVATE pybind11::headers graphar Arrow::arrow_shared
-                                    Parquet::parquet_shared
-                                    ArrowDataset::arrow_dataset_shared
-                                    ArrowAcero::arrow_acero_shared
+if(GRAPHAR_BUILD_STATIC OR USE_STATIC_ARROW OR ARROW_BUILD_STATIC)
+    message(STATUS "Linking _core against STATIC Arrow libraries")
+    target_link_libraries(_core PRIVATE 
+        pybind11::headers 
+        graphar 
+        Arrow::arrow_static
+        Parquet::parquet_static
+        ArrowDataset::arrow_dataset_static
+        ArrowAcero::arrow_acero_static
+    )
+else()
+    message(STATUS "Linking _core against SHARED Arrow libraries")
+    target_link_libraries(_core PRIVATE 
+        pybind11::headers 
+        graphar 
+        Arrow::arrow_shared
+        Parquet::parquet_shared
+        ArrowDataset::arrow_dataset_shared
+        ArrowAcero::arrow_acero_shared
+    )
+endif()
                                     )
 target_include_directories(_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(_core PRIVATE ${GRAPHAR_CPP_SOURCE_DIR}/src)
