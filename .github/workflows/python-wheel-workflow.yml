@@ -144,7 +144,7 @@ jobs:
         echo "Installing Arrow binaries from conda-forge..."
         ./bin/micromamba create -p /project/arrow-env \
           -c conda-forge \
-          arrow-cpp=17.0.0 \
+          arrow-cpp \
           pkg-config \
           cmake \
           make \
