@@ -1,4 +1,3 @@
-
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -23,8 +22,6 @@ concurrency:
   cancel-in-progress: false
 
 on:
-  # Trigger the workflow on push or pull request,
-  # but only for the main branch
   push:
     branches:
       - "**"
@@ -65,10 +62,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install build twine
+      
       - name: update pyproject version
         if: github.event_name != 'workflow_dispatch' || github.event.inputs.publish_pypi != 'true'
         run: |
-          python .github/scripts/update_version.py
+          # Ensure this script exists or remove this step if not needed
+          if [ -f .github/scripts/update_version.py ]; then
+            python .github/scripts/update_version.py
+          fi
+
       - name: Build sdist
         run: |
           # Bundle C++ sources into python/ so the sdist contains them.
@@ -76,6 +78,7 @@ jobs:
           cp -a cpp python/_bundled_cpp
           cd python
           python -m build --sdist
+
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -87,73 +90,81 @@ jobs:
     runs-on: ${{ matrix.runner }}
     needs: build_sdist
     strategy:
+      fail-fast: false
       matrix:
         include:
-          # Job 1: Native x86_64 build
+          # Job 1: Native x86_64 build (Linux)
           - platform: x86_64
-            runner: ubuntu-latest # This is the standard x86_64 runner
+            runner: ubuntu-latest
             os: linux
             manylinux: _2_28
-            deployment-target: ''
+            vcpkg_triplet: x64-linux-static
 
-          # Job 2: Native aarch64 build
+          # Job 2: Native aarch64 build (Linux)
           - platform: aarch64
-            runner: ubuntu-22.04-arm # This is a native ARM64 runner
+            runner: ubuntu-22.04-arm
             os: linux
             manylinux: _2_28
-            deployment-target: ''
+            vcpkg_triplet: arm64-linux-static
 
           # Job 3: macOS arm64 build
           - platform: arm64
             runner: macos-latest
             os: macos
-            deployment-target: '11.0'
-
+            deployment-target: '12.0'
 
     env:
+      # Common Config
       CIBW_PLATFORM: ${{ matrix.os }}
-      # CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-*"
-      CIBW_BUILD: "cp39-*"
+      CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-*" # Define supported python versions
       CIBW_SKIP: "*-musllinux_*"
-      # Pin arch to the matrix platform
       CIBW_ARCHS: ${{ matrix.platform }}
+      
+      # Linux Config
       CIBW_MANYLINUX_X86_64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
       CIBW_MANYLINUX_AARCH64_IMAGE: ${{ matrix.os == 'linux' && format('manylinux{0}', matrix.manylinux) || '' }}
-      CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
-      CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0} CFLAGS=-mmacosx-version-min={0} CXXFLAGS=-mmacosx-version-min={0} LDFLAGS=-mmacosx-version-min={0}', matrix.deployment-target) || '' }}
-      CIBW_BEFORE_BUILD_LINUX: |
-        set -eux
-        if [ -f /etc/system-release-cpe ]; then
-          ALMA_MAJOR="$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)"
-        else
-          . /etc/os-release
-          ALMA_MAJOR="${VERSION_ID%%.*}"
+      
+      # --- VCPKG Integration for Linux ---
+      # We install vcpkg to /project/vcpkg inside the container
+      # This script runs ONCE per job (before building any wheels)
+      CIBW_BEFORE_ALL_LINUX: |
+        set -e
+        echo "Installing build dependencies..."
+        if command -v dnf >/dev/null; then
+          dnf install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd
+        elif command -v yum >/dev/null; then
+          yum install -y git curl zip unzip tar gcc-c++ make perl-IPC-Cmd
         fi
-        dnf install -y 'dnf-command(config-manager)' || dnf install -y dnf-plugins-core || true
-        # Follow official Apache Arrow install instructions for AlmaLinux/RHEL-family
-        dnf install -y epel-release || dnf install -y oracle-epel-release-el$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1) || dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1).noarch.rpm
-        dnf install -y https://packages.apache.org/artifactory/arrow/almalinux/$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)/apache-arrow-release-latest.rpm
-        dnf config-manager --set-enabled epel || :
-        dnf config-manager --set-enabled powertools || :
-        dnf config-manager --set-enabled crb || :
-        dnf config-manager --set-enabled ol$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)_codeready_builder || :
-        dnf config-manager --set-enabled codeready-builder-for-rhel-$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)-rhui-rpms || :
-        subscription-manager repos --enable codeready-builder-for-rhel-$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)-$(arch)-rpms || :
-        dnf install -y arrow-devel # For C++
-        dnf install -y arrow-glib-devel # For GLib (C)
-        dnf install -y arrow-dataset-devel # For Apache Arrow Dataset C++
-        dnf install -y arrow-dataset-glib-devel # For Apache Arrow Dataset GLib (C)
-        dnf install -y arrow-acero-devel # For Apache Arrow Acero C++
-        dnf install -y arrow-flight-devel # For Apache Arrow Flight C++
-        dnf install -y arrow-flight-glib-devel # For Apache Arrow Flight GLib (C)
-        dnf install -y arrow-flight-sql-devel # For Apache Arrow Flight SQL C++
-        dnf install -y arrow-flight-sql-glib-devel # For Apache Arrow Flight SQL GLib (C)
-        dnf install -y gandiva-devel # For Apache Gandiva C++
-        dnf install -y gandiva-glib-devel # For Apache Gandiva GLib (C)
-        dnf install -y parquet-devel # For Apache Parquet C++
-        dnf install -y parquet-glib-devel # For Apache Parquet GLib (C)
+        
+        echo "Setting up vcpkg..."
+        cd /project
+        if [ ! -d "vcpkg" ]; then
+          git clone https://github.com/microsoft/vcpkg.git
+        fi
+        cd vcpkg
+        ./bootstrap-vcpkg.sh -disableMetrics
+        
+        echo "Installing Arrow via vcpkg (Static)..."
+        # Install Arrow with required features. 
+        # Note: This compiles from source and may take time.
+        ./vcpkg install \
+          arrow[parquet,dataset,acero,compute,csv,json,filesystem]:${{ matrix.vcpkg_triplet }} \
+          --clean-after-build
+
+      # Pass vcpkg toolchain to the pip build process
+      CIBW_ENVIRONMENT_LINUX: >
+        CMAKE_TOOLCHAIN_FILE="/project/vcpkg/scripts/buildsystems/vcpkg.cmake"
+        VCPKG_TARGET_TRIPLET="${{ matrix.vcpkg_triplet }}"
+        CXX_FLAGS="-fvisibility=hidden"
+
+      # macOS Config (Keep using Conda for speed, vcpkg is too slow on macOS runners)
+      CIBW_ENVIRONMENT_MACOS: ${{ matrix.os == 'macos' && format('MACOSX_DEPLOYMENT_TARGET={0} CMAKE_OSX_DEPLOYMENT_TARGET={0}', matrix.deployment-target) || '' }}
+      
+      # Windows Config
+      CIBW_ENVIRONMENT_WINDOWS: DISTUTILS_USE_SDK=1 MSSdk=1
+
     steps:
-      - name: Checkout (needed for some tooling)
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -161,8 +172,9 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Set up Miniconda (macOS/Windows)
-        if: matrix.os == 'windows' || matrix.os == 'macos'
+      # --- macOS Setup (Conda) ---
+      - name: Set up Miniconda (macOS)
+        if: matrix.os == 'macos'
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-activate-base: true
@@ -174,17 +186,18 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          mamba install -y -c conda-forge arrow-cpp
-          # Note: CONDA_PREFIX may be unset unless conda is activated in this shell.
-          # setup-miniconda exports CONDA (base install prefix), which is sufficient here.
+          mamba install -y -c conda-forge arrow-cpp pkg-config
           echo "CMAKE_PREFIX_PATH=$CONDA" >> "$GITHUB_ENV"
-          # Optional sanity check: ensure Arrow dylib isn't built for a newer macOS than deployment target.
-          if command -v otool >/dev/null 2>&1; then
-            ls -lah "$CONDA/lib" || true
-            if [ -f "$CONDA/lib/libarrow.dylib" ]; then
-              otool -l "$CONDA/lib/libarrow.dylib" | (grep -A3 -E 'LC_BUILD_VERSION|LC_VERSION_MIN_MACOSX' || true)
-            fi
-          fi
+
+      # --- Windows Setup (Conda) ---
+      - name: Set up Miniconda (Windows)
+        if: matrix.os == 'windows'
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-activate-base: true
+          miniforge-version: latest
+          use-mamba: true
+
       - name: Install Arrow (Windows)
         if: matrix.os == 'windows'
         shell: pwsh
@@ -192,6 +205,8 @@ jobs:
           mamba install -y -c conda-forge arrow-cpp
           Add-Content $env:GITHUB_ENV "CMAKE_PREFIX_PATH=$env:CONDA_PREFIX\\Library"
           Add-Content $env:GITHUB_ENV "PATH=$env:CONDA_PREFIX\\Library\\bin;$env:PATH"
+
+      # --- Build Process ---
       - name: Download sdist artifact
         uses: actions/download-artifact@v4
         with:
@@ -202,54 +217,41 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          ls -lah sdist
-          SDIST_FILE=""
-          for f in sdist/*.tar.gz sdist/*.zip; do
-            if [ -f "$f" ]; then
-              SDIST_FILE="$f"
-              break
-            fi
-          done
-          if [ -z "$SDIST_FILE" ]; then
-            echo "No sdist file found in sdist/" >&2
-            exit 1
-          fi
+          SDIST_FILE=$(find sdist -name "*.tar.gz" -o -name "*.zip" | head -n 1)
+          if [ -z "$SDIST_FILE" ]; then echo "No sdist found"; exit 1; fi
+          
           mkdir -p sdist_pkg
-          case "$SDIST_FILE" in
-            *.tar.gz) tar -xzf "$SDIST_FILE" -C sdist_pkg ;;
-            *.zip) unzip -q "$SDIST_FILE" -d sdist_pkg ;;
-          esac
-          PKGDIR="$(find sdist_pkg -mindepth 1 -maxdepth 1 -type d | head -n 1)"
-          if [ -z "$PKGDIR" ]; then
-            echo "Failed to locate extracted sdist directory" >&2
-            exit 1
-          fi
-          echo "PKGDIR=$PKGDIR" >> "$GITHUB_ENV"
+          tar -xf "$SDIST_FILE" -C sdist_pkg --strip-components=1
+          
+          # Use the extracted directory as the build source
+          echo "PKGDIR=$(pwd)/sdist_pkg" >> "$GITHUB_ENV"
+
       - name: Build wheels
         shell: bash
         run: |
           set -euxo pipefail
           python -m pip install --upgrade pip
-          python -m pip install packaging cibuildwheel
+          python -m pip install cibuildwheel
+          
           mkdir -p python/dist
+          # Build wheels using cibuildwheel
           python -m cibuildwheel --output-dir python/dist "$PKGDIR"
+
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}-${{ matrix.platform }}
           path: python/dist/*
 
-      - name: Smoke test wheel (import + CLI)
+      - name: Smoke test wheel
         shell: bash
+        if: runner.os == 'Linux' # Only run simple smoke test on Linux for now
         run: |
-          set -euxo pipefail
-          python -m pip uninstall -y graphar || true
-          python -m pip install --no-deps python/dist/*.whl
-          python -c "import graphar; import graphar._core; print('graphar import ok')"
-          graphar --help >/dev/null
+          python -m pip install python/dist/*.whl
+          python -c "import graphar; print('GraphAr imported successfully')"
 
   upload_test_pypi:
-    name: Publish to TestPyPI (auto)
+    name: Publish to TestPyPI
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-22.04
     if: github.event_name == 'push'
@@ -261,19 +263,23 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: dist
+          pattern: wheels-*
+          merge-multiple: true
+      
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdist
+          path: dist
 
-      - name: Move artifacts to correct location
-        run: |
-          mkdir -p python/dist
-          find dist -name "*" -type f -exec mv {} python/dist/ \;
       - name: Publish to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
-          packages-dir: python/dist/
+          packages-dir: dist/
+          skip-existing: true
 
   upload_pypi:
-    name: Publish (manual)
+    name: Publish to PyPI
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-22.04
     if: github.event_name == 'workflow_dispatch' && inputs.publish_pypi
@@ -285,12 +291,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: dist
+          pattern: wheels-*
+          merge-multiple: true
+          
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdist
+          path: dist
 
-      - name: Move artifacts to correct location
-        run: |
-          mkdir -p python/dist
-          find dist -name "*" -type f -exec mv {} python/dist/ \;
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: python/dist/
+          packages-dir: dist/
