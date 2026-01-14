@@ -166,7 +166,6 @@ else()
         ArrowAcero::arrow_acero_shared
     )
 endif()
-                                    )
 target_include_directories(_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(_core PRIVATE ${GRAPHAR_CPP_SOURCE_DIR}/src)
 target_include_directories(_core PRIVATE ${GRAPHAR_CPP_SOURCE_DIR}/thirdparty)
